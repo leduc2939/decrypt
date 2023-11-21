@@ -1,0 +1,51 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: #F5F5F5;
+    width: 100%;
+    height: 100vh;
+}
+.decryptr--left {
+    /* overflow-x: auto; */
+    width: 20%;
+}
+.decryptr--left > .decryptr--row {
+    margin: 0 auto;
+}
+.decryptr--right {
+    overflow-x: auto;
+    width: 80%;
+}
+.decryptr--row {
+    display: flex;
+    width: max-content;
+}
+.decryptr--item {
+    width: 100px;
+    height: 100px;
+    margin-right: 24px;
+    margin-bottom: 24px;
+    border: 1px solid blue;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+.decryptr--input {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    text-align: center;
+    font-size: 25px;
+}
+.input {
+    position: relative;
+    /* display: inline-block; */
+    display: flex;
+    background: teal;
+    width: 100px;
+    height: 100px;
+    /* padding: 5px; */
+    border: 1px solid blue;
+    white-space: nowrap;
+    overflow: auto;
+    margin: 5px !important;
+}
