@@ -1,4 +1,4 @@
-var columns = document.querySelectorAll('.card');
+var columns = document.querySelectorAll('.decryptr--item1');
 var draggingClass = 'dragging';
 var dragSource;
 

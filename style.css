@@ -19,12 +19,24 @@ body {
     display: flex;
     width: max-content;
 }
-.decryptr--item {
+.decryptr--item1 {
     width: 100px;
     height: 100px;
     margin-right: 24px;
     margin-bottom: 24px;
     border: 1px solid blue;
+    background-color: teal;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+.decryptr--item2 {
+    width: 100px;
+    height: 100px;
+    margin-right: 24px;
+    margin-bottom: 24px;
+    border: 1px solid red;
+    background-color: rgb(206, 99, 117);
     display: flex;
     align-items: center;
     text-align: center;
