@@ -76,3 +76,10 @@ body {
     word-break: break-all;
     opacity: 0;
 }
+
+.submit_clue {
+    position: absolute;
+    bottom: 50;
+    right: 50;
+    z-index: 999999;
+}

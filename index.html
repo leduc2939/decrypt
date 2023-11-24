@@ -19,14 +19,13 @@
     <button id="newGame">
         New Game
     </button>
-    <button id="newRound">
-        New Round
+    <button id="giveClues">
+        Give Clues
     </button>
     <div class="decryptr d-flex mt-4">
         <div class="decryptr--left ">
-            <div class="decryptr--row">
-
 <!-- team 1 keywords -->
+            <div class="decryptr--row">
                 <div id="thua_word1" class="decryptr--item1">
                     <span class="m-auto">?</span>
                 </div>
@@ -183,6 +182,11 @@
     </div>
 </div>
 
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -195,7 +199,70 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io();
+    var socket = io();
+  
+    let my_user_id = "";
+    socket.on('connect', function() {
+        my_user_id = socket.id;
+    });
+
+    // new games: give new html to all users
+    var newGames = document.getElementById('newGame');
+    newGames.addEventListener('click', function(e) {
+        socket.emit('newGames', my_user_id);
+    });
+
+    socket.on('newGame_JS', () => {
+        console.log('received newGame signal');
+        newGame_JS();
+    });
+
+    // give clues: client that clicked the button does is given
+    // the html-change while others have the button greyed out
+    var giveClues = document.getElementById('giveClues');
+    giveClues.addEventListener('click', function(e) {
+        socket.emit('giveClues',my_user_id);
+    });
+
+    socket.on('giveClues_JS', (user_id) => {
+        console.log('received giveClues_JS signal');
+        if (my_user_id == user_id){
+            console.log(my_user_id + ' is giving clues');
+            giveClues.setAttribute('disabled', true);
+            giveClues_JS();
+        } else {
+            console.log('give clues button is greyed out for ' + my_user_id);
+            giveClues.setAttribute('disabled', true);
+        }
+    });
+
+    
+
+
+    
+   
+
+    var messages = document.getElementById('messages');
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+        socket.emit('chat message', input.value);
+        input.value = '';
+        }
+    });
+
+    socket.on('chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+
+
+  
 </script>
 
 </body>

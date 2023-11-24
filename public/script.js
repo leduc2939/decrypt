@@ -50,7 +50,19 @@ function handleDragEnd (evt) {
   });
 }
 
-$("#newGame").click(function(){
+// $("#newGame").click(function(){
+//   $('#thua_word1 span').text('random word');
+//   $('#thua_word2 span').text('random word');
+//   $('#thua_word3 span').text('random word');
+//   $('#thua_word4 span').text('random word');
+  
+//   $('#loser_word1 span').text('random word');
+//   $('#loser_word2 span').text('random word');
+//   $('#loser_word3 span').text('random word');
+//   $('#loser_word4 span').text('random word');
+// });
+
+function newGame_JS() {
   $('#thua_word1 span').text('random word');
   $('#thua_word2 span').text('random word');
   $('#thua_word3 span').text('random word');
@@ -60,10 +72,10 @@ $("#newGame").click(function(){
   $('#loser_word2 span').text('random word');
   $('#loser_word3 span').text('random word');
   $('#loser_word4 span').text('random word');
-});
+}
 
-$("#newRound").click(function(){
-  // create an array of three positions to be encoded
+function giveClues_JS () {
+    // create an array of three positions to be encoded
   position_to_be_encoded = [1, 2, 3, 4];
   left_out_position = Math.floor(Math.random()*position_to_be_encoded.length);
   position_to_be_encoded.splice(left_out_position, 1);
@@ -99,18 +111,5 @@ $("#newRound").click(function(){
   clue_input14.setAttribute('type','text');
   clue_input14.setAttribute('class','leftout');
   $(`#row1${left_out_position+1}`).prepend(clue_input14);
+}
 
-    // clue_input11.id = "input11";
-    // let clue_input12 = document.createElement("div");
-    // clue_input12.className = "decryptr--item1";
-    // clue_input12.id = "input12";
-    // let clue_input13 = document.createElement("div");
-    // clue_input13.className = "decryptr--item1";
-    // clue_input13.id = "input13";
-  
- 
-
-
-  //  class="decryptr--item1" draggable="true">
-  //                   <input class="decryptr--input" type="text" value="A"></input>
-});
