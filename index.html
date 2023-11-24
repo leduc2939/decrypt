@@ -22,29 +22,32 @@
     <button id="giveClues">
         Give Clues
     </button>
+    <button class="submit_clue" id="submitClues">
+        Submit
+    </button>
     <div class="decryptr d-flex mt-4">
         <div class="decryptr--left ">
 <!-- team 1 keywords -->
             <div class="decryptr--row">
-                <div id="thua_word1" class="decryptr--item1">
+                <div id="thua_word1" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word2" class="decryptr--item1">
+                <div id="thua_word2" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word3" class="decryptr--item1">
+                <div id="thua_word3" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word4" class="decryptr--item1">
+                <div id="thua_word4" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
@@ -203,6 +206,7 @@
   
     let my_user_id = "";
     socket.on('connect', function() {
+        console.log('connected');
         my_user_id = socket.id;
     });
 
@@ -224,23 +228,31 @@
         socket.emit('giveClues',my_user_id);
     });
 
-    socket.on('giveClues_JS', (user_id) => {
+    socket.on('giveClues_JS', (user_id, position_to_be_encoded,left_out_position) => {
         console.log('received giveClues_JS signal');
         if (my_user_id == user_id){
             console.log(my_user_id + ' is giving clues');
             giveClues.setAttribute('disabled', true);
-            giveClues_JS();
+            giveClues_JS(position_to_be_encoded,left_out_position);
         } else {
             console.log('give clues button is greyed out for ' + my_user_id);
             giveClues.setAttribute('disabled', true);
         }
     });
 
+    socket.on('rearrangeClues_JS', (user_id, input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position) => {
+        if (my_user_id != user_id){
+            rearrangeClues_JS(input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position);
+        }
+    });
     
 
+    var submitClues = document.getElementById('submitClues');
+    submitClues.addEventListener('click', function(e) {
+        socket.emit('submitClues', my_user_id, $('#input11').html(),$('#input12').html(),$('#input13').html());
+    });
 
-    
-   
+
 
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');

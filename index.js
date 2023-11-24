@@ -24,10 +24,26 @@ io.on('connection', (socket) => {
   })
 
   socket.on('giveClues', (user_id) => {
-    console.log('user: ' + user_id + 'is giving clues');
-    io.emit('giveClues_JS', user_id);
+    console.log('user: ' + user_id + ' is giving clues');
+    position_to_be_encoded = [1, 2, 3, 4];
+    left_out_position = Math.floor(Math.random()*position_to_be_encoded.length);
+    position_to_be_encoded.splice(left_out_position, 1);
+    io.emit('giveClues_JS', user_id, position_to_be_encoded, left_out_position+1);
+  });
+
+  // rearrange clues then give to other players
+  socket.on('submitClues', (user_id, input1_value, input2_value,input3_value) => {
+    console.log(input1_value);
+    console.log(input2_value);
+    console.log(input3_value);
+    // randomize position
+    position_to_be_encoded = [1, 2, 3, 4];
+    left_out_position = Math.floor(Math.random()*position_to_be_encoded.length);
+    position_to_be_encoded.splice(left_out_position, 1);
+    io.emit('rearrangeClues_JS', user_id, input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position+1);
   });
   
+
 
 
 

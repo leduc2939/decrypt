@@ -1,4 +1,4 @@
-var columns = document.querySelectorAll('.decryptr--item1');
+var columns = document.querySelectorAll('.draggable_clue_1');
 var draggingClass = 'dragging';
 var dragSource;
 
@@ -15,7 +15,8 @@ function handleDragStart (evt) {
   dragSource = this;
   evt.target.classList.add(draggingClass);
   evt.dataTransfer.effectAllowed = 'move';
-  evt.dataTransfer.setData('text/html', this.innerHTML);
+  // evt.dataTransfer.setData('text/html', this.innerHTML);
+  evt.dataTransfer.setData('text/plain', evt.target.id)
 }
 
 function handleDragOver (evt) {
@@ -25,6 +26,7 @@ function handleDragOver (evt) {
 
 function handleDragEnter (evt) {
   this.classList.add('over');
+  evt.preventDefault();
 }
 
 function handleDragLeave (evt) {
@@ -74,13 +76,7 @@ function newGame_JS() {
   $('#loser_word4 span').text('random word');
 }
 
-function giveClues_JS () {
-    // create an array of three positions to be encoded
-  position_to_be_encoded = [1, 2, 3, 4];
-  left_out_position = Math.floor(Math.random()*position_to_be_encoded.length);
-  position_to_be_encoded.splice(left_out_position, 1);
-  console.log(position_to_be_encoded);
-  // create those new boxes so that the users can input clues
+function giveClues_JS (position_to_be_encoded,left_out_position) {
   let clue_input11 = document.createElement("div");
   clue_input11.id = "input11";
   clue_input11.setAttribute('type','text');
@@ -100,7 +96,6 @@ function giveClues_JS () {
   clue_input13.setAttribute('placeholder','encode word');
   clue_input13.setAttribute('contenteditable', 'true');
 
-  console.log(`#row1${position_to_be_encoded[0]}`);
   $(`#row1${position_to_be_encoded[0]}`).prepend(clue_input11);
   $(`#row1${position_to_be_encoded[1]}`).prepend(clue_input12);
   $(`#row1${position_to_be_encoded[2]}`).prepend(clue_input13);
@@ -110,6 +105,64 @@ function giveClues_JS () {
   clue_input14.id = "leftout1";
   clue_input14.setAttribute('type','text');
   clue_input14.setAttribute('class','leftout');
-  $(`#row1${left_out_position+1}`).prepend(clue_input14);
+  $(`#row1${left_out_position}`).prepend(clue_input14);
 }
 
+function rearrangeClues_JS(input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position) {
+  let clue1 = document.createElement("div");
+  clue1.id = "input11";
+  clue1.setAttribute('type','text');
+  // clue1.setAttribute('class',"decryptr--input");
+  clue1.setAttribute('draggable', 'true');
+  clue1.innerHTML  = input2_value;
+
+  let clue2 = document.createElement("div");
+  clue2.id = "input12";
+  clue2.setAttribute('type','text');
+  // clue2.setAttribute('class',"decryptr--input");
+  // clue2.setAttribute('draggable', 'true');
+  clue2.innerHTML = input3_value;
+
+  let clue3 = document.createElement("div");
+  clue3.id = "input13";
+  clue3.setAttribute('type','text');
+  // clue3.setAttribute('class',"decryptr--input");
+  // clue3.setAttribute('draggable', 'true');
+  clue3.innerHTML = input1_value;
+
+  outsidebox1 = document.createElement("div");
+  outsidebox1.setAttribute('class','draggable_clue_1');
+  outsidebox1.setAttribute('id','outsidebox1');
+  outsidebox1.setAttribute('draggable', 'true');
+  outsidebox2 = document.createElement("div");
+  outsidebox2.setAttribute('class','draggable_clue_1');
+  outsidebox2.setAttribute('id','outsidebox2');
+  outsidebox2.setAttribute('draggable', 'true');
+  outsidebox3 = document.createElement("div");
+  outsidebox3.setAttribute('class','draggable_clue_1');
+  outsidebox3.setAttribute('id','outsidebox3');
+  outsidebox3.setAttribute('draggable', 'true');
+
+
+  $(`#row1${position_to_be_encoded[0]}`).prepend(outsidebox1);
+  $(`#row1${position_to_be_encoded[1]}`).prepend(outsidebox2);
+  $(`#row1${position_to_be_encoded[2]}`).prepend(outsidebox3);
+
+  // $(`#outsidebox1`).prepend(clue1);
+  // $(`#outsidebox2`).prepend(clue2);
+  // $(`#outsidebox3`).prepend(clue3);
+
+  $(`#row1${position_to_be_encoded[0]}`).prepend(clue1);
+  $(`#row1${position_to_be_encoded[1]}`).prepend(clue2);
+  $(`#row1${position_to_be_encoded[2]}`).prepend(clue3);
+
+  let clue_input14 = document.createElement("div");
+  clue_input14.id = "leftout1";
+  clue_input14.setAttribute('type','text');
+  clue_input14.setAttribute('class','leftout');
+  $(`#row1${left_out_position}`).prepend(clue_input14);
+}
+
+// <div class="decryptr--item1" draggable="true">
+//    <input class="decryptr--input"  type="text" value="A">
+// </div>  </div>
