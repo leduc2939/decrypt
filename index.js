@@ -4,6 +4,13 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const cors = require("cors");
+// app.use(cors());
+var corsOptions = {
+  origin: "http://localhost:3000"
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.static(__dirname + "/public"));
 app.get('/', (req, res) => {
