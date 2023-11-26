@@ -120,12 +120,17 @@ function drop(e) {
 
   // get the draggable element
   const id = e.dataTransfer.getData('text/plain');
-  console.log("id: " + id);
+  // console.log("id: " + id);
   const draggable = document.getElementById(id);
-  console.log(draggable);
+  // console.log(draggable);
+  // console.log(draggable.parentNode);
+  if (e.target.id.startsWith('b')){
+    e.target.appendChild(draggable);
+  }
   // add it to the drop target
-  e.target.appendChild(draggable);
-  console.log(e.target);
+  // console.log(e.target.id);
+  
+  // console.log(e.target);
   // display the draggable element
   draggable.classList.remove('hide');
 }
@@ -231,54 +236,54 @@ function rearrangeClues_JS(input2_value, input3_value, input1_value, position_to
 }
 
 
-var columns = document.querySelectorAll('.card');
-var draggingClass = 'dragging';
-var dragSource;
+// var columns = document.querySelectorAll('.card');
+// var draggingClass = 'dragging';
+// var dragSource;
 
-Array.prototype.forEach.call(columns, function (col) {
-  col.addEventListener('dragstart', handleDragStart, false);
-  col.addEventListener('dragenter', handleDragEnter, false)
-  col.addEventListener('dragover', handleDragOver, false);
-  col.addEventListener('dragleave', handleDragLeave, false);
-  col.addEventListener('drop', handleDrop, false);
-  col.addEventListener('dragend', handleDragEnd, false);
-});
+// Array.prototype.forEach.call(columns, function (col) {
+//   col.addEventListener('dragstart', handleDragStart, false);
+//   col.addEventListener('dragenter', handleDragEnter, false)
+//   col.addEventListener('dragover', handleDragOver, false);
+//   col.addEventListener('dragleave', handleDragLeave, false);
+//   col.addEventListener('drop', handleDrop, false);
+//   col.addEventListener('dragend', handleDragEnd, false);
+// });
 
-function handleDragStart (evt) {
-  dragSource = this;
-  evt.target.classList.add(draggingClass);
-  evt.dataTransfer.effectAllowed = 'move';
-  evt.dataTransfer.setData('text/html', this.innerHTML);
-}
+// function handleDragStart (evt) {
+//   dragSource = this;
+//   evt.target.classList.add(draggingClass);
+//   evt.dataTransfer.effectAllowed = 'move';
+//   evt.dataTransfer.setData('text/html', this.innerHTML);
+// }
 
-function handleDragOver (evt) {
-  evt.dataTransfer.dropEffect = 'move';
-  evt.preventDefault();
-}
+// function handleDragOver (evt) {
+//   evt.dataTransfer.dropEffect = 'move';
+//   evt.preventDefault();
+// }
 
-function handleDragEnter (evt) {
-  this.classList.add('over');
-}
+// function handleDragEnter (evt) {
+//   this.classList.add('over');
+// }
 
-function handleDragLeave (evt) {
-  this.classList.remove('over');
-}
+// function handleDragLeave (evt) {
+//   this.classList.remove('over');
+// }
 
-function handleDrop (evt) {
-  evt.stopPropagation();
+// function handleDrop (evt) {
+//   evt.stopPropagation();
   
-  if (dragSource !== this) {
-    dragSource.innerHTML = this.innerHTML;
-    this.innerHTML = evt.dataTransfer.getData('text/html');
-  }
+//   if (dragSource !== this) {
+//     dragSource.innerHTML = this.innerHTML;
+//     this.innerHTML = evt.dataTransfer.getData('text/html');
+//   }
   
-  evt.preventDefault();
-}
+//   evt.preventDefault();
+// }
 
-function handleDragEnd (evt) {
-  Array.prototype.forEach.call(columns, function (col) {
-    ['over', 'dragging'].forEach(function (className) {
-      col.classList.remove(className);
-    });
-  });
-}
+// function handleDragEnd (evt) {
+//   Array.prototype.forEach.call(columns, function (col) {
+//     ['over', 'dragging'].forEach(function (className) {
+//       col.classList.remove(className);
+//     });
+//   });
+// }
