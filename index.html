@@ -15,7 +15,7 @@
 </head>
 <body>
 
-<div class="container ">
+<div class="container" id = "container">
     <button id="newGame">
         New Game
     </button>
@@ -23,6 +23,12 @@
         Give Clues
     </button>
     <button class="submit_clue" id="submitClues">
+        Submit
+    </button>
+    <button class="suggest" id="suggestAnswer">
+        Suggest
+    </button>
+    <button class="submitAnswer" id="submitAnswer">
         Submit
     </button>
     <div class="decryptr d-flex mt-4">
@@ -137,39 +143,143 @@
         newGame_JS();
     });
 
-    // give clues: client that clicked the button does is given
+    // button for sending giving-clues sinal: client that clicked the button is given
     // the html-change while others have the button greyed out
     var giveClues = document.getElementById('giveClues');
     giveClues.addEventListener('click', function(e) {
         socket.emit('giveClues',my_user_id);
     });
 
-    socket.on('giveClues_JS', (user_id, position_to_be_encoded,left_out_position) => {
+    // received give-clues signal: changes HTML accordingly 
+    socket.on('giveClues_JS', (user_id, position_to_be_encoded) => {
         console.log('received giveClues_JS signal');
         if (my_user_id == user_id){
             console.log(my_user_id + ' is giving clues');
             giveClues.setAttribute('disabled', true);
-            giveClues_JS(position_to_be_encoded,left_out_position);
+            giveClues_JS(position_to_be_encoded);
         } else {
             console.log('give clues button is greyed out for ' + my_user_id);
             giveClues.setAttribute('disabled', true);
         }
     });
 
-    socket.on('rearrangeClues_JS', (user_id, input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position) => {
-        if (my_user_id != user_id){
-            rearrangeClues_JS(input2_value, input3_value, input1_value, position_to_be_encoded, left_out_position);
-        }
-    });
-    
-
+    // button for sending submit-clues signal
     var submitClues = document.getElementById('submitClues');
     submitClues.addEventListener('click', function(e) {
-        socket.emit('submitClues', my_user_id, $('#input11').html(),$('#input12').html(),$('#input13').html());
+        socket.emit('submitClues', my_user_id, $('#input11').html(), $('#input12').html(), $('#input13').html());
+    });
+
+    // received rearrangement singal: clues are now rearranged randomly
+    socket.on('rearrangeClues_JS', (user_id, input2_value, input3_value, input1_value, position_to_be_encoded) => {
+        if (my_user_id != user_id){
+            rearrangeClues_JS(input2_value, input3_value, input1_value, position_to_be_encoded);
+        }
+    });
+
+    // button to send suggest-arrangement signal to server
+    var suggest = document.getElementById('suggestAnswer');
+    suggest.addEventListener('click', function(e) {
+      
+        let box11Children = document.getElementById('box11').children;
+        let box12Children = document.getElementById('box12').children;
+        let box13Children = document.getElementById('box13').children;
+        let box14Children = document.getElementById('box14').children;
+
+        let box11word;
+        let box12word;
+        let box13word;
+        let box14word;
+
+        if (box11Children.length > 0) {
+            box11word = box11Children.item(0).innerHTML;} 
+        else {
+            box11word = 'null';}
+
+        if (box12Children.length > 0) {
+            box12word = box12Children.item(0).innerHTML;} 
+        else {
+            box12word = 'null';}
+
+        if (box13Children.length > 0) {
+            box13word = box13Children.item(0).innerHTML;} 
+        else {
+            box13word = 'null';}
+
+        if (box14Children.length > 0) {
+            box14word = box14Children.item(0).innerHTML;} 
+        else {
+            box14word = 'null';}
+
+        let d = {
+            'box11': box11word,
+            'box12': box12word,
+            'box13': box13word,
+            'box14': box14word
+            };
+        socket.emit('suggestAnswer', my_user_id, d);
+    });
+
+    // receive suggest-rearrangement signal, displays for everyone to see
+    socket.on('rearrangeSuggest_JS', (user_id, d) => {
+        console.log('received rearrangeSuggest_JS ');
+        rearrangeSuggest_JS(user_id, d);
+    });
+
+    // button for sending submit-answers signal
+    var submitAnswer = document.getElementById('submitAnswer');
+    submitAnswer.addEventListener('click', function(e) {
+        console.log('submitted answer');
+        let box11Children = document.getElementById('box11').children;
+        let box12Children = document.getElementById('box12').children;
+        let box13Children = document.getElementById('box13').children;
+        let box14Children = document.getElementById('box14').children;
+
+        let box11word;
+        let box12word;
+        let box13word;
+        let box14word;
+
+        if (box11Children.length > 0) {
+            box11word = box11Children.item(0).innerHTML;} 
+        else {
+            box11word = 'null';}
+
+        if (box12Children.length > 0) {
+            box12word = box12Children.item(0).innerHTML;} 
+        else {
+            box12word = 'null';}
+
+        if (box13Children.length > 0) {
+            box13word = box13Children.item(0).innerHTML;} 
+        else {
+            box13word = 'null';}
+
+        if (box14Children.length > 0) {
+            box14word = box14Children.item(0).innerHTML;} 
+        else {
+            box14word = 'null';}
+
+        let d = {
+            'box11': box11word,
+            'box12': box12word,
+            'box13': box13word,
+            'box14': box14word
+            };
+        console.log(d);
+        socket.emit('submitAnswer', my_user_id, d);
+    });
+
+
+    // received communication result, push correct answers to the right
+    socket.on('pushRight', (result, user_id, game_state_correct_answer) => {
+        console.log('received pushRight');
+        pushRight(result, user_id, game_state_correct_answer);
     });
 
 
 
+
+    // chat
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
@@ -189,7 +299,7 @@
         window.scrollTo(0, document.body.scrollHeight);
     });
 
-
+    
   
 </script>
 
