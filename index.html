@@ -15,6 +15,22 @@
 </head>
 <body>
 
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Đúng nhận?</h5>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sai cãi</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Nhận</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
 <div class="container" id = "container">
     <button id="newGame">
         New Game
@@ -22,7 +38,7 @@
     <button id="giveClues">
         Give Clues
     </button>
-    <button class="submit_clue" id="submitClues">
+    <button class="submit_clue" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Submit
     </button>
     <button class="suggest" id="suggestAnswer">
