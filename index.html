@@ -166,6 +166,8 @@
     // button for sending submit-clues signal
     var submitClues = document.getElementById('submitClues');
     submitClues.addEventListener('click', function(e) {
+        submitClues.setAttribute('disabled', true);
+        submitClues.classList.add("hide");
         socket.emit('submitClues', my_user_id, $('#input11').html(), $('#input12').html(), $('#input13').html());
     });
 

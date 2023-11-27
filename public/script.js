@@ -229,5 +229,4 @@ function pushRight (result, user_id, game_state_correct_answerd) {
       $(`#row${key.slice(-2)}`).append(previous_words_1);
     }
   }
-  
 }
