@@ -13,9 +13,21 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.static(__dirname + "/public"));
+
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/index.html');
+// });
+
+// ====> cookies token TODO
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-  });
+  res.sendFile(__dirname + '/login.html');
+});
+
+app.post('/login', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
+
 
 let game_state = {};
 let round_no = 1;
@@ -32,12 +44,17 @@ position_to_be_encoded['team_2'] = [1,2,3,4];
 
 io.on('connection', (socket) => {
   user_team[socket.id] = 1;
-  console.log('a user connected');
+  console.log('user ' + socket.id + ' connected');
+  
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    console.log('user' + socket.id + 'disconnected');
   });
 
+  socket.on('userName', () => {
+    
+
+  }); 
 
 
   socket.on('newGames', (user_id) => {
@@ -114,28 +131,3 @@ server.listen(3000, () => {
   console.log('listening on *:3000');
 });
 
-// const express = require('express');
-// const app = express();
-// const http = require('http');
-// const server = http.createServer(app);
-// const { Server } = require("socket.io");
-// const io = new Server(server);
-
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/index.html');
-// });
-
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-//   socket.on('chat message', (msg) => {
-//     console.log('message: ' + msg);
-//     io.emit('chat message', msg);
-//   });
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected');
-//   });
-// });
-
-// server.listen(3000, () => {
-//   console.log('listening on *:3000');
-// });
