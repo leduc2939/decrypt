@@ -5,7 +5,6 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const cors = require("cors");
-// app.use(cors());
 var corsOptions = {
   origin: "http://localhost:3000"
 };
@@ -27,8 +26,8 @@ app.post('/login', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-
-
+let team_finish = 0;
+let user_db = {};
 let game_state = {};
 let round_no = 1;
 let user_team = {};
@@ -51,21 +50,32 @@ io.on('connection', (socket) => {
     console.log('user' + socket.id + 'disconnected');
   });
 
-  socket.on('userName', () => {
-    
+  socket.on('iden_user_id', (user_id) => {
+    if (user_id in user_db) {
+      io.emit('recognized', user_id, user_db[user_id]);
+      } else {
+      user_db[user_id] = {}; 
+    }
+  });
 
+  socket.on('enterGame', (user_id, user_name, user_team) => {
+    user_db[user_id]['user_name'] = user_name;
+    user_db[user_id]['user_team'] = user_team;
+    console.log(user_db[user_id]);
   }); 
 
 
-  socket.on('newGames', (user_id) => {
-    console.log('user: ' + user_id + ' has started a new game');
+  socket.on('newGames', (user_id, user_name) => {
+    console.log('user: ' + user_name + ' has started a new game');
     io.emit('newGame_JS');
   })
   
   // 
-  socket.on('giveClues', (user_id) => {
-    console.log('user: ' + user_id + ' is giving clues');
-    var team = user_team[user_id];
+  socket.on('giveClues', (user_id, user_name, user_team) => {
+    console.log(user_id);
+    console.log(user_db);
+    console.log('user: ' + user_name + ' is giving clues');
+    var team = user_team;
     var left_out_position = Math.floor(Math.random()*4);
     position_to_be_encoded[`team_${team}`].splice(left_out_position,1);
     left_out_position += 1;
@@ -73,51 +83,71 @@ io.on('connection', (socket) => {
     game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][1]}`] = '';
     game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][2]}`] = '';
     game_state[`round_${round_no}`][`team_${team}`][`box${team}${left_out_position}`] = 'null';
-    io.emit('giveClues_JS', user_id, position_to_be_encoded[`team_${team}`]);
+    io.emit('giveClues_JS', user_id, user_team, position_to_be_encoded[`team_${team}`]);
   });
 
   // rearrange clues then give to other players
-  socket.on('submitClues', (user_id, input1_value, input2_value, input3_value) => {
-    console.log(input1_value,input2_value,input3_value);
-    var team = user_team[user_id];
-    game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][0]}`] = input1_value;
-    game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][1]}`] = input2_value;
-    game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][2]}`] = input3_value;
+  socket.on('submitClues', (user_id, user_name, user_team, input1_value, input2_value, input3_value) => {
+    
+    console.log(user_name + " has submitted his clues");
+    game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] = input1_value;
+    game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] = input2_value;
+    game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] = input3_value;
     // randomize position
     var mixed_position = [1, 2, 3, 4];
     var left_out_position = Math.floor(Math.random()*mixed_position.length);
     mixed_position.splice(left_out_position,1);
-    io.emit('rearrangeClues_JS', user_id, input2_value, input3_value, input1_value, mixed_position);
+    io.emit('rearrangeClues_JS', user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
+    console.log( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
   });
   
-  socket.on('suggestAnswer', (user_id, d) => {
-    var team = user_team[user_id];
-    io.emit('rearrangeSuggest_JS', user_id, d);
+  socket.on('suggestAnswer', (user_id, user_name, user_team, d) => {
+    console.log(d);
+    io.emit('rearrangeSuggest_JS', user_name, user_team, d);
     console.log('emit rearrangeSuggest_JS');
   });
 
-  socket.on('submitAnswer', (user_id, d) => {
-    var team = user_team[user_id];
+  socket.on('submitAnswer', (user_id, user_name, user_team, d) => {
+    var team = user_team;
     console.log(d);
     console.log(position_to_be_encoded[`team_${team}`]);
     console.log(game_state);
 
     if (
-      d[`box1${position_to_be_encoded[`team_${team}`][0]}`] == game_state[`round_${round_no}`][`team_${team}`][`box1${position_to_be_encoded[`team_${team}`][0]}`] &&
-      d[`box1${position_to_be_encoded[`team_${team}`][1]}`] == game_state[`round_${round_no}`][`team_${team}`][`box1${position_to_be_encoded[`team_${team}`][1]}`] &&
-      d[`box1${position_to_be_encoded[`team_${team}`][2]}`] == game_state[`round_${round_no}`][`team_${team}`][`box1${position_to_be_encoded[`team_${team}`][2]}`]
-    ) {
+      d[`box${position_to_be_encoded[`team_${team}`][0]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][0]}`] &&
+      d[`box${position_to_be_encoded[`team_${team}`][1]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][1]}`] &&
+      d[`box${position_to_be_encoded[`team_${team}`][2]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][2]}`]
+    ) { 
       console.log('correct');
-      io.emit('pushRight', 1, user_id, game_state[`round_${round_no}`][`team_${team}`]);
+      io.emit('pushRight', 1, user_name, game_state[`round_${round_no}`][`team_${team}`], team);
       console.log('push right signal sent');
-    } else {
+    } 
+    else {
       console.log('incorrect');
       misconmunication[`team_${team}`] +=1;
-      io.emit('pushRight', 0, user_id, game_state[`round_${round_no}`][`team_${team}`]);
+      io.emit('pushRight', 0, user_name, game_state[`round_${round_no}`][`team_${team}`], team);
       console.log('push right signal sent');
     }
     console.log(misconmunication);
+    team_finish += 1;
+    if (team_finish == 2) {
+      io.emit('roundCompleted');
+      team_finish = 0;
+      position_to_be_encoded['team_1'] = [1,2,3,4];
+      position_to_be_encoded['team_2'] = [1,2,3,4];
+    }
+    // position_to_be_encoded[`team_${user_team}`] = [1,2,3,4];
   });
+
+  
+
+
+
+
+
+
+
+
 
 
   socket.on('chat message', (msg) => {

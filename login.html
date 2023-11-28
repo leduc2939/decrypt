@@ -36,50 +36,64 @@
         crossorigin="anonymous"></script>
 <script src="script.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <script>
-
-let my_user_id = "";
-
-    var socket = io();
   
-    let myteam = "";
+  let my_user_id = "";
+  var socket = io();
+  let my_team = "";
+  // check which team is chosen and alternate the team variable
+  var teamThua = document.getElementById('teamThua');
+  var teamLoser = document.getElementById('teamLoser');
 
-    // check which team is chosen and alternate the team variable
-    var teamThua = document.getElementById('teamThua');
-    var teamLoser = document.getElementById('teamLoser');
+  teamThua.addEventListener('click', function(e) {
+      my_team  = '1';
+      teamThua.classList.add("glow_active");
+      teamLoser.classList.remove("glow_active");
+      console.log('teamThua');
+  });
 
-    teamThua.addEventListener('click', function(e) {
-        myteam  = '1';
-        teamThua.classList.add("glow_active");
-        teamLoser.classList.remove("glow_active");
-        console.log('teamThua');
-    });
+  teamLoser.addEventListener('click', function(e) {
+      my_team  = '2';
+      teamLoser.classList.add("glow_active");
+      teamThua.classList.remove("glow_active");
+      console.log('teamLoser');
+  });
 
-    teamLoser.addEventListener('click', function(e) {
-        myteam  = '2';
-        teamLoser.classList.add("glow_active");
-        teamThua.classList.remove("glow_active");
-        console.log('teamLoser');
-    });
+  socket.on('connect', function() {
+      console.log('connected');
+      document.getElementById("teamThua").click();
+      my_team = "1";
+      if (sessionStorage.getItem('user_id')){
+        my_user_id = sessionStorage.getItem('user_id');
+        socket.emit('iden_user_id', my_user_id);
+      } else {
+        my_user_id = uuidv4();
+        sessionStorage.setItem('user_id',my_user_id);
+        socket.emit('iden_user_id', my_user_id)
+      } 
+  });
 
-    socket.on('connect', function() {
-        console.log('connected');
-        document.getElementById("teamThua").click();
-        myteam = "1"
-    });
+  socket.on('recognized', (user_id, user_info) =>{
+      if (my_user_id == user_id) {
+        console.log(user_info);
+      }
+  });
 
-    var userName = document.getElementById('user_name_input');
-    var enter_button = document.getElementById('enter_button');
-    enter_button.addEventListener('click', function(e) {
-        if (userName.value) {
-          console.log(userName.value);
-          my_user_id = socket.id;
-          console.log(my_user_id);
-          socket.emit('userName', my_user_id, userName.value, myteam);
-        }
-    });
+
+  var userName = document.getElementById('user_name_input');
+  var enter_button = document.getElementById('enter_button');
+  enter_button.addEventListener('click', function(e) {
+      if (userName.value) {
+        console.log(userName.value);
+        sessionStorage.setItem('user_team', my_team);
+        sessionStorage.setItem('user_name', userName.value)
+        socket.emit('enterGame', my_user_id, userName.value, my_team);
+      }
+  });
+
+
 
     // socket.on('newGame_JS', () => {
     //     console.log('received newGame signal');

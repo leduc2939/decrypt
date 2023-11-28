@@ -38,14 +38,8 @@
     <button id="giveClues">
         Give Clues
     </button>
-    <button class="submit_clue" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Submit
-    </button>
-    <button class="suggest" id="suggestAnswer">
-        Suggest
-    </button>
-    <button class="submitAnswer" id="submitAnswer">
-        Submit
+    <button id="startNewRound">
+        Start New Round
     </button>
     <div class="decryptr d-flex mt-4">
         <div class="decryptr--left ">
@@ -73,6 +67,10 @@
                     <span class="m-auto">?</span>
                 </div>
             </div>
+
+            <button class="small_block">
+        
+            </button>
 
 <!-- team 2 keywords -->
             <div class="decryptr--row">
@@ -106,8 +104,6 @@
         <div class="decryptr--right">
             <div class="decryptr--row" id="row11">
                 <div class="box" id="box11"></div>
-
-               
             </div>
             <div class="decryptr--row" id="row12">
                 <div class="box" id="box12"></div>
@@ -117,6 +113,31 @@
             </div>
             <div class="decryptr--row" id="row14">
                 <div class="box" id="box14"> </div>
+            </div>
+
+            <div class="middlerow">
+                <button class="suggest" id="suggestAnswer" disabled>
+                    Suggest
+                </button>
+                <button disabled class="submit_clue" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Submit
+                </button>
+                <button disabled class="submitAnswer" id="submitAnswer">
+                    Submit
+                </button>
+            </div>
+
+            <div class="decryptr--row" id="row21">
+                <div class="box" id="box21"></div>
+            </div>
+            <div class="decryptr--row" id="row22">
+                <div class="box" id="box22"></div>
+            </div>
+            <div class="decryptr--row" id="row23">
+                <div class="box" id="box23"></div>
+            </div>
+            <div class="decryptr--row" id="row24">
+                <div class="box" id="box24"> </div>
             </div>
             </div>
         </div>
@@ -141,17 +162,21 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io();
-  
     let my_user_id = "";
+    let my_name = "";
+    let my_team = "";
+
     socket.on('connect', function() {
         console.log('connected');
-        my_user_id = socket.id;
+        my_user_id = sessionStorage.getItem('user_id');
+        my_team = sessionStorage.getItem('user_team');
+        my_name = sessionStorage.getItem('user_name');
     });
 
     // new games: give new html to all users
     var newGames = document.getElementById('newGame');
     newGames.addEventListener('click', function(e) {
-        socket.emit('newGames', my_user_id);
+        socket.emit('newGames', my_user_id, my_name);
     });
 
     socket.on('newGame_JS', () => {
@@ -159,141 +184,154 @@
         newGame_JS();
     });
 
+    var giveClues = document.getElementById('giveClues');
+    var submitAnswer = document.getElementById('submitAnswer');
+    var submitClues = document.getElementById('submitClues');
+    var suggest = document.getElementById('suggestAnswer');
     // button for sending giving-clues sinal: client that clicked the button is given
     // the html-change while others have the button greyed out
-    var giveClues = document.getElementById('giveClues');
+    
     giveClues.addEventListener('click', function(e) {
-        socket.emit('giveClues',my_user_id);
+        console.log(my_user_id);
+        socket.emit('giveClues',my_user_id, my_name , my_team);
     });
 
     // received give-clues signal: changes HTML accordingly 
-    socket.on('giveClues_JS', (user_id, position_to_be_encoded) => {
+    socket.on('giveClues_JS', (user_id, user_team, position_to_be_encoded) => {
         console.log('received giveClues_JS signal');
         if (my_user_id == user_id){
-            console.log(my_user_id + ' is giving clues');
+            console.log(my_name + ' is giving clues');
             giveClues.setAttribute('disabled', true);
-            giveClues_JS(position_to_be_encoded);
-        } else {
-            console.log('give clues button is greyed out for ' + my_user_id);
+            giveClues_JS(user_team, position_to_be_encoded);
+            submitClues.disabled = false;
+        } else if (my_team == user_team) {
+            console.log('give clues button is greyed out for ' + my_name);
             giveClues.setAttribute('disabled', true);
         }
     });
 
     // button for sending submit-clues signal
-    var submitClues = document.getElementById('submitClues');
+    
     submitClues.addEventListener('click', function(e) {
         submitClues.setAttribute('disabled', true);
-        submitClues.classList.add("hide");
-        socket.emit('submitClues', my_user_id, $('#input11').html(), $('#input12').html(), $('#input13').html());
+        socket.emit('submitClues', my_user_id, my_name, my_team, $(`#input${my_team}1`).html(), $(`#input${my_team}2`).html(), $(`#input${my_team}3`).html());
     });
 
     // received rearrangement singal: clues are now rearranged randomly
-    socket.on('rearrangeClues_JS', (user_id, input2_value, input3_value, input1_value, position_to_be_encoded) => {
+    socket.on('rearrangeClues_JS', ( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position) => {
         if (my_user_id != user_id){
-            rearrangeClues_JS(input2_value, input3_value, input1_value, position_to_be_encoded);
-        }
+            rearrangeClues_JS( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
+            submitAnswer.disabled = false;
+            suggest.disabled = false;
+        }   
     });
 
     // button to send suggest-arrangement signal to server
-    var suggest = document.getElementById('suggestAnswer');
+    
     suggest.addEventListener('click', function(e) {
-      
-        let box11Children = document.getElementById('box11').children;
-        let box12Children = document.getElementById('box12').children;
-        let box13Children = document.getElementById('box13').children;
-        let box14Children = document.getElementById('box14').children;
+        console.log('suggested');
+        let box1Children = document.getElementById(`box${my_team}1`).children;
+        let box2Children = document.getElementById(`box${my_team}2`).children;
+        let box3Children = document.getElementById(`box${my_team}3`).children;
+        let box4Children = document.getElementById(`box${my_team}4`).children;
 
-        let box11word;
-        let box12word;
-        let box13word;
-        let box14word;
+        let box1word;
+        let box2word;
+        let box3word;
+        let box4word;
 
-        if (box11Children.length > 0) {
-            box11word = box11Children.item(0).innerHTML;} 
+        if (box1Children.length > 0) {
+            box1word = box1Children.item(0).innerHTML;} 
         else {
-            box11word = 'null';}
-
-        if (box12Children.length > 0) {
-            box12word = box12Children.item(0).innerHTML;} 
+            box1word = 'null';}
+        if (box2Children.length > 0) {
+            box2word = box2Children.item(0).innerHTML;} 
         else {
-            box12word = 'null';}
-
-        if (box13Children.length > 0) {
-            box13word = box13Children.item(0).innerHTML;} 
+            box2word = 'null';}
+        if (box3Children.length > 0) {
+            box3word = box3Children.item(0).innerHTML;} 
         else {
-            box13word = 'null';}
-
-        if (box14Children.length > 0) {
-            box14word = box14Children.item(0).innerHTML;} 
+            box3word = 'null';}
+        if (box4Children.length > 0) {
+            box4word = box4Children.item(0).innerHTML;} 
         else {
-            box14word = 'null';}
+            box4word = 'null';}
 
         let d = {
-            'box11': box11word,
-            'box12': box12word,
-            'box13': box13word,
-            'box14': box14word
+            'box1': box1word,
+            'box2': box2word,
+            'box3': box3word,
+            'box4': box4word
             };
-        socket.emit('suggestAnswer', my_user_id, d);
+        console.log(d);
+        socket.emit('suggestAnswer', my_user_id, my_name, my_team, d);
     });
 
     // receive suggest-rearrangement signal, displays for everyone to see
-    socket.on('rearrangeSuggest_JS', (user_id, d) => {
+    socket.on('rearrangeSuggest_JS', ( user_name, user_team, d) => {
         console.log('received rearrangeSuggest_JS ');
-        rearrangeSuggest_JS(user_id, d);
+        rearrangeSuggest_JS( user_name, user_team, d);
     });
 
     // button for sending submit-answers signal
-    var submitAnswer = document.getElementById('submitAnswer');
+    
     submitAnswer.addEventListener('click', function(e) {
         console.log('submitted answer');
-        let box11Children = document.getElementById('box11').children;
-        let box12Children = document.getElementById('box12').children;
-        let box13Children = document.getElementById('box13').children;
-        let box14Children = document.getElementById('box14').children;
+        submitAnswer.disabled = true;
+        suggest.disabled = true;
+        let box1Children = document.getElementById(`box${my_team}1`).children;
+        let box2Children = document.getElementById(`box${my_team}2`).children;
+        let box3Children = document.getElementById(`box${my_team}3`).children;
+        let box4Children = document.getElementById(`box${my_team}4`).children;
 
-        let box11word;
-        let box12word;
-        let box13word;
-        let box14word;
+        let box1word;
+        let box2word;
+        let box3word;
+        let box4word;
 
-        if (box11Children.length > 0) {
-            box11word = box11Children.item(0).innerHTML;} 
+        if (box1Children.length > 0) {
+            box1word = box1Children.item(0).innerHTML;} 
         else {
-            box11word = 'null';}
-
-        if (box12Children.length > 0) {
-            box12word = box12Children.item(0).innerHTML;} 
+            box1word = 'null';}
+        if (box2Children.length > 0) {
+            box2word = box2Children.item(0).innerHTML;} 
         else {
-            box12word = 'null';}
-
-        if (box13Children.length > 0) {
-            box13word = box13Children.item(0).innerHTML;} 
+            box2word = 'null';}
+        if (box3Children.length > 0) {
+            box3word = box3Children.item(0).innerHTML;} 
         else {
-            box13word = 'null';}
-
-        if (box14Children.length > 0) {
-            box14word = box14Children.item(0).innerHTML;} 
+            box3word = 'null';}
+        if (box4Children.length > 0) {
+            box4word = box4Children.item(0).innerHTML;} 
         else {
-            box14word = 'null';}
+            box4word = 'null';}
 
         let d = {
-            'box11': box11word,
-            'box12': box12word,
-            'box13': box13word,
-            'box14': box14word
+            'box1': box1word,
+            'box2': box2word,
+            'box3': box3word,
+            'box4': box4word
             };
         console.log(d);
-        socket.emit('submitAnswer', my_user_id, d);
+        socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
     });
 
 
     // received communication result, push correct answers to the right
-    socket.on('pushRight', (result, user_id, game_state_correct_answer) => {
-        console.log('received pushRight');
-        pushRight(result, user_id, game_state_correct_answer);
+    socket.on('pushRight', (result, user_id, game_state_correct_answer, team) => {
+        if (my_team == team) {
+            console.log('received pushRight');         
+            submitAnswer.disabled = true;
+            suggest.disabled = true;
+            pushRight(result, user_id, game_state_correct_answer);
+        }
     });
 
+    // received roundComplete signal, reset boxes and enable giveClues; 
+    socket.on('roundCompleted', () => {
+        console.log('received roundCompleted');
+        roundCompleted_JS();
+    });
 
 
 
