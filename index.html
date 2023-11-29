@@ -35,10 +35,7 @@
     <button id="newGame">
         New Game
     </button>
-    <button id="giveClues">
-        Give Clues
-    </button>
-    <button id="startNewRound">
+    <button id="startNewRound" disabled>
         Start New Round
     </button>
     <div class="decryptr d-flex mt-4">
@@ -68,8 +65,8 @@
                 </div>
             </div>
 
-            <button class="small_block">
-        
+            <button class='giveClues' id="giveClues" disabled>
+                Give Clues
             </button>
 
 <!-- team 2 keywords -->
@@ -116,6 +113,7 @@
             </div>
 
             <div class="middlerow">
+            
                 <button class="suggest" id="suggestAnswer" disabled>
                     Suggest
                 </button>
@@ -184,6 +182,7 @@
         newGame_JS();
     });
 
+    var startNewRound = document.getElementById('startNewRound');
     var giveClues = document.getElementById('giveClues');
     var submitAnswer = document.getElementById('submitAnswer');
     var submitClues = document.getElementById('submitClues');
@@ -219,7 +218,7 @@
 
     // received rearrangement singal: clues are now rearranged randomly
     socket.on('rearrangeClues_JS', ( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position) => {
-        if (my_user_id != user_id){
+        if (my_user_id != user_id && my_team == user_team){
             rearrangeClues_JS( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
             submitAnswer.disabled = false;
             suggest.disabled = false;
@@ -319,20 +318,34 @@
 
     // received communication result, push correct answers to the right
     socket.on('pushRight', (result, user_id, game_state_correct_answer, team) => {
-        if (my_team == team) {
-            console.log('received pushRight');         
+        console.log('received pushRight');  
+        pushRight(result, user_id, game_state_correct_answer);
+        if (my_team == team) {      
             submitAnswer.disabled = true;
             suggest.disabled = true;
-            pushRight(result, user_id, game_state_correct_answer);
         }
     });
 
     // received roundComplete signal, reset boxes and enable giveClues; 
     socket.on('roundCompleted', () => {
         console.log('received roundCompleted');
-        roundCompleted_JS();
+        startNewRound.disabled = false;
     });
 
+    // when click on start new round, send signal to clear everything from boxes, reset the clock, update var round, enable giveClues
+    startNewRound.addEventListener('click', function(e) {
+        console.log('start new round clicked');
+        socket.emit('startNewRound', my_name);
+    });
+
+    // receive startNewRound_JS from server and update site
+    socket.on('startNewRound_JS', (user_name) => {
+        console.log('received startNewRound_JS');
+        startNewRound_JS(user_name);
+    });
+
+    // make it draggable swappable for opponents
+    // 
 
 
     // chat
@@ -354,6 +367,8 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
     });
+
+    
 
     
   

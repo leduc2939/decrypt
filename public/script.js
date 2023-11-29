@@ -77,6 +77,12 @@ function drop(e) {
 }
 
 function newGame_JS() {
+  document.getElementById('startNewRound').disabled = false;
+  document.getElementById('giveClues').disabled = true;
+  document.getElementById('suggestAnswer').disabled = true;
+  document.getElementById('submitClues').disabled = true;
+  document.getElementById('submitAnswer').disabled = true;
+
   $('#thua_word1 span').text('random word');
   $('#thua_word2 span').text('random word');
   $('#thua_word3 span').text('random word');
@@ -86,12 +92,57 @@ function newGame_JS() {
   $('#loser_word2 span').text('random word');
   $('#loser_word3 span').text('random word');
   $('#loser_word4 span').text('random word');
+
+  $(`#box11`).empty();
+  $(`#box12`).empty();
+  $(`#box13`).empty();
+  $(`#box14`).empty();  
+  $(`#box21`).empty();
+  $(`#box22`).empty();
+  $(`#box23`).empty();
+  $(`#box24`).empty(); 
+
+  var row11 = document.getElementById('row11');
+  var row12 = document.getElementById('row12');
+  var row13 = document.getElementById('row13');
+  var row14 = document.getElementById('row14');
+  var row21 = document.getElementById('row21');
+  var row22 = document.getElementById('row22');
+  var row23 = document.getElementById('row23');
+  var row24 = document.getElementById('row24');
+
+  while (row11.children.length > 1) {
+    row11.removeChild(row11.lastChild);
+  }
+  while (row12.children.length > 1) {
+    row12.removeChild(row12.lastChild);
+  }
+  while (row13.children.length > 1) {
+    row13.removeChild(row13.lastChild);
+  }
+  while (row14.children.length > 1) {
+    row14.removeChild(row14.lastChild);
+  }
+  while (row21.children.length > 1) {
+    row21.removeChild(row21.lastChild);
+  }
+  while (row22.children.length > 1) {
+    row22.removeChild(row22.lastChild);
+  }
+  while (row23.children.length > 1) {
+    row23.removeChild(row23.lastChild);
+  }
+  while (row24.children.length > 1) {
+    row24.removeChild(row24.lastChild);
+  }
+
 }
 
 function giveClues_JS (user_team, position_to_be_encoded) {
 
   document.getElementById('submitAnswer').classList.add('hide');
   document.getElementById('submitClues').classList.remove('hide');
+  document.getElementById('submitClues').disabled = false;
 
   let clue_input1 = document.createElement("div");
   clue_input1.id = `input${user_team}1`;
@@ -221,6 +272,9 @@ function rearrangeSuggest_JS ( user_name, user_team, d) {
       $(this).remove();
     });
   });
+  setTimeout(function(){
+    alert.remove();
+  }, 8000);
 }
 
 function pushRight (result, user_name, game_state_correct_answerd) {
@@ -245,7 +299,28 @@ function pushRight (result, user_name, game_state_correct_answerd) {
   }
 }
 
-function roundCompleted_JS () {
+
+
+// clear everything from boxes, reset the clock, update var round,
+// lock startNewRound reset position_to_encode array
+function startNewRound_JS (user_name) {
+  var alert = document.createElement("div");
+  alert.setAttribute('class',"suggest_alert");
+  alert.setAttribute('id',"suggest_alert");
+  alert.innerHTML  = user_name + ' has started a new round';
+  console.log(alert);
+  $('#container').append(alert);
+  setTimeout(function() {
+    $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+      $(this).remove();
+    });
+  });
+  setTimeout(function(){
+    alert.remove();
+  }, 8000);
+  
+  document.getElementById('giveClues').disabled = false;
+  document.getElementById('startNewRound').disabled = true;
   $(`#box11`).empty();
   $(`#box12`).empty();
   $(`#box13`).empty();
@@ -254,7 +329,6 @@ function roundCompleted_JS () {
   $(`#box22`).empty();
   $(`#box23`).empty();
   $(`#box24`).empty(); 
-  document.getElementById('giveClues').disabled = false;
-  document.getElementById('submitClues').disabled = false;
-  document.getElementById('submitClues').classList.remove("hide");
+  
 }
+
