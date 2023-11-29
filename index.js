@@ -29,11 +29,8 @@ app.post('/login', (req, res) => {
 let team_finish = 0;
 let user_db = {};
 let game_state = {};
-let round_no = 1;
+let round_no = 0;
 let user_team = {};
-game_state[`round_${round_no}`] = {}; 
-game_state[`round_${round_no}`]['team_1'] = {};
-game_state[`round_${round_no}`]['team_2'] = {};
 let misconmunication = {'team_1':0, 'team_2':0};
 let interception = {'team_1':0,'team_2':0};
 let position_to_be_encoded = {};
@@ -67,6 +64,11 @@ io.on('connection', (socket) => {
 
   socket.on('newGames', (user_id, user_name) => {
     console.log('user: ' + user_name + ' has started a new game');
+    round_no = 0;
+    misconmunication = {'team_1':0, 'team_2':0};
+    interception = {'team_1':0,'team_2':0};
+    position_to_be_encoded['team_1'] = [1,2,3,4];
+    position_to_be_encoded['team_2'] = [1,2,3,4];
     io.emit('newGame_JS');
   })
   
@@ -132,12 +134,24 @@ io.on('connection', (socket) => {
     team_finish += 1;
     if (team_finish == 2) {
       io.emit('roundCompleted');
-      team_finish = 0;
-      position_to_be_encoded['team_1'] = [1,2,3,4];
-      position_to_be_encoded['team_2'] = [1,2,3,4];
     }
     // position_to_be_encoded[`team_${user_team}`] = [1,2,3,4];
   });
+
+  socket.on('startNewRound', (user_name) => {
+    console.log('starNewRound signal received from ' + user_name);
+    team_finish = 0;
+    position_to_be_encoded['team_1'] = [1,2,3,4];
+    position_to_be_encoded['team_2'] = [1,2,3,4];
+    round_no +=1;
+    game_state[`round_${round_no}`] = {}; 
+    game_state[`round_${round_no}`]['team_1'] = {};
+    game_state[`round_${round_no}`]['team_2'] = {};
+    io.emit('startNewRound_JS', user_name);
+  });
+
+
+  
 
   
 

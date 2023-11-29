@@ -248,6 +248,13 @@ body {
     opacity: 0;
 }
 
+.giveClues{
+    width: 125px;
+    height: 30px;
+    margin-right: 12px;
+    margin-bottom: 6px;
+}
+
 .small_block {
     width: 100px;
     height: 30px;
@@ -256,7 +263,7 @@ body {
     opacity: 0;
 }
 .submit_clue {
-    width: 150px;
+    width: 125px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -266,7 +273,7 @@ body {
 }
 
 .submitAnswer {
-    width: 150px;
+    width: 125px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -276,7 +283,7 @@ body {
 }
 
 .suggest {
-    width: 150px;
+    width: 125px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
