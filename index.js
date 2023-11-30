@@ -26,6 +26,10 @@ app.post('/login', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+let game_state_full_server = {};
+game_state_full_server['team_1'] = {};
+game_state_full_server['team_2'] = {};
+
 let team_finish = 0;
 let team_finish_interception = 0;
 let user_db = {};
@@ -67,6 +71,7 @@ io.on('connection', (socket) => {
   socket.on('newGames', (user_id, user_name) => {
     console.log('user: ' + user_name + ' has started a new game');
     round_no = 1;
+    phase = 1;
     misconmunication = {'team_1':0, 'team_2':0};
     interception = {'team_1':0,'team_2':0};
     position_to_be_encoded['team_1'] = [1,2,3,4];
@@ -118,10 +123,8 @@ io.on('connection', (socket) => {
   
   socket.on('submitAnswer', (user_id, user_name, user_team, d) => {
     var team = user_team;
-    console.log(d);
-    console.log(position_to_be_encoded[`team_${team}`]);
-    console.log(game_state);
     if (phase=='1') {
+      console.log(user_name + " just submitted communication");
       if (
         d[`box${position_to_be_encoded[`team_${team}`][0]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][0]}`] &&
         d[`box${position_to_be_encoded[`team_${team}`][1]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][1]}`] &&
@@ -137,7 +140,6 @@ io.on('connection', (socket) => {
         io.emit('pushRight', 0, user_name, game_state[`round_${round_no}`][`team_${team}`], team);
         console.log('push right signal sent');
       }
-      console.log(misconmunication);
       team_finish += 1;
       if (team_finish == 2) {
         if (round_no >= 2) {
@@ -145,47 +147,48 @@ io.on('connection', (socket) => {
           phase = "2";
           mixed_position.splice(Math.floor(Math.random()*4),1);
           io.emit('rearrangeClues_intercept_JS', game_state[`round_${round_no}`], mixed_position);
-          console.log('send rearrangeClues_intercept_JS');
+          console.log('start interception round: send rearrangeClues_intercept_JS');
         } else {
           io.emit('roundCompleted');
         }
       }
     }
-    if (phase=='2') {
+    else {
+      console.log(user_name + " just submitted interception");
       var other_team = '';
       if (user_team == '1'){
           other_team = '2';
       } else {
           other_team = '1';
+        }
       if (
         d[`box${position_to_be_encoded[`team_${team}`][0]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][0]}`] &&
         d[`box${position_to_be_encoded[`team_${team}`][1]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][1]}`] &&
         d[`box${position_to_be_encoded[`team_${team}`][2]}`] == game_state[`round_${round_no}`][`team_${team}`][`box${team}${position_to_be_encoded[`team_${team}`][2]}`]
       ) { 
-        console.log('correct');
-        io.emit('intercept_res', user_id);
-        interception[`team${other_team}`] +=1;
-        console.log('intercept_res sent');
+        io.emit('intercept_res', 1, user_name, game_state[`round_${round_no}`][`team_${team}`], team);
+        interception[`team_${other_team}`] +=1;
+        console.log('correct interception: intercept_res + push right sent');
       } 
       else {
-        console.log('incorrect');
-        io.emit('intercept_res', user_id);
+        io.emit('intercept_res', 0, user_name, game_state[`round_${round_no}`][`team_${team}`], team);
+        console.log('incorrect interception: intercept_res + push right sent');
       }
-      console.log(misconmunication);
-      console.log(interception);
+      console.log("misconmmunication: "+ misconmunication);
+      console.log("interception: " + interception);
       team_finish_interception += 1;
       if (team_finish_interception == 2) {
-        team_finish_interception = 0;
-        phase = 1;
+        console.log('send roundComplete');
         io.emit('roundCompleted');
         }
       }
-    }
+    
   });
 
   socket.on('startNewRound', (user_name) => {
     console.log('starNewRound signal received from ' + user_name);
     team_finish = 0;
+    team_finish_interception = 0;
     position_to_be_encoded['team_1'] = [1,2,3,4];
     position_to_be_encoded['team_2'] = [1,2,3,4];
     phase = "1";
@@ -195,6 +198,21 @@ io.on('connection', (socket) => {
     game_state[`round_${round_no}`]['team_2'] = {};
     io.emit('startNewRound_JS', user_name);
   });
+
+  socket.on('sync_up', (game_state_full, phase) => {
+    game_state_full_server = game_state_full;
+    phase = phase;
+    console.log('a');
+    console.log(game_state_full_server['team_1']);
+  });
+
+  socket.on('reconnect_sync_up', () => {
+    socket.emit('reconnect_sync_up_js', game_state_full_server);
+  });
+
+  
+
+
 
 
   

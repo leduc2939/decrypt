@@ -362,6 +362,7 @@ function pushRight (result, user_name, game_state_correct_answerd) {
 
 
 
+
 // clear everything from boxes, reset the clock, update var round,
 // lock startNewRound reset position_to_encode array
 function startNewRound_JS (user_name) {
@@ -391,5 +392,52 @@ function startNewRound_JS (user_name) {
   $(`#box23`).empty();
   $(`#box24`).empty(); 
   
+}
+
+function intercept_res_JS (result, user_name, game_state_correct_answer) {
+  document.getElementById('submitAnswer').disabled = true;
+  document.getElementById('suggestAnswer').disabled = true;
+
+  if (result == 1){
+    console.log(user_name + " has nailed the thing");
+  } else {
+    console.log(user_name + " has failed the thing");
+  }
+  console.log(game_state_correct_answer);
+  for (key in game_state_correct_answer){
+    if (game_state_correct_answer[key] != 'null') {
+      let previous_words_1 = document.createElement("div");
+      previous_words_1.setAttribute('class',"previous_words_1");
+      previous_words_1.innerHTML  = game_state_correct_answer[key];
+      $(`#row${key.slice(-2)}`).append(previous_words_1);
+    }
+    else {
+      let previous_words_1 = document.createElement("div");
+      previous_words_1.setAttribute('class',"previous_words_1_empty");
+      $(`#row${key.slice(-2)}`).append(previous_words_1);
+    }
+  }
+
+  var alert = document.createElement("div");
+  alert.setAttribute('class',"suggest_alert");
+  alert.setAttribute('id',"suggest_alert");
+  alert.innerHTML  = user_name + ' has tried to intercept';
+  $('#container').append(alert);
+  setTimeout(function() {
+    $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+      $(this).remove();
+    });
+  });
+  setTimeout(function(){
+    alert.remove();
+  }, 8000);
+}
+
+function reconnect_sync_up_js(my_user_id,clue_giver,my_team,game_state_full_server){
+  console.log('syncing');
+  console.log(game_state_full_server);
+  console.log(game_state_full_server[`team_${my_team}`]);
+  document.body.appendChild(game_state_full_server[my_team]['whole']);
+
 }
 

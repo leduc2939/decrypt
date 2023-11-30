@@ -13,8 +13,9 @@
     <link rel="stylesheet" type="text/css" href="style.css" />      
 
 </head>
-<body>
-
+<body id="body">
+    
+    <div id = 'whole'>
       <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -146,7 +147,7 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -155,22 +156,61 @@
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
 <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
     var socket = io();
+    
     let my_user_id = "";
     let my_name = "";
     let my_team = "";
     let phase = "1";
+    let clue_giver = "";
+    let game_state_full = {};
+    game_state_full['team_1'] = {};
+    game_state_full['team_2'] = {};
+
+    var body = document.getElementById('body');
+    var whole = document.getElementById('whole');
+
+    var thua_word1 = document.getElementById('thua_word1');
+    
+    var startNewRound = document.getElementById('startNewRound');
+    var giveClues = document.getElementById('giveClues');
+    var submitAnswer = document.getElementById('submitAnswer');
+    var submitClues = document.getElementById('submitClues');
+    var suggestAnswer = document.getElementById('suggestAnswer');
+    
+
 
     socket.on('connect', function() {
         console.log('connected');
+        if (sessionStorage.getItem('user_id')){
+        my_user_id = sessionStorage.getItem('user_id');
+        socket.emit('iden_user_id', my_user_id);
+        } else {
+        my_user_id = uuidv4();
+        sessionStorage.setItem('user_id',my_user_id);
+        sessionStorage.setItem('user_team','1');
+        sessionStorage.setItem('user_name','noname');
+        socket.emit('iden_user_id', my_user_id)
+        } 
         my_user_id = sessionStorage.getItem('user_id');
         my_team = sessionStorage.getItem('user_team');
         my_name = sessionStorage.getItem('user_name');
+        
+        socket.emit('reconnect_sync_up');
+
     });
+
+    socket.on('reconnect_sync_up_js', (game_state_full_server) => {
+        reconnect_sync_up_js(my_user_id,clue_giver,my_team,game_state_full_server);
+    }); 
+
+    
 
     // new games: give new html to all users
     var newGames = document.getElementById('newGame');
@@ -181,13 +221,12 @@
     socket.on('newGame_JS', () => {
         console.log('received newGame signal');
         newGame_JS();
+        game_state_full['team_1'] = whole;
+        console.log(game_state_full);
+        socket.emit('sync_up',game_state_full, phase);
     });
 
-    var startNewRound = document.getElementById('startNewRound');
-    var giveClues = document.getElementById('giveClues');
-    var submitAnswer = document.getElementById('submitAnswer');
-    var submitClues = document.getElementById('submitClues');
-    var suggest = document.getElementById('suggestAnswer');
+    
     // button for sending giving-clues sinal: client that clicked the button is given
     // the html-change while others have the button greyed out
     
@@ -208,6 +247,7 @@
             console.log('give clues button is greyed out for ' + my_name);
             giveClues.setAttribute('disabled', true);
         }
+        clue_giver = user_id
     });
 
     // button for sending submit-clues signal
@@ -222,13 +262,13 @@
         if (my_user_id != user_id && my_team == user_team){
             rearrangeClues_JS( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
             submitAnswer.disabled = false;
-            suggest.disabled = false;
+            suggestAnswer.disabled = false;
         }   
     });
 
     // button to send suggest-arrangement signal to server
     
-    suggest.addEventListener('click', function(e) {
+    suggestAnswer.addEventListener('click', function(e) {
         console.log('suggested');
         if (phase =="2") {
             var other_team = '';
@@ -331,9 +371,9 @@
     // button for sending submit-answers signal
     
     submitAnswer.addEventListener('click', function(e) {
-        console.log('submitted answer');
+        console.log('phase is: ' +phase);
         submitAnswer.disabled = true;
-        suggest.disabled = true;
+        suggestAnswer.disabled = true;
         if (phase=="2") {
             var other_team = '';
             if (my_team == '1'){
@@ -376,6 +416,7 @@
                 };
             console.log(d);
             socket.emit('submitAnswer', my_user_id, my_name, other_team, d);
+            console.log('submitted interception answer');
         } 
         else {
             let box1Children = document.getElementById(`box${my_team}1`).children;
@@ -413,6 +454,7 @@
                 };
             console.log(d);
             socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
+            console.log('submitted communication answer');
         }
     });
 
@@ -422,7 +464,7 @@
         console.log('received pushRight for my team');  
         if (my_team == team) {      
             submitAnswer.disabled = true;
-            suggest.disabled = true;
+            suggestAnswer.disabled = true;
             pushRight(result, user_id, game_state_correct_answer);
         }
     });
@@ -443,6 +485,7 @@
     socket.on('startNewRound_JS', (user_name) => {
         console.log('received startNewRound_JS');
         startNewRound_JS(user_name);
+        phase = '1';
     });
 
     // make it draggable swappable for opponents
@@ -452,6 +495,15 @@
         rearrangeClues_intercept_JS(round_d, mixed_position, my_team);
     });
 
+    // receive intercept_res, lock submit button
+    socket.on('intercept_res', (result, user_name, game_state_correct_answer, user_team) => {
+        console.log(user_team);
+        console.log('intercept_res received');
+        if (my_team!=user_team) {
+            console.log('its my team');
+            intercept_res_JS(result, user_name, game_state_correct_answer);
+        }
+    });
 
     // chat
     var messages = document.getElementById('messages');
