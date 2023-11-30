@@ -163,6 +163,7 @@
     let my_user_id = "";
     let my_name = "";
     let my_team = "";
+    let phase = "1";
 
     socket.on('connect', function() {
         console.log('connected');
@@ -229,47 +230,102 @@
     
     suggest.addEventListener('click', function(e) {
         console.log('suggested');
-        let box1Children = document.getElementById(`box${my_team}1`).children;
-        let box2Children = document.getElementById(`box${my_team}2`).children;
-        let box3Children = document.getElementById(`box${my_team}3`).children;
-        let box4Children = document.getElementById(`box${my_team}4`).children;
+        if (phase =="2") {
+            var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
 
-        let box1word;
-        let box2word;
-        let box3word;
-        let box4word;
+            let box1Children = document.getElementById(`box${other_team}1`).children;
+            let box2Children = document.getElementById(`box${other_team}2`).children;
+            let box3Children = document.getElementById(`box${other_team}3`).children;
+            let box4Children = document.getElementById(`box${other_team}4`).children;
 
-        if (box1Children.length > 0) {
-            box1word = box1Children.item(0).innerHTML;} 
-        else {
-            box1word = 'null';}
-        if (box2Children.length > 0) {
-            box2word = box2Children.item(0).innerHTML;} 
-        else {
-            box2word = 'null';}
-        if (box3Children.length > 0) {
-            box3word = box3Children.item(0).innerHTML;} 
-        else {
-            box3word = 'null';}
-        if (box4Children.length > 0) {
-            box4word = box4Children.item(0).innerHTML;} 
-        else {
-            box4word = 'null';}
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
 
-        let d = {
-            'box1': box1word,
-            'box2': box2word,
-            'box3': box3word,
-            'box4': box4word
-            };
-        console.log(d);
-        socket.emit('suggestAnswer', my_user_id, my_name, my_team, d);
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            let d = {
+                'box1': box1word,
+                'box2': box2word,
+                'box3': box3word,
+                'box4': box4word
+                };
+            console.log(d);
+            socket.emit('suggestAnswer', my_user_id, my_name, other_team, d);
+
+        } else {
+            let box1Children = document.getElementById(`box${my_team}1`).children;
+            let box2Children = document.getElementById(`box${my_team}2`).children;
+            let box3Children = document.getElementById(`box${my_team}3`).children;
+            let box4Children = document.getElementById(`box${my_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            let d = {
+                'box1': box1word,
+                'box2': box2word,
+                'box3': box3word,
+                'box4': box4word
+                };
+            console.log(d);
+            socket.emit('suggestAnswer', my_user_id, my_name, my_team, d);
+        }
     });
 
     // receive suggest-rearrangement signal, displays for everyone to see
     socket.on('rearrangeSuggest_JS', ( user_name, user_team, d) => {
         console.log('received rearrangeSuggest_JS ');
-        rearrangeSuggest_JS( user_name, user_team, d);
+        if (phase=='2') {
+            if (my_team != user_team) {
+                rearrangeSuggest_JS( user_name, user_team, d);
+            } 
+        }
+        else { 
+            if (my_team == user_team) {
+            rearrangeSuggest_JS( user_name, user_team, d);
+            }
+        }
     });
 
     // button for sending submit-answers signal
@@ -278,51 +334,96 @@
         console.log('submitted answer');
         submitAnswer.disabled = true;
         suggest.disabled = true;
-        let box1Children = document.getElementById(`box${my_team}1`).children;
-        let box2Children = document.getElementById(`box${my_team}2`).children;
-        let box3Children = document.getElementById(`box${my_team}3`).children;
-        let box4Children = document.getElementById(`box${my_team}4`).children;
+        if (phase=="2") {
+            var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
+            let box1Children = document.getElementById(`box${other_team}1`).children;
+            let box2Children = document.getElementById(`box${other_team}2`).children;
+            let box3Children = document.getElementById(`box${other_team}3`).children;
+            let box4Children = document.getElementById(`box${other_team}4`).children;
 
-        let box1word;
-        let box2word;
-        let box3word;
-        let box4word;
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
 
-        if (box1Children.length > 0) {
-            box1word = box1Children.item(0).innerHTML;} 
-        else {
-            box1word = 'null';}
-        if (box2Children.length > 0) {
-            box2word = box2Children.item(0).innerHTML;} 
-        else {
-            box2word = 'null';}
-        if (box3Children.length > 0) {
-            box3word = box3Children.item(0).innerHTML;} 
-        else {
-            box3word = 'null';}
-        if (box4Children.length > 0) {
-            box4word = box4Children.item(0).innerHTML;} 
-        else {
-            box4word = 'null';}
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
 
-        let d = {
-            'box1': box1word,
-            'box2': box2word,
-            'box3': box3word,
-            'box4': box4word
-            };
-        console.log(d);
-        socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
+            let d = {
+                'box1': box1word,
+                'box2': box2word,
+                'box3': box3word,
+                'box4': box4word
+                };
+            console.log(d);
+            socket.emit('submitAnswer', my_user_id, my_name, other_team, d);
+        } 
+        else {
+            let box1Children = document.getElementById(`box${my_team}1`).children;
+            let box2Children = document.getElementById(`box${my_team}2`).children;
+            let box3Children = document.getElementById(`box${my_team}3`).children;
+            let box4Children = document.getElementById(`box${my_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            let d = {
+                'box1': box1word,
+                'box2': box2word,
+                'box3': box3word,
+                'box4': box4word
+                };
+            console.log(d);
+            socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
+        }
     });
 
 
     // received communication result, push correct answers to the right
     socket.on('pushRight', (result, user_id, game_state_correct_answer, team) => {
-        console.log('received pushRight');  
-        pushRight(result, user_id, game_state_correct_answer);
+        console.log('received pushRight for my team');  
         if (my_team == team) {      
             submitAnswer.disabled = true;
             suggest.disabled = true;
+            pushRight(result, user_id, game_state_correct_answer);
         }
     });
 
@@ -345,7 +446,11 @@
     });
 
     // make it draggable swappable for opponents
-    // 
+    socket.on('rearrangeClues_intercept_JS', (round_d, mixed_position) => {
+        console.log('received rearrangeClues_intercept_JS');
+        phase = "2";
+        rearrangeClues_intercept_JS(round_d, mixed_position, my_team);
+    });
 
 
     // chat

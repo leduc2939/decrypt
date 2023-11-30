@@ -277,6 +277,67 @@ function rearrangeSuggest_JS ( user_name, user_team, d) {
   }, 8000);
 }
 
+function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
+
+  document.getElementById('submitClues').classList.add('hide');
+  document.getElementById('submitAnswer').classList.remove('hide');
+  document.getElementById('submitAnswer').disabled = false;
+  document.getElementById('suggestAnswer').disabled = false;
+  console.log(document.getElementById('submitAnswer').classList);
+
+  $(`#box${user_team}1`).empty();
+  $(`#box${user_team}2`).empty();
+  $(`#box${user_team}3`).empty();
+  $(`#box${user_team}4`).empty();  
+
+  var other_team = '';
+  if (user_team == '1'){
+    other_team = '2';
+  } else {
+    other_team = '1';
+  }
+  var input = [];
+  for (key in round_d[`team_${other_team}`]) {
+    if (round_d[`team_${other_team}`][key] != 'null') {
+      input.push(round_d[`team_${other_team}`][key]);
+    }
+  } 
+  
+  let clue1 = document.createElement("div");
+  clue1.id = `input${other_team}1`;
+  // clue1.setAttribute('type','text');
+  clue1.setAttribute('class',`draggable_clue_${other_team}`);
+  clue1.setAttribute('draggable', 'true');
+  clue1.innerHTML  = input[0];
+
+  let clue2 = document.createElement("div");
+  clue2.id = `input${other_team}2`;
+  // clue2.setAttribute('type','text');
+  clue2.setAttribute('class',`draggable_clue_${other_team}`);
+  clue2.setAttribute('draggable', 'true');
+  clue2.innerHTML = input[1];
+
+  let clue3 = document.createElement("div");
+  clue3.id = `input${other_team}3`;
+  // clue3.setAttribute('type','text');
+  clue3.setAttribute('class',`draggable_clue_${other_team}`);
+  clue3.setAttribute('draggable', 'true');
+  clue3.innerHTML = input[2];
+
+  $(`#box${other_team}${mixed_position[1]}`).prepend(clue1);
+  $(`#box${other_team}${mixed_position[2]}`).prepend(clue2);
+  $(`#box${other_team}${mixed_position[0]}`).prepend(clue3);
+  console.log('appened')
+
+  columns = document.querySelectorAll(`.draggable_clue_${other_team}`);
+  draggingClass = 'dragging';
+  dragSource;
+    
+  Array.prototype.forEach.call(columns, function (col) {
+      col.addEventListener('dragstart', dragStart, false);
+    });
+}
+
 function pushRight (result, user_name, game_state_correct_answerd) {
   if (result == 1){
     console.log(user_name + " has nailed the thing");
