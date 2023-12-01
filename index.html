@@ -141,7 +141,6 @@
             </div>
         </div>
     </div>
-</div>
 
     <ul id="messages"></ul>
     <form id="form" action="">
@@ -149,6 +148,9 @@
     </form>
 </div>
 
+</div>
+
+   
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
@@ -201,13 +203,16 @@
         my_user_id = sessionStorage.getItem('user_id');
         my_team = sessionStorage.getItem('user_team');
         my_name = sessionStorage.getItem('user_name');
+        console.log(my_user_id);
+        console.log(my_team);
         
-        socket.emit('reconnect_sync_up');
+        socket.emit('reconnect_sync_up', my_user_id, my_team);
 
     });
 
-    socket.on('reconnect_sync_up_js', (game_state_full_server) => {
-        reconnect_sync_up_js(my_user_id,clue_giver,my_team,game_state_full_server);
+    socket.on('reconnect_sync_up_js', (dom_serialized, current_phase) => {
+        phase = current_phase;
+        reconnect_sync_up_js(dom_serialized);
     }); 
 
     
@@ -221,9 +226,9 @@
     socket.on('newGame_JS', () => {
         console.log('received newGame signal');
         newGame_JS();
-        game_state_full['team_1'] = whole;
-        console.log(game_state_full);
-        socket.emit('sync_up',game_state_full, phase);
+        phase = 1;
+        var serializedHTML = serializeDOMHTML(whole);
+        socket.emit('sync_up',serializedHTML, my_team, true, false,phase);
     });
 
     
@@ -247,7 +252,7 @@
             console.log('give clues button is greyed out for ' + my_name);
             giveClues.setAttribute('disabled', true);
         }
-        clue_giver = user_id
+        clue_giver = user_id;
     });
 
     // button for sending submit-clues signal
@@ -523,6 +528,11 @@
         item.textContent = msg;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on('redirecttonewgame', newgameurl => {
+    // redirect to new url
+    window.location = newgameurl;
     });
 
     

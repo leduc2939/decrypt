@@ -29,6 +29,14 @@ app.post('/login', (req, res) => {
 let game_state_full_server = {};
 game_state_full_server['team_1'] = {};
 game_state_full_server['team_2'] = {};
+game_state_full_server['team_1']['normal_member'] = "";
+game_state_full_server['team_1']['clue_giver'] = "";
+game_state_full_server['team_2']['normal_member'] = "";
+game_state_full_server['team_2']['clue_giver'] = "";
+let clue_giver = {}
+clue_giver['team_1'] = "";
+clue_giver['team_2'] = "";
+let game_started = false;
 
 let team_finish = 0;
 let team_finish_interception = 0;
@@ -76,6 +84,7 @@ io.on('connection', (socket) => {
     interception = {'team_1':0,'team_2':0};
     position_to_be_encoded['team_1'] = [1,2,3,4];
     position_to_be_encoded['team_2'] = [1,2,3,4];
+    game_started = true;
     io.emit('newGame_JS');
   })
   
@@ -184,6 +193,7 @@ io.on('connection', (socket) => {
       }
     
   });
+  
 
   socket.on('startNewRound', (user_name) => {
     console.log('starNewRound signal received from ' + user_name);
@@ -199,15 +209,43 @@ io.on('connection', (socket) => {
     io.emit('startNewRound_JS', user_name);
   });
 
-  socket.on('sync_up', (game_state_full, phase) => {
-    game_state_full_server = game_state_full;
-    phase = phase;
-    console.log('a');
-    console.log(game_state_full_server['team_1']);
+  socket.on('sync_up', (serializedHTML, user_team, is_all, is_clue_giver, current_phase) => {
+    if (is_clue_giver) {
+      game_state_full_server[`team_${user_team}`]['clue_giver'] = serializedHTML;
+    }
+    else {
+      if (is_all) {
+        var other_team = '';
+        if (user_team == '1'){
+            other_team = '2';
+        } else {
+            other_team = '1';
+          }
+        game_state_full_server[`team_${user_team}`]['normal_member'] = serializedHTML;
+        game_state_full_server[`team_${other_team}`]['normal_member'] = serializedHTML;
+        game_state_full_server[`team_${user_team}`]['clue_giver'] = serializedHTML;
+        game_state_full_server[`team_${other_team}`]['clue_giver'] = serializedHTML;
+      }
+      else {
+        game_state_full_server[`team_${user_team}`]['normal_member'] = serializedHTML;
+      }
+    }
+    phase = current_phase;
   });
 
-  socket.on('reconnect_sync_up', () => {
-    socket.emit('reconnect_sync_up_js', game_state_full_server);
+
+  socket.on('reconnect_sync_up', (user_id, user_team) => {
+    if (game_started){
+      if (user_id == clue_giver[`team_${user_team}`]) {
+        console.log('here');
+        console.log(clue_giver[`team_${user_team}`]);
+        console.log(user_id);
+        socket.emit('reconnect_sync_up_js', game_state_full_server[`team_${user_team}`]['clue_giver'], phase);
+      }
+      else {
+        socket.emit('reconnect_sync_up_js', game_state_full_server[`team_${user_team}`]['normal_member'], phase);
+      }
+    }
   });
 
   

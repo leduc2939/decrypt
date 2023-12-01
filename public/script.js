@@ -433,11 +433,24 @@ function intercept_res_JS (result, user_name, game_state_correct_answer) {
   }, 8000);
 }
 
-function reconnect_sync_up_js(my_user_id,clue_giver,my_team,game_state_full_server){
+function reconnect_sync_up_js(dom_serialized){
   console.log('syncing');
-  console.log(game_state_full_server);
-  console.log(game_state_full_server[`team_${my_team}`]);
-  document.body.appendChild(game_state_full_server[my_team]['whole']);
+  console.log(dom_serialized);
+  var deserializedElement = deserializeHTML(dom_serialized)
+  // console.log(deserializedElement.outerHTML);
+  document.body.removeChild(document.getElementById('whole'));
+  // document.body.prependChild(deserializedElement.outerHTML);
+  $('body').prepend(deserializedElement);
 
 }
 
+
+function serializeDOMHTML(element) {
+  return new XMLSerializer().serializeToString(element);
+}
+
+function deserializeHTML(htmlString) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  return doc.documentElement;
+}
