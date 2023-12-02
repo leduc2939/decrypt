@@ -43,25 +43,25 @@
         <div class="decryptr--left ">
 <!-- team 1 keywords -->
             <div class="decryptr--row">
-                <div id="thua_word1" class="keyword1">
+                <div id="team_1_word1" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word2" class="keyword1">
+                <div id="team_1_word2" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word3" class="keyword1">
+                <div id="team_1_word3" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="thua_word4" class="keyword1">
+                <div id="team_1_word4" class="keyword1">
                     <span class="m-auto">?</span>
                 </div>
             </div>
@@ -72,52 +72,81 @@
 
 <!-- team 2 keywords -->
             <div class="decryptr--row">
-                <div id="loser_word1" class="decryptr--item2">
+                <div id="team_2_word1" class="decryptr--item2">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="loser_word2" class="decryptr--item2">
+                <div id="team_2_word2" class="decryptr--item2">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="loser_word3" class="decryptr--item2">
+                <div id="team_2_word3" class="decryptr--item2">
                     <span class="m-auto">?</span>
                 </div>
             </div>
 
             <div class="decryptr--row">
-                <div id="loser_word4" class="decryptr--item2">
+                <div id="team_2_word4" class="decryptr--item2">
                     <span class="m-auto">?</span>
                 </div>
             </div>
         </div>
 
-        
-
-
-        <div class="decryptr--right">
-            <div class="decryptr--row" id="row11">
+        <div class="decryptr--box">
+            <div class="decryptr--row" id="boxrow11">
                 <div class="box" id="box11"></div>
             </div>
-            <div class="decryptr--row" id="row12">
+            <div class="decryptr--row" id="boxrow12">
                 <div class="box" id="box12"></div>
             </div>
-            <div class="decryptr--row" id="row13">
+            <div class="decryptr--row" id="boxrow13">
                 <div class="box" id="box13"></div>
             </div>
-            <div class="decryptr--row" id="row14">
+            <div class="decryptr--row" id="boxrow14">
                 <div class="box" id="box14"> </div>
             </div>
 
             <div class="middlerow">
-            
                 <button class="suggest" id="suggestAnswer" disabled>
                     Suggest
                 </button>
+            </div>
+
+            <div class="decryptr--row" id="boxrow21">
+                <div class="box" id="box21"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow22">
+                <div class="box" id="box22"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow23">
+                <div class="box" id="box23"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow24">
+                <div class="box" id="box24"> </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="decryptr--right">
+            <div class="decryptr--row" id="row11">
+            </div>
+            <div class="decryptr--row" id="row12">
+            </div>
+            <div class="decryptr--row" id="row13">
+            </div>
+            <div class="decryptr--row" id="row14">
+            </div>
+
+
+            
+
+            <div class="middlerow">
                 <button disabled class="submit_clue" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     Submit
                 </button>
@@ -127,20 +156,21 @@
             </div>
 
             <div class="decryptr--row" id="row21">
-                <div class="box" id="box21"></div>
             </div>
             <div class="decryptr--row" id="row22">
-                <div class="box" id="box22"></div>
             </div>
             <div class="decryptr--row" id="row23">
-                <div class="box" id="box23"></div>
             </div>
             <div class="decryptr--row" id="row24">
-                <div class="box" id="box24"> </div>
             </div>
+
+
+            
             </div>
         </div>
     </div>
+
+    
 
     <ul id="messages"></ul>
     <form id="form" action="">
@@ -161,6 +191,8 @@
 <script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
@@ -174,6 +206,7 @@
     let game_state_full = {};
     game_state_full['team_1'] = {};
     game_state_full['team_2'] = {};
+    
 
     var body = document.getElementById('body');
     var whole = document.getElementById('whole');
@@ -191,14 +224,14 @@
     socket.on('connect', function() {
         console.log('connected');
         if (sessionStorage.getItem('user_id')){
-        my_user_id = sessionStorage.getItem('user_id');
-        socket.emit('iden_user_id', my_user_id);
+            my_user_id = sessionStorage.getItem('user_id');
+            socket.emit('iden_user_id', my_user_id);
         } else {
-        my_user_id = uuidv4();
-        sessionStorage.setItem('user_id',my_user_id);
-        sessionStorage.setItem('user_team','1');
-        sessionStorage.setItem('user_name','noname');
-        socket.emit('iden_user_id', my_user_id)
+            my_user_id = uuidv4();
+            sessionStorage.setItem('user_id',my_user_id);
+            sessionStorage.setItem('user_team','1');
+            sessionStorage.setItem('user_name','noname');
+            socket.emit('iden_user_id', my_user_id)
         } 
         my_user_id = sessionStorage.getItem('user_id');
         my_team = sessionStorage.getItem('user_team');
@@ -223,15 +256,28 @@
         socket.emit('newGames', my_user_id, my_name);
     });
 
-    socket.on('newGame_JS', () => {
+    // receive keywords from server
+    socket.on('newGame_JS', (team_1_keywords,team_2_keywords) => {
         console.log('received newGame signal');
-        newGame_JS();
+        if (my_team=="1") {
+            newGame_JS(team_1_keywords, my_team);
+        } else {
+            newGame_JS(team_2_keywords, my_team);
+        }
         phase = 1;
-        var serializedHTML = serializeDOMHTML(whole);
-        socket.emit('sync_up',serializedHTML, my_team, true, false,phase);
     });
 
-    
+    function isScriptLoaded(url) {
+        const scripts = document.querySelectorAll('script');
+        for (const script of scripts) {
+            if (script.src === url) {
+            return script.readyState === 'loaded' || script.readyState === 'complete';
+            }
+        }
+        return false;
+    }
+
+
     // button for sending giving-clues sinal: client that clicked the button is given
     // the html-change while others have the button greyed out
     

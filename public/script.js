@@ -76,23 +76,19 @@ function drop(e) {
   draggable.classList.remove('hide');
 }
 
-function newGame_JS() {
+function newGame_JS(team_keywords, team) {
   document.getElementById('startNewRound').disabled = false;
   document.getElementById('giveClues').disabled = true;
   document.getElementById('suggestAnswer').disabled = true;
   document.getElementById('submitClues').disabled = true;
   document.getElementById('submitAnswer').disabled = true;
 
-  $('#thua_word1 span').text('random word');
-  $('#thua_word2 span').text('random word');
-  $('#thua_word3 span').text('random word');
-  $('#thua_word4 span').text('random word');
-  
-  $('#loser_word1 span').text('random word');
-  $('#loser_word2 span').text('random word');
-  $('#loser_word3 span').text('random word');
-  $('#loser_word4 span').text('random word');
 
+  $(`#team_${team}_word1 span`).text(team_keywords[0]);
+  $(`#team_${team}_word2 span`).text(team_keywords[1]);
+  $(`#team_${team}_word3 span`).text(team_keywords[2]);
+  $(`#team_${team}_word4 span`).text(team_keywords[3]);
+  
   $(`#box11`).empty();
   $(`#box12`).empty();
   $(`#box13`).empty();
@@ -436,8 +432,8 @@ function intercept_res_JS (result, user_name, game_state_correct_answer) {
 function reconnect_sync_up_js(dom_serialized){
   console.log('syncing');
   console.log(dom_serialized);
-  var deserializedElement = deserializeHTML(dom_serialized)
-  // console.log(deserializedElement.outerHTML);
+  var deserializedElement = deserializeDOMWithEventListeners(dom_serialized);
+  console.log(deserializedElement);
   document.body.removeChild(document.getElementById('whole'));
   // document.body.prependChild(deserializedElement.outerHTML);
   $('body').prepend(deserializedElement);
@@ -445,12 +441,121 @@ function reconnect_sync_up_js(dom_serialized){
 }
 
 
-function serializeDOMHTML(element) {
-  return new XMLSerializer().serializeToString(element);
+function serializeDOM(element) {
+  const serializer = new htmlparser2.WritableStream({ write: function(chunk) {} });
+  htmlparser2.serialize(element, serializer);
+  const serializedHTML = serializer.toString();
+
+  // Convert serialized HTML to a JSON object
+  const serializedNode = JSON.parse(serializedHTML);
+
+  // Extract and store event listeners for buttons
+  if (serializedNode.tagName === 'BUTTON') {
+    for (const eventType of Object.keys(element._eventListeners)) {
+      serializedNode.eventListeners = {};
+      for (const eventListener of element._eventListeners[eventType]) {
+        serializedNode.eventListeners[eventType] = serializedNode.eventListeners[eventType] || [];
+        serializedNode.eventListeners[eventType].push(eventListener.toString());
+      }
+    }
+  }
+
+  return serializedNode;
 }
 
-function deserializeHTML(htmlString) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlString, 'text/html');
-  return doc.documentElement;
+
+
+function deserializeDOMWithEventListeners(serializedNode) {
+  const deserializer = new htmlparser2.Parser({
+    onopentag(name, attributes) {
+      const element = document.createElement(name);
+      for (const attributeName in attributes) {
+        element.setAttribute(attributeName, attributes[attributeName]);
+      }
+      this.push(element);
+    },
+    ontext(text) {
+      this.push(document.createTextNode(text));
+    },
+    onclosetag(name) {
+      const child = this.pop();
+      const parent = this.current;
+      parent.appendChild(child);
+    },
+    onend() {
+      const element = this.current;
+      this.emit('finish', element);
+    }
+  });
+
+  deserializer.write(JSON.stringify(serializedNode));
+  deserializer.end();
+
+  deserializer.on('finish', function(element) {
+    // Reattach event listeners for buttons
+    if (element.tagName === 'BUTTON' && element.eventListeners) {
+      for (const eventType in element.eventListeners) {
+        for (const eventListenerString of element.eventListeners[eventType]) {
+          element.addEventListener(eventType, new Function(eventListenerString));
+        }
+      }
+    }
+  });
 }
+
+
+
+
+
+
+// function serializeDOMHTML(element) {
+//   return new XMLSerializer().serializeToString(element);
+// }
+
+// function deserializeHTML(htmlString) {
+//   const parser = new DOMParser();
+//   const doc = parser.parseFromString(htmlString, 'text/html');
+//   return doc.documentElement;
+// }
+
+// const serializeDOM = (element) => {
+//   // Convert the DOM element to a string using jsdom's serialize method
+//   const serializedHTML = jsdom.serialize(element);
+
+//   // Parse the serialized HTML string into a JavaScript object
+//   const serializedNode = JSON.parse(serializedHTML);
+
+//   return serializedNode;
+// };
+
+// const deserializeDOMWithEventListeners = (serializedNode) => {
+//   // Create a new jsdom document
+//   const document = jsdom.env().document;
+
+//   // Create a DOM element from the serialized node
+//   const element = document.createElement(serializedNode.tagName);
+
+//   // Set the attributes of the DOM element
+//   for (const attributeName in serializedNode.attributes) {
+//     element.setAttribute(attributeName, serializedNode.attributes[attributeName]);
+//   }
+
+//   // Append child elements to the DOM element recursively
+//   for (const child of serializedNode.children) {
+//     const deserializedChild = deserializeDOMWithEventListeners(child);
+//     if (deserializedChild) {
+//       element.appendChild(deserializedChild);
+//     }
+//   }
+
+//   // Reattach event listeners to buttons
+//   if (serializedNode.tagName === 'BUTTON') {
+//     for (const eventType in serializedNode.eventListeners) {
+//       for (const eventListener of serializedNode.eventListeners[eventType]) {
+//         element.addEventListener(eventType, eventListener);
+//       }
+//     }
+//   }
+
+//   return element;
+// };

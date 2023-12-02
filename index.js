@@ -51,6 +51,23 @@ let position_to_be_encoded = {};
 position_to_be_encoded['team_1'] = [1,2,3,4];
 position_to_be_encoded['team_2'] = [1,2,3,4];
 
+var team_1_keywords = [];
+var team_2_keywords = [];
+var wordlist = [];
+
+function fetchLines(url) {
+  return fetch(url)
+    .then(response => response.text())
+    .then(text => text.split('\n'));
+}
+
+fetchLines('https://gist.githubusercontent.com/leduc2939/a4ca0c8efadec2b21af9dcf3c947b94f/raw/decrypto_word.txt')
+  .then(lines => {
+    wordlist = lines;
+  })
+  .catch(error => {
+    console.error("Error fetching lines:", error);
+  });
 
 io.on('connection', (socket) => {
   user_team[socket.id] = 1;
@@ -85,7 +102,18 @@ io.on('connection', (socket) => {
     position_to_be_encoded['team_1'] = [1,2,3,4];
     position_to_be_encoded['team_2'] = [1,2,3,4];
     game_started = true;
-    io.emit('newGame_JS');
+
+    team_1_keywords = [];
+    team_2_keywords = [];
+    for (let i = 0; i < 4; i++) {
+      team_1_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
+      team_2_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
+    }
+    console.log(team_1_keywords);
+    console.log(team_2_keywords);
+
+    io.emit('newGame_JS',team_1_keywords,team_2_keywords);
+    
   })
   
   // 
@@ -209,6 +237,7 @@ io.on('connection', (socket) => {
     io.emit('startNewRound_JS', user_name);
   });
 
+  // sync current state of the game
   socket.on('sync_up', (serializedHTML, user_team, is_all, is_clue_giver, current_phase) => {
     if (is_clue_giver) {
       game_state_full_server[`team_${user_team}`]['clue_giver'] = serializedHTML;

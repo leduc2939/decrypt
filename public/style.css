@@ -118,6 +118,13 @@ body {
 .decryptr--left > .decryptr--row {
     margin: 0 auto;
 }
+.decryptr--box {
+    /* overflow-x: auto; */
+    width: 20%;
+}
+.decryptr--box > .decryptr--row {
+    margin: 0 auto;
+}
 .decryptr--right {
     overflow-x: auto;
     width: 80%;

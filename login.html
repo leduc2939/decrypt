@@ -68,10 +68,13 @@
       if (sessionStorage.getItem('user_id')){
         my_user_id = sessionStorage.getItem('user_id');
         socket.emit('iden_user_id', my_user_id);
+        console.log('user has user_id: ' + my_user_id);
+
       } else {
         my_user_id = uuidv4();
         sessionStorage.setItem('user_id',my_user_id);
-        socket.emit('iden_user_id', my_user_id)
+        socket.emit('iden_user_id', my_user_id);
+        console.log('issue user_id: ' + my_user_id);
       } 
   });
 
