@@ -206,6 +206,8 @@
     let game_state_full = {};
     game_state_full['team_1'] = {};
     game_state_full['team_2'] = {};
+
+    let position_to_be_encoded = [];
     
 
     var body = document.getElementById('body');
@@ -243,9 +245,11 @@
 
     });
 
-    socket.on('reconnect_sync_up_js', (dom_serialized, current_phase) => {
+    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, clue_giver) => {
         phase = current_phase;
-        reconnect_sync_up_js(dom_serialized);
+        console.log(my_team);
+        // console.log(game_state_full_server);
+        reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver);
     }); 
 
     
@@ -267,18 +271,18 @@
         phase = 1;
     });
 
-    function isScriptLoaded(url) {
-        const scripts = document.querySelectorAll('script');
-        for (const script of scripts) {
-            if (script.src === url) {
-            return script.readyState === 'loaded' || script.readyState === 'complete';
-            }
-        }
-        return false;
-    }
+    // function isScriptLoaded(url) {
+    //     const scripts = document.querySelectorAll('script');
+    //     for (const script of scripts) {
+    //         if (script.src === url) {
+    //         return script.readyState === 'loaded' || script.readyState === 'complete';
+    //         }
+    //     }
+    //     return false;
+    // }
 
 
-    // button for sending giving-clues sinal: client that clicked the button is given
+    // button for sending giving-clues signal: client that clicked the button is given
     // the html-change while others have the button greyed out
     
     giveClues.addEventListener('click', function(e) {
@@ -291,12 +295,13 @@
         console.log('received giveClues_JS signal');
         if (my_user_id == user_id){
             console.log(my_name + ' is giving clues');
-            giveClues.setAttribute('disabled', true);
+            giveClues.disabled = true;
             giveClues_JS(user_team, position_to_be_encoded);
             submitClues.disabled = false;
+            position_to_be_encoded = position_to_be_encoded;
         } else if (my_team == user_team) {
             console.log('give clues button is greyed out for ' + my_name);
-            giveClues.setAttribute('disabled', true);
+            giveClues.disabled = true;
         }
         clue_giver = user_id;
     });
@@ -306,12 +311,17 @@
     submitClues.addEventListener('click', function(e) {
         submitClues.setAttribute('disabled', true);
         socket.emit('submitClues', my_user_id, my_name, my_team, $(`#input${my_team}1`).html(), $(`#input${my_team}2`).html(), $(`#input${my_team}3`).html());
+        
+        for (pos of position_to_be_encoded){
+            document.getElementById(`box${my_team}${position_to_be_encoded[pos]}`).setAttribute('contenteditable', 'false');
+        }
+        
     });
 
     // received rearrangement singal: clues are now rearranged randomly
-    socket.on('rearrangeClues_JS', ( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position) => {
+    socket.on('rearrangeClues_JS', ( user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position) => {
         if (my_user_id != user_id && my_team == user_team){
-            rearrangeClues_JS( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
+            rearrangeClues_JS( user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position);
             submitAnswer.disabled = false;
             suggestAnswer.disabled = false;
         }   

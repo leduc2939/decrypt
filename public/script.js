@@ -76,12 +76,30 @@ function drop(e) {
   draggable.classList.remove('hide');
 }
 
+var row11 = document.getElementById('row11');
+var row12 = document.getElementById('row12');
+var row13 = document.getElementById('row13');
+var row14 = document.getElementById('row14');
+var row21 = document.getElementById('row21');
+var row22 = document.getElementById('row22');
+var row23 = document.getElementById('row23');
+var row24 = document.getElementById('row24');
+
+var startNewRound = document.getElementById('startNewRound');
+var giveClues = document.getElementById('giveClues');
+var suggestAnswer = document.getElementById('suggestAnswer');
+var submitClues = document.getElementById('submitClues');
+var submitAnswer = document.getElementById('submitAnswer');
+
+
+
 function newGame_JS(team_keywords, team) {
-  document.getElementById('startNewRound').disabled = false;
-  document.getElementById('giveClues').disabled = true;
-  document.getElementById('suggestAnswer').disabled = true;
-  document.getElementById('submitClues').disabled = true;
-  document.getElementById('submitAnswer').disabled = true;
+  console.log('newGame_JS');
+  startNewRound.disabled = false;
+  giveClues.disabled = true;
+  suggestAnswer.disabled = true;
+  submitClues.disabled = true;
+  submitAnswer.disabled = true;
 
 
   $(`#team_${team}_word1 span`).text(team_keywords[0]);
@@ -98,37 +116,30 @@ function newGame_JS(team_keywords, team) {
   $(`#box23`).empty();
   $(`#box24`).empty(); 
 
-  var row11 = document.getElementById('row11');
-  var row12 = document.getElementById('row12');
-  var row13 = document.getElementById('row13');
-  var row14 = document.getElementById('row14');
-  var row21 = document.getElementById('row21');
-  var row22 = document.getElementById('row22');
-  var row23 = document.getElementById('row23');
-  var row24 = document.getElementById('row24');
 
-  while (row11.children.length > 1) {
+  while (row11.children.length > 0) {
     row11.removeChild(row11.lastChild);
   }
-  while (row12.children.length > 1) {
+  while (row12.children.length > 0) {
     row12.removeChild(row12.lastChild);
   }
-  while (row13.children.length > 1) {
+  console.log(row12.children.length);
+  while (row13.children.length > 0) {
     row13.removeChild(row13.lastChild);
   }
-  while (row14.children.length > 1) {
+  while (row14.children.length > 0) {
     row14.removeChild(row14.lastChild);
   }
-  while (row21.children.length > 1) {
+  while (row21.children.length > 0) {
     row21.removeChild(row21.lastChild);
   }
-  while (row22.children.length > 1) {
+  while (row22.children.length > 0) {
     row22.removeChild(row22.lastChild);
   }
-  while (row23.children.length > 1) {
+  while (row23.children.length > 0) {
     row23.removeChild(row23.lastChild);
   }
-  while (row24.children.length > 1) {
+  while (row24.children.length > 0) {
     row24.removeChild(row24.lastChild);
   }
 
@@ -165,36 +176,37 @@ function giveClues_JS (user_team, position_to_be_encoded) {
 
 }
 
-function rearrangeClues_JS(user_id, user_name, user_team, input2_value, input3_value, input1_value, position_to_be_encoded) {
+function rearrangeClues_JS(user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position) {
   
-  document.getElementById('submitClues').classList.add('hide');
-  document.getElementById('submitAnswer').classList.remove('hide');
-
+  // document.getElementById('submitClues').classList.add('hide');
+  // document.getElementById('submitAnswer').classList.remove('hide');
+  document.getElementById('submitClues').hidden = true;
+  document.getElementById('submitAnswer').hidden = false;
 
   let clue1 = document.createElement("div");
   clue1.id = `input${user_team}1`;
   // clue1.setAttribute('type','text');
   clue1.setAttribute('class',`draggable_clue_${user_team}`);
   clue1.setAttribute('draggable', 'true');
-  clue1.innerHTML  = input2_value;
+  clue1.innerHTML  = input1_value;
 
   let clue2 = document.createElement("div");
   clue2.id = `input${user_team}2`;
   // clue2.setAttribute('type','text');
   clue2.setAttribute('class',`draggable_clue_${user_team}`);
   clue2.setAttribute('draggable', 'true');
-  clue2.innerHTML = input3_value;
+  clue2.innerHTML = input2_value;
 
   let clue3 = document.createElement("div");
   clue3.id = `input${user_team}3`;
   // clue3.setAttribute('type','text');
   clue3.setAttribute('class',`draggable_clue_${user_team}`);
   clue3.setAttribute('draggable', 'true');
-  clue3.innerHTML = input1_value;
+  clue3.innerHTML = input3_value;
 
-  $(`#box${user_team}${position_to_be_encoded[0]}`).prepend(clue1);
-  $(`#box${user_team}${position_to_be_encoded[1]}`).prepend(clue2);
-  $(`#box${user_team}${position_to_be_encoded[2]}`).prepend(clue3);
+  $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
+  $(`#box${user_team}${mixed_position[1]}`).prepend(clue2);
+  $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
   console.log('appened')
 
   columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
@@ -256,21 +268,23 @@ function rearrangeSuggest_JS ( user_name, user_team, d) {
       col.addEventListener('dragstart', dragStart, false);
     });
 
-  var alert = document.createElement("div");
-  alert.setAttribute('class',"suggest_alert");
-  alert.setAttribute('id',"suggest_alert");
-  alert.innerHTML  = user_name + ' has given a suggestion';
-  console.log(alert);
-  $('#container').append(alert);
-  console.log('appended to container');
-  setTimeout(function() {
-    $(alert).fadeTo(3000, 0).slideUp(3000, function(){
-      $(this).remove();
+  if (user_name != "reconnect_user") {
+    var alert = document.createElement("div");
+    alert.setAttribute('class',"suggest_alert");
+    alert.setAttribute('id',"suggest_alert");
+    alert.innerHTML  = user_name + ' has given a suggestion';
+    console.log(alert);
+    $('#container').append(alert);
+    console.log('appended to container');
+    setTimeout(function() {
+      $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+        $(this).remove();
+      });
     });
-  });
-  setTimeout(function(){
-    alert.remove();
-  }, 8000);
+    setTimeout(function(){
+      alert.remove();
+    }, 8000);
+  }
 }
 
 function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
@@ -378,6 +392,7 @@ function startNewRound_JS (user_name) {
   }, 8000);
   
   document.getElementById('giveClues').disabled = false;
+  console.log('giveClues.disabled = false here');
   document.getElementById('startNewRound').disabled = true;
   $(`#box11`).empty();
   $(`#box12`).empty();
@@ -429,79 +444,200 @@ function intercept_res_JS (result, user_name, game_state_correct_answer) {
   }, 8000);
 }
 
-function reconnect_sync_up_js(dom_serialized){
+function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver){
   console.log('syncing');
-  console.log(dom_serialized);
-  var deserializedElement = deserializeDOMWithEventListeners(dom_serialized);
-  console.log(deserializedElement);
-  document.body.removeChild(document.getElementById('whole'));
-  // document.body.prependChild(deserializedElement.outerHTML);
-  $('body').prepend(deserializedElement);
+  console.log(game_state_full_server);
+  var normal_member_obj = game_state_full_server[`team_${user_team}`]['normal_member'];
+  var clue_giver_obj = game_state_full_server[`team_${user_team}`]['clue_giver'];
 
-}
+  if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) {  
+    if (user_id==clue_giver[`team_${user_team}`]) {
+      
+      var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
+      
+      let clue_input1 = document.createElement("div");
+      clue_input1.id = `input${user_team}1`;
+      clue_input1.setAttribute('type','text');
+      clue_input1.setAttribute('class','input');
+      clue_input1.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['contenteditable']);
+      clue_input1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
+      let clue_input2 = document.createElement("div");
+      clue_input2.id = `input${user_team}2`;
+      clue_input2.setAttribute('type','text');
+      clue_input2.setAttribute('class','input');
+      clue_input2.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['contenteditable']);
+      clue_input2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
+      let clue_input3 = document.createElement("div");
+      clue_input3.id = `input${user_team}3`;
+      clue_input3.setAttribute('type','text');
+      clue_input3.setAttribute('class','input');
+      clue_input3.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['contenteditable']);
+      clue_input3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
 
+      $(`#box${user_team}${position_to_be_encoded[0]}`).prepend(clue_input1);
+      $(`#box${user_team}${position_to_be_encoded[1]}`).prepend(clue_input2);
+      $(`#box${user_team}${position_to_be_encoded[2]}`).prepend(clue_input3);
 
-function serializeDOM(element) {
-  const serializer = new htmlparser2.WritableStream({ write: function(chunk) {} });
-  htmlparser2.serialize(element, serializer);
-  const serializedHTML = serializer.toString();
+      startNewRound.disabled = clue_giver_obj["startNewRound"]['disabled'];
+      giveClues.disabled = clue_giver_obj["giveClues"]['disabled'];
+      suggestAnswer.disabled = clue_giver_obj["suggestAnswer"]['disabled'];
+      submitClues.disabled = clue_giver_obj["submitClues"]['disabled'];
+      submitAnswer.disabled = clue_giver_obj["submitAnswer"]['disabled'];
 
-  // Convert serialized HTML to a JSON object
-  const serializedNode = JSON.parse(serializedHTML);
+      submitClues.hidden = clue_giver_obj["submitClues"]['hide'];
+      submitAnswer.hidden = clue_giver_obj["submitAnswer"]['hide'];
+      
+    }
+    else {
+      console.log('normal member');
+      var mixed_position = normal_member_obj['boxes_with_clue']; 
+      var clue_giver_obj = game_state_full_server[`team_${user_team}`]['clue_giver'];
+      var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
 
-  // Extract and store event listeners for buttons
-  if (serializedNode.tagName === 'BUTTON') {
-    for (const eventType of Object.keys(element._eventListeners)) {
-      serializedNode.eventListeners = {};
-      for (const eventListener of element._eventListeners[eventType]) {
-        serializedNode.eventListeners[eventType] = serializedNode.eventListeners[eventType] || [];
-        serializedNode.eventListeners[eventType].push(eventListener.toString());
+      if (mixed_position.length > 0) {
+      console.log(mixed_position);
+
+      
+      let clue1 = document.createElement("div");
+      clue1.id = `input${user_team}1`;
+      // clue1.setAttribute('type','text');
+      clue1.setAttribute('class',`draggable_clue_${user_team}`);
+      clue1.setAttribute('draggable', 'true');
+      clue1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
+    
+      let clue2 = document.createElement("div");
+      clue2.id = `input${user_team}2`;
+      // clue2.setAttribute('type','text');
+      clue2.setAttribute('class',`draggable_clue_${user_team}`);
+      clue2.setAttribute('draggable', 'true');
+      clue2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
+    
+      let clue3 = document.createElement("div");
+      clue3.id = `input${user_team}3`;
+      // clue3.setAttribute('type','text');
+      clue3.setAttribute('class',`draggable_clue_${user_team}`);
+      clue3.setAttribute('draggable', 'true');
+      clue3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
+    
+      $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
+      $(`#box${user_team}${mixed_position[1]}`).prepend(clue2);
+      $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
+      console.log('appened')
+    
+      columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
+      draggingClass = 'dragging';
+      dragSource;
+        
+      Array.prototype.forEach.call(columns, function (col) {
+          col.addEventListener('dragstart', dragStart, false);
+        });
+   
       }
+
+      startNewRound.disabled = normal_member_obj["startNewRound"]['disabled'];
+      giveClues.disabled = normal_member_obj["giveClues"]['disabled'];
+      suggestAnswer.disabled = normal_member_obj["suggestAnswer"]['disabled'];
+      submitClues.disabled = normal_member_obj["submitClues"]['disabled'];
+      submitAnswer.disabled = normal_member_obj["submitAnswer"]['disabled'];
+
+      submitClues.hidden = normal_member_obj["submitClues"]['hide'];
+      submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+    }
+
+  }
+
+  if (Object.keys(game_state_full_server[`team_${user_team}`]['suggest']).length > 0) {
+    if (phase=="2") {
+      var other_team = '';
+      if (user_team == '1'){
+          other_team = '2';
+      } else {
+          other_team = '1';
+      }
+      rearrangeSuggest_JS('reconnect_user', other_team, game_state_full_server[`team_${user_team}`]['suggest']);
+    } else {
+      rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest']);
     }
   }
 
-  return serializedNode;
+  $(`#team_${user_team}_word1 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word1`]);
+  $(`#team_${user_team}_word2 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word2`]);
+  $(`#team_${user_team}_word3 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word3`]);
+  $(`#team_${user_team}_word4 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word4`]);
+  
+  console.log(normal_member_obj);
+  startNewRound.disabled = normal_member_obj["startNewRound"]['disabled'];
+  giveClues.disabled = normal_member_obj["giveClues"]['disabled'];
+  suggestAnswer.disabled = normal_member_obj["suggestAnswer"]['disabled'];
+  submitClues.disabled = normal_member_obj["submitClues"]['disabled'];
+  submitAnswer.disabled = normal_member_obj["submitAnswer"]['disabled'];
+  submitClues.hidden = normal_member_obj["submitClues"]['hide'];
+  submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+
 }
 
 
+// function serializeDOM(element) {
+//   const serializer = new htmlparser2.WritableStream({ write: function(chunk) {} });
+//   htmlparser2.serialize(element, serializer);
+//   const serializedHTML = serializer.toString();
 
-function deserializeDOMWithEventListeners(serializedNode) {
-  const deserializer = new htmlparser2.Parser({
-    onopentag(name, attributes) {
-      const element = document.createElement(name);
-      for (const attributeName in attributes) {
-        element.setAttribute(attributeName, attributes[attributeName]);
-      }
-      this.push(element);
-    },
-    ontext(text) {
-      this.push(document.createTextNode(text));
-    },
-    onclosetag(name) {
-      const child = this.pop();
-      const parent = this.current;
-      parent.appendChild(child);
-    },
-    onend() {
-      const element = this.current;
-      this.emit('finish', element);
-    }
-  });
+//   // Convert serialized HTML to a JSON object
+//   const serializedNode = JSON.parse(serializedHTML);
 
-  deserializer.write(JSON.stringify(serializedNode));
-  deserializer.end();
+//   // Extract and store event listeners for buttons
+//   if (serializedNode.tagName === 'BUTTON') {
+//     for (const eventType of Object.keys(element._eventListeners)) {
+//       serializedNode.eventListeners = {};
+//       for (const eventListener of element._eventListeners[eventType]) {
+//         serializedNode.eventListeners[eventType] = serializedNode.eventListeners[eventType] || [];
+//         serializedNode.eventListeners[eventType].push(eventListener.toString());
+//       }
+//     }
+//   }
 
-  deserializer.on('finish', function(element) {
-    // Reattach event listeners for buttons
-    if (element.tagName === 'BUTTON' && element.eventListeners) {
-      for (const eventType in element.eventListeners) {
-        for (const eventListenerString of element.eventListeners[eventType]) {
-          element.addEventListener(eventType, new Function(eventListenerString));
-        }
-      }
-    }
-  });
-}
+//   return serializedNode;
+// }
+
+
+
+// function deserializeDOMWithEventListeners(serializedNode) {
+//   const deserializer = new htmlparser2.Parser({
+//     onopentag(name, attributes) {
+//       const element = document.createElement(name);
+//       for (const attributeName in attributes) {
+//         element.setAttribute(attributeName, attributes[attributeName]);
+//       }
+//       this.push(element);
+//     },
+//     ontext(text) {
+//       this.push(document.createTextNode(text));
+//     },
+//     onclosetag(name) {
+//       const child = this.pop();
+//       const parent = this.current;
+//       parent.appendChild(child);
+//     },
+//     onend() {
+//       const element = this.current;
+//       this.emit('finish', element);
+//     }
+//   });
+
+//   deserializer.write(JSON.stringify(serializedNode));
+//   deserializer.end();
+
+//   deserializer.on('finish', function(element) {
+//     // Reattach event listeners for buttons
+//     if (element.tagName === 'BUTTON' && element.eventListeners) {
+//       for (const eventType in element.eventListeners) {
+//         for (const eventListenerString of element.eventListeners[eventType]) {
+//           element.addEventListener(eventType, new Function(eventListenerString));
+//         }
+//       }
+//     }
+//   });
+// }
 
 
 
