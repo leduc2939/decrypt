@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html
+ 
+lang="en">
+
+<head>
+
+    
+<meta
+ 
+charset="UTF-8">
+
+    
+<meta
+ 
+name="viewport"
+ 
+content="width=device-width, initial-scale=1.0">
+
+    
+<title>Countdown Clock</title>
+    <style>
+        .countdown-container {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown-container">
+        <div id="countdown"></div>
+    </div>
+
+    <button class="button" id="startButton">Start Countdown</button>
+
+    <script>
+        const countdownDisplay = document.getElementById('countdown');
+        const startButton = document.getElementById('startButton');
+
+        let timerInterval;
+
+        startButton.addEventListener('click', () => {
+            let remainingTime = 5 * 60; // 5 minutes in seconds
+
+            timerInterval = setInterval(() => {
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    countdownDisplay.textContent = 'Countdown finished!';
+                    return;
+                }
+
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+
+                countdownDisplay.textContent = `${minutes} minutes and ${seconds} seconds remaining`;
+
+                remainingTime--;
+            }, 1000); // Update the countdown every second
+        });
+    </script>
+</body>
+</html>

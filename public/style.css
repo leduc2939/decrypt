@@ -336,3 +336,44 @@ body {
 	max-width: 300px;
 }
 
+
+.arrow{
+    padding:16px;
+    background-color: rgb(190, 190, 190);
+    text-decoration:none;
+    border-radius:10px;
+    font-size: 18px;
+    color:#000000;
+    left: 90%;
+    right:50%;
+    &:hover{
+        transition:0.3s;
+        background-color: #222;
+    }
+} 
+.menu{
+    position:absolute;
+    top: 5%;
+    left: 60%;
+    background-color: #969696;
+    border-radius:4px;
+    display: none;
+    
+.menu__item{
+    padding:36px;
+    text-align:center;
+    border-bottom:1px solid #222;
+    &:hover{
+        background-color: #dddfdb;
+    }
+    }
+}
+
+.showmenu{
+    display:block;
+}
+
+.countdown-container {
+    text-align: center;
+    font-size: 24px;
+}

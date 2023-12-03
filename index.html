@@ -33,12 +33,29 @@
 
 
 <div class="container" id = "container">
-    <button id="newGame">
-        New Game
-    </button>
     <button id="startNewRound" disabled>
         Start New Round
     </button>
+
+    <div class="countdown-container">
+        <div id="countdown"></div>
+    </div>
+
+
+
+    <a href="javascript:;" class="arrow">◄</a>
+        <ul class="menu">
+          <li class="menu__item">
+            <button id="newGame">
+                New Game
+            </button>
+
+
+
+          </li>
+        </ul>
+    
+    
     <div class="decryptr d-flex mt-4">
         <div class="decryptr--left ">
 <!-- team 1 keywords -->
@@ -365,15 +382,15 @@
                 box4word = box4Children.item(0).innerHTML;} 
             else {
                 box4word = 'null';}
-
-            let d = {
-                'box1': box1word,
-                'box2': box2word,
-                'box3': box3word,
-                'box4': box4word
-                };
+            
+            let d = {};
+            d[`box${other_team}1`] = box1word;
+            d[`box${other_team}2`] = box2word;
+            d[`box${other_team}3`] = box3word;
+            d[`box${other_team}4`] = box4word;
+            
             console.log(d);
-            socket.emit('suggestAnswer', my_user_id, my_name, other_team, d);
+            socket.emit('suggestAnswer', my_user_id, my_name, my_team, d);
 
         } else {
             let box1Children = document.getElementById(`box${my_team}1`).children;
@@ -403,29 +420,23 @@
             else {
                 box4word = 'null';}
 
-            let d = {
-                'box1': box1word,
-                'box2': box2word,
-                'box3': box3word,
-                'box4': box4word
-                };
+            let d = {};
+            d[`box${my_team}1`] = box1word;
+            d[`box${my_team}2`] = box2word;
+            d[`box${my_team}3`] = box3word;
+            d[`box${my_team}4`] = box4word;
+
             console.log(d);
             socket.emit('suggestAnswer', my_user_id, my_name, my_team, d);
         }
     });
 
     // receive suggest-rearrangement signal, displays for everyone to see
-    socket.on('rearrangeSuggest_JS', ( user_name, user_team, d) => {
+    socket.on('rearrangeSuggest_JS', ( user_name, user_team, d, phase) => {
         console.log('received rearrangeSuggest_JS ');
-        if (phase=='2') {
-            if (my_team != user_team) {
-                rearrangeSuggest_JS( user_name, user_team, d);
-            } 
-        }
-        else { 
-            if (my_team == user_team) {
-            rearrangeSuggest_JS( user_name, user_team, d);
-            }
+
+        if (user_team == my_team) {           
+        rearrangeSuggest_JS( user_name, user_team, d, phase);
         }
     });
 
@@ -533,20 +544,46 @@
     // received roundComplete signal, reset boxes and enable giveClues; 
     socket.on('roundCompleted', () => {
         console.log('received roundCompleted');
-        startNewRound.disabled = false;
+        startNewRound.disabled = false; 
     });
 
     // when click on start new round, send signal to clear everything from boxes, reset the clock, update var round, enable giveClues
     startNewRound.addEventListener('click', function(e) {
         console.log('start new round clicked');
         socket.emit('startNewRound', my_name);
+        giveClues.disabled = false;
+        submitClues.hidden = false;
+        submitAnswer.hidden = true;
+        startNewRound.disabled = true;
     });
-
+    const countdownDisplay = document.getElementById('countdown');
+    
     // receive startNewRound_JS from server and update site
     socket.on('startNewRound_JS', (user_name) => {
         console.log('received startNewRound_JS');
         startNewRound_JS(user_name);
         phase = '1';
+        giveClues.disabled = false;
+        submitClues.hidden = false;
+        submitAnswer.hidden = true;
+        startNewRound.disabled = true;
+
+        let remainingTime = 5 * 60; // 5 minutes in seconds
+        timerInterval = setInterval(() => {
+        if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            countdownDisplay.textContent = 'Countdown finished!';
+            return;
+        }
+
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+
+        countdownDisplay.textContent = `${minutes}:${seconds}`;
+
+        remainingTime--;
+        }, 1000); // Update the countdown every second
+ 
     });
 
     // make it draggable swappable for opponents
@@ -554,6 +591,10 @@
         console.log('received rearrangeClues_intercept_JS');
         phase = "2";
         rearrangeClues_intercept_JS(round_d, mixed_position, my_team);
+        submitAnswer.hidden = false;
+        submitClues.hidden = true;
+        submitAnswer.disabled = false;
+        suggestAnswer.disabled = false;
     });
 
     // receive intercept_res, lock submit button

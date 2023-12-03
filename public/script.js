@@ -219,48 +219,71 @@ function rearrangeClues_JS(user_id, user_name, user_team, input1_value, input2_v
 }
 
 
-function rearrangeSuggest_JS ( user_name, user_team, d) {
+function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   console.log(d);
-  console.log($(`#box${user_team}1`));
-  $(`#box${user_team}1`).empty();
-  $(`#box${user_team}2`).empty();
-  $(`#box${user_team}3`).empty();
-  $(`#box${user_team}4`).empty();
+  console.log('rearrangeSuggest_JS');
+  var team = "";
+  if (phase =="2") {
+    if (user_team == '1'){
+      team = '2';
+    } else {
+      team = '1';
+    }
+  } else {
+    team = user_team;
+  }
 
-  if (d[`box1`] != 'null') {
-    let clue1 = document.createElement("div");
-    clue1.id = `input${user_team}1`;
-    clue1.setAttribute('class',`draggable_clue_${user_team}`);
-    clue1.setAttribute('draggable', 'true');
-    clue1.innerHTML  = d[`box1`];
-    $(`#box${user_team}1`).prepend(clue1);
+
+  for (box in d) {
+  $(`#${box}`).empty();
+  $(`#${box}`).empty();
+  $(`#${box}`).empty();
+  $(`#${box}`).empty();
   }
-  if (d[`box2`] != 'null') {
-    let clue2 = document.createElement("div");
-    clue2.id = `input${user_team}2`;
-    clue2.setAttribute('class',`draggable_clue_${user_team}`);
-    clue2.setAttribute('draggable', 'true');
-    clue2.innerHTML  = d[`box2`];
-    $(`#box${user_team}2`).prepend(clue2);
+
+  var c = 1;
+  for (box in d) {
+    if (d[box] != 'null') {
+      // console.log(`${box.charAt(3)}${c}`);
+      // console.log(box);
+      let clue = document.createElement("div");
+      clue.id = `input${box.charAt(3)}${c}`;
+      clue.setAttribute('class',`draggable_clue_${box.charAt(3)}`);
+      clue.setAttribute('draggable', 'true');
+      clue.innerHTML  = d[box];
+      console.log(clue)
+      $(`#${box}`).prepend(clue);
+      c+=1;
+    }
   }
-  if (d[`box3`] != 'null') {
-    let clue3 = document.createElement("div");
-    clue3.id = `input${user_team}3`;
-    clue3.setAttribute('class',`draggable_clue_${user_team}`);
-    clue3.setAttribute('draggable', 'true');
-    clue3.innerHTML  = d[`box3`];
-    $(`#box${user_team}3`).prepend(clue3);
-  }
-  if (d[`box4`] != 'null') {
-    let clue4 = document.createElement("div");
-    clue4.id = `input${user_team}4`;
-    clue4.setAttribute('class',`draggable_clue_${user_team}`);
-    clue4.setAttribute('draggable', 'true');
-    clue4.innerHTML  = d[`box4`];
-    $(`#box${user_team}4`).prepend(clue4);
-  }
- 
-  columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
+
+  
+  // if (d[`box${team}2`] != 'null') {
+  //   let clue2 = document.createElement("div");
+  //   clue2.id = `input${team}2`;
+  //   clue2.setAttribute('class',`draggable_clue_${team}`);
+  //   clue2.setAttribute('draggable', 'true');
+  //   clue2.innerHTML  = d[`box${team}2`];
+  //   $(`#box${team}2`).prepend(clue2);
+  // }
+  // if (d[`box${team}3`] != 'null') {
+  //   let clue3 = document.createElement("div");
+  //   clue3.id = `input${team}3`;
+  //   clue3.setAttribute('class',`draggable_clue_${team}`);
+  //   clue3.setAttribute('draggable', 'true');
+  //   clue3.innerHTML  = d[`box${team}3`];
+  //   $(`#box${team}3`).prepend(clue3);
+  // }
+  // if (d[`box${team}4`] != 'null') {
+  //   let clue4 = document.createElement("div");
+  //   clue4.id = `input${team}4`;
+  //   clue4.setAttribute('class',`draggable_clue_${team}`);
+  //   clue4.setAttribute('draggable', 'true');
+  //   clue4.innerHTML  = d[`box${team}4`];
+  //   $(`#box${team}4`).prepend(clue4);
+  // }
+
+  columns = document.querySelectorAll(`.draggable_clue_${box.charAt(3)}`);
   draggingClass = 'dragging';
   dragSource;
     
@@ -293,12 +316,16 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   document.getElementById('submitAnswer').classList.remove('hide');
   document.getElementById('submitAnswer').disabled = false;
   document.getElementById('suggestAnswer').disabled = false;
-  console.log(document.getElementById('submitAnswer').classList);
 
-  $(`#box${user_team}1`).empty();
-  $(`#box${user_team}2`).empty();
-  $(`#box${user_team}3`).empty();
-  $(`#box${user_team}4`).empty();  
+  // rearrangeClues_intercept_JS(game_state_full_server['round_boxes'], game_state_full_server['round_boxes']['mixed_position'], user_team);
+  console.log('rearrangeClues_intercept_JS');
+  console.log(round_d);
+  // console.log(round_d, mixed_position, user_team);
+  // console.log(round_d, mixed_position, user_team);
+  // $(`#box${user_team}1`).empty();
+  // $(`#box${user_team}2`).empty();
+  // $(`#box${user_team}3`).empty();
+  // $(`#box${user_team}4`).empty();  
 
   var other_team = '';
   if (user_team == '1'){
@@ -334,10 +361,16 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   clue3.setAttribute('draggable', 'true');
   clue3.innerHTML = input[2];
 
+  $(`#box${other_team}1`).empty();
+  $(`#box${other_team}2`).empty();
+  $(`#box${other_team}3`).empty();
+  $(`#box${other_team}4`).empty();  
+
   $(`#box${other_team}${mixed_position[1]}`).prepend(clue1);
   $(`#box${other_team}${mixed_position[2]}`).prepend(clue2);
   $(`#box${other_team}${mixed_position[0]}`).prepend(clue3);
   console.log('appened')
+  // console.log($(`#box${other_team}${mixed_position[1]}`));
 
   columns = document.querySelectorAll(`.draggable_clue_${other_team}`);
   draggingClass = 'dragging';
@@ -390,10 +423,8 @@ function startNewRound_JS (user_name) {
   setTimeout(function(){
     alert.remove();
   }, 8000);
-  
-  document.getElementById('giveClues').disabled = false;
   console.log('giveClues.disabled = false here');
-  document.getElementById('startNewRound').disabled = true;
+
   $(`#box11`).empty();
   $(`#box12`).empty();
   $(`#box13`).empty();
@@ -445,14 +476,79 @@ function intercept_res_JS (result, user_name, game_state_correct_answer) {
 }
 
 function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver){
+
   console.log('syncing');
   console.log(game_state_full_server);
+
   var normal_member_obj = game_state_full_server[`team_${user_team}`]['normal_member'];
   var clue_giver_obj = game_state_full_server[`team_${user_team}`]['clue_giver'];
+  var other_team = '';
+      if (user_team == '1'){
+          other_team = '2';
+      } else {
+          other_team = '1';
+      }
 
+  // populate keywords on reconnection
+  $(`#team_${user_team}_word1 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word1`]);
+  $(`#team_${user_team}_word2 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word2`]);
+  $(`#team_${user_team}_word3 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word3`]);
+  $(`#team_${user_team}_word4 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word4`]);
+
+  // disabled/enable buttons to current default
+  startNewRound.disabled = normal_member_obj["startNewRound"]['disabled'];
+  giveClues.disabled = normal_member_obj["giveClues"]['disabled'];
+  suggestAnswer.disabled = normal_member_obj["suggestAnswer"]['disabled'];
+  submitClues.disabled = normal_member_obj["submitClues"]['disabled'];
+  submitAnswer.disabled = normal_member_obj["submitAnswer"]['disabled'];
+  submitClues.hidden = normal_member_obj["submitClues"]['hide'];
+  submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+  
+  // in case number of communications > 0, populates rowxx view for my team
+  console.log(game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]);
+  for (d of game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]){
+    // console.log(game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]);
+    for (key in d){
+      console.log(key);
+      if (d[key] != 'null') {
+        let previous_words_1 = document.createElement("div");
+        previous_words_1.setAttribute('class',"previous_words_1");
+        previous_words_1.innerHTML  = d[key];
+        $(`#row${key.slice(-2)}`).append(previous_words_1);
+      }
+      else {
+        let previous_words_1 = document.createElement("div");
+        previous_words_1.setAttribute('class',"previous_words_1_empty");
+        $(`#row${key.slice(-2)}`).append(previous_words_1);
+      }
+    }
+  }
+
+  console.log(game_state_full_server[`team_${user_team}`][`team_${other_team}_truth`]);
+  // in case number of communications > 0, populates rowxx for my view of other team
+  for (d of game_state_full_server[`team_${user_team}`][`team_${other_team}_truth`]){
+    
+    for (key in d){
+      if (d[key] != 'null') {
+        let previous_words_1 = document.createElement("div");
+        previous_words_1.setAttribute('class',"previous_words_1");
+        previous_words_1.innerHTML  = d[key];
+        $(`#row${key.slice(-2)}`).append(previous_words_1);
+      }
+      else {
+        let previous_words_1 = document.createElement("div");
+        previous_words_1.setAttribute('class',"previous_words_1_empty");
+        $(`#row${key.slice(-2)}`).append(previous_words_1);
+      }
+    }
+  }
+
+  // when someone already clicked on giveClues, box_with_clue is filled, reconnected 
+  // cluegiver and normal players have different view
   if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) {  
     if (user_id==clue_giver[`team_${user_team}`]) {
       
+      // whether content has be filled or not, editable or not, apply such configs
       var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
       
       let clue_input1 = document.createElement("div");
@@ -494,46 +590,48 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
       var clue_giver_obj = game_state_full_server[`team_${user_team}`]['clue_giver'];
       var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
 
+      // when submitClues clicked, mixed_position is filled, boxes should be filled
       if (mixed_position.length > 0) {
-      console.log(mixed_position);
+        console.log(mixed_position);
 
-      
-      let clue1 = document.createElement("div");
-      clue1.id = `input${user_team}1`;
-      // clue1.setAttribute('type','text');
-      clue1.setAttribute('class',`draggable_clue_${user_team}`);
-      clue1.setAttribute('draggable', 'true');
-      clue1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
-    
-      let clue2 = document.createElement("div");
-      clue2.id = `input${user_team}2`;
-      // clue2.setAttribute('type','text');
-      clue2.setAttribute('class',`draggable_clue_${user_team}`);
-      clue2.setAttribute('draggable', 'true');
-      clue2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
-    
-      let clue3 = document.createElement("div");
-      clue3.id = `input${user_team}3`;
-      // clue3.setAttribute('type','text');
-      clue3.setAttribute('class',`draggable_clue_${user_team}`);
-      clue3.setAttribute('draggable', 'true');
-      clue3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
-    
-      $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
-      $(`#box${user_team}${mixed_position[1]}`).prepend(clue2);
-      $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
-      console.log('appened')
-    
-      columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
-      draggingClass = 'dragging';
-      dragSource;
         
-      Array.prototype.forEach.call(columns, function (col) {
-          col.addEventListener('dragstart', dragStart, false);
-        });
+        let clue1 = document.createElement("div");
+        clue1.id = `input${user_team}1`;
+        // clue1.setAttribute('type','text');
+        clue1.setAttribute('class',`draggable_clue_${user_team}`);
+        clue1.setAttribute('draggable', 'true');
+        clue1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
+      
+        let clue2 = document.createElement("div");
+        clue2.id = `input${user_team}2`;
+        // clue2.setAttribute('type','text');
+        clue2.setAttribute('class',`draggable_clue_${user_team}`);
+        clue2.setAttribute('draggable', 'true');
+        clue2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
+      
+        let clue3 = document.createElement("div");
+        clue3.id = `input${user_team}3`;
+        // clue3.setAttribute('type','text');
+        clue3.setAttribute('class',`draggable_clue_${user_team}`);
+        clue3.setAttribute('draggable', 'true');
+        clue3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
+      
+        $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
+        $(`#box${user_team}${mixed_position[1]}`).prepend(clue2);
+        $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
+        console.log('appened')
+      
+        columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
+        draggingClass = 'dragging';
+        dragSource;
+          
+        Array.prototype.forEach.call(columns, function (col) {
+            col.addEventListener('dragstart', dragStart, false);
+          });
    
       }
 
+      // disable and enable buttons for normal member
       startNewRound.disabled = normal_member_obj["startNewRound"]['disabled'];
       giveClues.disabled = normal_member_obj["giveClues"]['disabled'];
       suggestAnswer.disabled = normal_member_obj["suggestAnswer"]['disabled'];
@@ -542,39 +640,66 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
       submitClues.hidden = normal_member_obj["submitClues"]['hide'];
       submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+      // console.log(normal_member_obj);
+      // console.log(submitClues);
     }
 
   }
 
+  // if phase 2, other teams' boxes should be populated
+  if (phase=="2") {
+    rearrangeClues_intercept_JS(game_state_full_server['round_boxes'], game_state_full_server['round_boxes']['mixed_position'], user_team);
+  }
+
+  // if someone already suggested something, change view accordingly for reconnected 
   if (Object.keys(game_state_full_server[`team_${user_team}`]['suggest']).length > 0) {
-    if (phase=="2") {
-      var other_team = '';
-      if (user_team == '1'){
-          other_team = '2';
-      } else {
-          other_team = '1';
-      }
-      rearrangeSuggest_JS('reconnect_user', other_team, game_state_full_server[`team_${user_team}`]['suggest']);
-    } else {
-      rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest']);
-    }
+    // if (phase=="2") {
+    //   // console.log(game_state_full_server[`team_${user_team}`]['suggest']);
+    //   rearrangeSuggest_JS('reconnect_user', other_team, game_state_full_server[`team_${user_team}`]['suggest']);
+    // } else {
+    //   rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest']);
+    // }
+    rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest'], phase);
+    console.log(game_state_full_server[`team_${user_team}`]['suggest']);
   }
 
-  $(`#team_${user_team}_word1 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word1`]);
-  $(`#team_${user_team}_word2 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word2`]);
-  $(`#team_${user_team}_word3 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word3`]);
-  $(`#team_${user_team}_word4 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word4`]);
+  if (game_state_full_server['round_finished']) {
+    console.log('round_finished');
+    console.log(normal_member_obj);
+    startNewRound.disabled = false;
+    giveClues.disabled = true;
+    suggestAnswer.disabled = true;
+    submitClues.disabled = true;
+    submitAnswer.disabled = true;
+    submitClues.hidden = false;
+    submitAnswer.hidden = false;
+  }
+
   
-  console.log(normal_member_obj);
-  startNewRound.disabled = normal_member_obj["startNewRound"]['disabled'];
-  giveClues.disabled = normal_member_obj["giveClues"]['disabled'];
-  suggestAnswer.disabled = normal_member_obj["suggestAnswer"]['disabled'];
-  submitClues.disabled = normal_member_obj["submitClues"]['disabled'];
-  submitAnswer.disabled = normal_member_obj["submitAnswer"]['disabled'];
-  submitClues.hidden = normal_member_obj["submitClues"]['hide'];
-  submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
 
 }
+
+const el = document.querySelector('.arrow')
+const menu = document.querySelector('.menu');
+
+el.onclick = function(){
+  menu.classList.toggle("showmenu");
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.arrow')&&!(event.target.matches('.menu')||event.target.matches('.menu__item'))) {
+    menu.classList.remove('showmenu')
+  }
+}
+
+
+
+
+
+
+  //I'm adding this section so I don't have to keep updating this pen every year :-)
+  //remove this if you don't need it
+
 
 
 // function serializeDOM(element) {
