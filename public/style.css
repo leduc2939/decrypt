@@ -25,6 +25,7 @@
     left: 20%;
     right: 20%;
     border-width: 5px;
+    background-color: #adadadc4;
 }
 
 .enter_button {
@@ -52,7 +53,7 @@
     border: 1px solid rgb(55, 55, 204);
     border-radius: 25px;
     color: #000000;
-    background-color: rgb(130, 152, 226);
+    background-color: rgba(130, 152, 226, 0.525);
   }
 
 .glow_active {
@@ -80,7 +81,7 @@ justify-content:center;
     border: 1px solid rgb(204, 55, 55);
     border-radius: 25px;
     color: #000000;
-    background-color: #d39c9c;
+    background-color: #d39c9c84;
   }
 
 .glow2:hover {
@@ -173,10 +174,15 @@ body {
     margin-bottom: 6px;
 }
 .middlerow {
-    width: 1000px;
+    width: 150px;
     height: 30px;
-    margin-right: 12px;
+    /* margin-right: 12px; */
     margin-bottom: 6px;
+    /* align-items: center;
+    text-align: center; */
+    /* display: flex;
+    flex-direction: row;
+    align-items: flex-start */
 }
 .previous_words_1 {
     
@@ -399,13 +405,14 @@ body {
 
 .countdown-container {
     display:inline-block;
-    border: 1px solid rgb(55, 55, 204);
+    border: 1px solid rgb(7, 7, 7);
     width: 100px;
     height: 50px;
     border-radius:4px;
     left: 30%;
     text-align: center;
     font-size: 21px;
+    background-color: #535151;
 }
 
 .startNewRound {
@@ -413,7 +420,7 @@ body {
     white-space: nowrap;
     height: 50px;
     width:100px
-    /* flex-basis: 10%; */
+    
 }
 
 /* .table {
@@ -507,3 +514,213 @@ background-color: rgb(163, 163, 163);
 padding: 10px;
 display: none;
 }
+
+.game-button {
+    position: relative;
+    /* top: 0; */
+    cursor: pointer;
+    text-decoration: none !important;
+    outline: none !important;
+    font-family: 'Carter One', sans-serif;
+    font-size: 12px;
+    /* line-height: 1em;
+    letter-spacing: .1em; */
+    height: 30px;
+    width: 100px;
+    text-shadow: 2px 2px 1px #0066a2, -2px 2px 1px #0066a2, 2px -2px 1px #0066a2, -2px -2px 1px #0066a2, 0px 2px 1px #0066a2, 0px -2px 1px #0066a2, 0px 4px 1px #004a87, 2px 4px 1px #004a87, -2px 4px 1px  #004a87;
+    border: none;
+    /* margin: 15px 15px 30px; */
+    background: repeating-linear-gradient( 45deg, #3ebbf7, #3ebbf7 5px, #45b1f4 5px, #45b1f4 10px);
+    border-bottom: 3px solid rgba(16, 91, 146, 0.5);
+    border-top: 3px solid rgba(255,255,255,.3);
+    color: #fff !important;
+    border-radius: 8px;
+    left:0%;
+    /* padding: 8px 15px 10px;
+    box-shadow: 0 6px 0 #266b91, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #12517d, 0 12px 0 5px #1a6b9a, 0 15px 0 5px #0c405e, 0 15px 1px 6px rgba(0,0,0,.3); */
+  }
+  /* .game-button:hover {
+    top:2px;
+    /* box-shadow: 0 4px 0 #266b91, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #12517d, 0 10px 0 5px #1a6b9a, 0 13px 0 5px #0c405e, 0 13px 1px 6px rgba(0,0,0,.3); */
+  /* }  */
+  .game-button::before {
+    content: '';
+    height: 10%;
+    position: absolute;
+    width: 40%;
+    background: #fff;
+    right: 13%;
+    top: -3%;
+    border-radius: 99px;
+    }
+  .game-button::after {
+    content: '';
+    height: 10%;
+    position: absolute;
+    width: 5%;
+    background: #fff;
+    right: 5%;
+    top: -3%;
+    border-radius: 99px;
+    }
+    .game-button:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    /* border: 1px solid #999999; */
+      /* background-color: #cccccc; */
+      /* color: #353535; */
+    /* } */
+
+      
+  .game-button.orange {
+     background: repeating-linear-gradient( 45deg, #ffc800, #ffc800 5px, #ffc200 5px, #ffc200 10px);
+    /* box-shadow: 0 6px 0 #b76113, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #75421f, 0 12px 0 5px #8a542b, 0 15px 0 5px #593116, 0 15px 1px 6px rgba(0,0,0,.3); */
+    border-bottom: 3px solid rgba(205, 102, 0, 0.5);
+    text-shadow: 2px 2px 1px #e78700, -2px 2px 1px #e78700, 2px -2px 1px #e78700, -2px -2px 1px #e78700, 0px 2px 1px #e78700, 0px -2px 1px #e78700, 0px 4px 1px #c96100, 2px 4px 1px #c96100, -2px 4px 1px  #c96100;
+    height: 30px;
+    width: 100px;
+}
+  /* .game-button.orange:hover {
+    top:2px;
+    /* box-shadow: 0 4px 0 #b76113, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #75421f, 0 10px 0 5px #8a542b, 0 13px 0 5px #593116, 0 13px 1px 6px rgba(0,0,0,.3); */
+  /* } */
+   
+  .game-button.red {
+     background: repeating-linear-gradient( 45deg, #ff4f4c, #ff4f4c 5px, #ff4643 5px, #ff4643 10px);
+    /* box-shadow: 0 6px 0 #ae2725, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #831614, 0 12px 0 5px #a33634, 0 15px 0 5px #631716, 0 15px 1px 6px rgba(0,0,0,.3); */
+    border-bottom: 3px solid rgba(160, 25, 23, 0.5);
+    text-shadow: 2px 2px 1px #d72d21, -2px 2px 1px #d72d21, 2px -2px 1px #d72d21, -2px -2px 1px #d72d21, 0px 2px 1px #d72d21, 0px -2px 1px #d72d21, 0px 4px 1px #930704, 2px 4px 1px #930704, -2px 4px 1px  #930704;
+  }
+  /* .game-button.red:hover {
+    top:2px;
+    /* box-shadow: 0 4px 0 #ae2725, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #831614, 0 10px 0 5px #a33634, 0 13px 0 5px #631716, 0 13px 1px 6px rgba(0,0,0,.3); */
+  /* } */
+
+  .game-button.green {
+     background: repeating-linear-gradient( 45deg, #54d440, #54d440 5px, #52cc3f 5px, #52cc3f 10px);
+      /* box-shadow: 0 6px 0 #348628, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #2a6d20, 0 12px 0 5px #39822e, 0 15px 0 5px #1d4c16, 0 15px 1px 6px rgba(0,0,0,.3); */
+      border-bottom: 3px solid rgba(40, 117, 29, 0.5);
+      text-shadow: 2px 2px 1px #348628, -2px 2px 1px #348628, 2px -2px 1px #348628, -2px -2px 1px #348628, 0px 2px 1px #348628, 0px -2px 1px #348628, 0px 4px 1px #1d4c16, 2px 4px 1px #1d4c16, -2px 4px 1px #1d4c16;
+      height: 30px;
+      width: 100px;
+      text-align: center;
+      align-items: right;
+      position:absolute;
+    left: 60%;
+    z-index: 99999;
+      /* position: s; */
+    }
+  /* .game-button.green:hover {
+    top:2px;
+    /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
+  /* }  */
+
+  .game-button.blue_new_round {
+    height: 50px;
+    width: 100px;
+    text-shadow: 2px 2px 1px #0066a2, -2px 2px 1px #0066a2, 2px -2px 1px #0066a2, -2px -2px 1px #0066a2, 0px 2px 1px #0066a2, 0px -2px 1px #0066a2, 0px 4px 1px #004a87, 2px 4px 1px #004a87, -2px 4px 1px  #004a87;
+    border: none;
+    /* margin: 15px 15px 30px; */
+    background: repeating-linear-gradient( 45deg, #3ebbf7, #3ebbf7 5px, #45b1f4 5px, #45b1f4 10px);
+    border-bottom: 3px solid rgba(16, 91, 146, 0.5);
+    border-top: 3px solid rgba(255,255,255,.3);
+    color: #fff !important;
+     text-align: center;
+     align-items: right;
+   }
+ /* .game-button.green:hover {
+   top:2px;
+   /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
+ /* } */ 
+ .game-button.blue_menu {
+    text-shadow: 2px 2px 1px #0066a2, -2px 2px 1px #0066a2, 2px -2px 1px #0066a2, -2px -2px 1px #0066a2, 0px 2px 1px #0066a2, 0px -2px 1px #0066a2, 0px 4px 1px #004a87, 2px 4px 1px #004a87, -2px 4px 1px  #004a87;
+    border: none;
+    /* margin: 15px 15px 30px; */
+    background: repeating-linear-gradient( 45deg, #3ebbf7, #3ebbf7 5px, #45b1f4 5px, #45b1f4 10px);
+    border-bottom: 3px solid rgba(16, 91, 146, 0.5);
+    border-top: 3px solid rgba(255,255,255,.3);
+    color: #fff !important;
+     text-align: center;
+     align-items: right;
+     height:50px;
+     width: 50px;
+   }
+   /* .game-button.blue_menu:hover {
+    top:2px;
+    /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
+  /* }  */
+  .game-button.purple {
+    background: repeating-linear-gradient( 45deg, #df05c9, #ba3296 5px, #9d528a 5px, #df5fd9 10px);
+     /* box-shadow: 0 6px 0 #348628, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #2a6d20, 0 12px 0 5px #39822e, 0 15px 0 5px #1d4c16, 0 15px 1px 6px rgba(0,0,0,.3); */
+     border-bottom: 3px solid rgba(96, 27, 87, 0.5);
+     text-shadow: 2px 2px 1px #62185a, -2px 2px 1px #3c082f, 2px -2px 1px #2b0639, -2px -2px 1px #570f5d, 0px 2px 1px #680d61, 0px -2px 1px #76487f, 0px 4px 1px #3a042f, 2px 4px 1px #4b0534, -2px 4px 1px #2c012a;
+     height: 30px;
+     width: 100px;
+     text-align: center;
+     align-items: right;
+   }
+ /* .game-button.purple:hover {
+   top:2px;
+   /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
+ /* } */ 
+ .game-button.enter_game {
+    background: repeating-linear-gradient( 45deg, #ff4f4c, #ff4f4c 5px, #ff4643 5px, #ff4643 10px);
+    /* box-shadow: 0 6px 0 #ae2725, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #831614, 0 12px 0 5px #a33634, 0 15px 0 5px #631716, 0 15px 1px 6px rgba(0,0,0,.3); */
+    border-bottom: 3px solid rgba(160, 25, 23, 0.5);
+    text-shadow: 2px 2px 1px #d72d21, -2px 2px 1px #d72d21, 2px -2px 1px #d72d21, -2px -2px 1px #d72d21, 0px 2px 1px #d72d21, 0px -2px 1px #d72d21, 0px 4px 1px #930704, 2px 4px 1px #930704, -2px 4px 1px  #930704;
+     height: 50px;
+     width: 100px;
+     /* text-align: center; */
+     /* align-items: right; */
+     position: absolute;
+    top: 50%;
+    left: 35%;
+    right: 35%;
+    font-size: 20px;
+     }
+ /* .game-button.enter_game:hover {
+   top:2px;
+   box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3);
+ } */
+ 
+ /* .messages {
+
+ } */
+
+ .messages {
+    width: 500px;
+    height: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f0f1f3c2;
+  }
+  
+  .chat-message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .chat-message-sender {
+    font-weight: bold;
+  }
+  
+  .chat-message-content {
+    font-size: 14px;
+  }
+  
+  .chat-box-expand-button {
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #ccc;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .chat-box-expand-button:hover {
+    background-color: #eee;
+  }

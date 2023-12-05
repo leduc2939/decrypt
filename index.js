@@ -194,7 +194,7 @@ fetchLines('https://gist.githubusercontent.com/leduc2939/4b5758704bc2beda0d77085
 
 fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4604d77a22/raw/675d2a9410db34239c15c4ea4082346f919de1bd/name_list.txt')
   .then(lines => {
-    wordlist = lines;
+    namelist = lines;
   })
   .catch(error => {
     console.error("Error fetching lines:", error);
@@ -781,7 +781,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('generate_random_name', () =>{
-    gen_name = namelist[Math.floor(Math.random())*namelist.length];
+    var gen_name = namelist[Math.floor(Math.random()*namelist.length)];
+    
     socket.emit('generated_name', gen_name);
   });
 

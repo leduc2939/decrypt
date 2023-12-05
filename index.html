@@ -32,15 +32,14 @@
 
     <div id = container>
 
-    </div>
 
+    
 
     <div class="decryptr--head--row">
         
-            <button id="startNewRound" class="startNewRound" disabled >
+            <button id="startNewRound" class="game-button blue_new_round" disabled >
                 New Round
             </button>
-
             <div class="countdown-container" id="countdown-container">
                 <div id="countdown"></div>
             </div>
@@ -58,10 +57,10 @@
                 </tr>
             </table>
 
-            <button class="menu-button">Menu</button>
-            <div class="menu">
+            <button class="game-button blue_menu" id="menu-button">Menu</button>
+            <div class="menu" id="menu">
       
-                <button id="newGame" class="newGame" >
+                <button id="newGame" class="game-button red" >
                     New Game
                 </button>
                 <hr></hr>
@@ -116,10 +115,11 @@
                     <span class="m-auto">?</span>
                 </div>
             </div>
-
-            <button class='giveClues' id="giveClues" disabled>
+            <div class="middlerow">
+            <button class='game-button purple' id="giveClues" disabled>
                 Give Clues
             </button>
+            </div>
 
 <!-- team 2 keywords -->
             <div class="decryptr--row">
@@ -162,7 +162,7 @@
             </div>
 
             <div class="middlerow">
-                <button class="suggest" id="suggestAnswer" disabled>
+                <button class="game-button orange" id="suggestAnswer" disabled>
                     Suggest
                 </button>
             </div>
@@ -198,10 +198,13 @@
             
 
             <div class="middlerow">
-                <button disabled class="submit_clue" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <!-- <button disabled class="game-button green" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Submit
+                </button> -->
+                <button disabled class="game-button green" id="submitClues"> 
                     Submit
                 </button>
-                <button disabled class="submitAnswer" id="submitAnswer">
+                <button disabled class="game-button green" id="submitAnswer">
                     Submit
                 </button>
             </div>
@@ -225,9 +228,9 @@
 
     
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input id="input" autocomplete="off" /><button class="game-button">Send</button>
     </form>
-    <ul id="messages"></ul>
+    <ul id="messages" class="messages"></ul>
 </div>
 
 </div>
@@ -750,8 +753,8 @@
     });
 
     
-    const menuButton = document.querySelector('.menu-button');
-    const menuElement = document.querySelector('.menu');
+    const menuButton = document.getElementById('menu-button');
+    const menuElement = document.getElementById('menu');
 
     menuButton.addEventListener('click', () => {
         const menuButtonPosition = menuButton.getBoundingClientRect();
