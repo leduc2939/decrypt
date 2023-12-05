@@ -679,22 +679,18 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
 }
 
-const el = document.querySelector('.arrow')
-const menu = document.querySelector('.menu');
+// const el = document.querySelector('.arrow')
+// const menu = document.querySelector('.menu');
 
-el.onclick = function(){
-  menu.classList.toggle("showmenu");
-}
+// el.onclick = function(){
+//   menu.classList.toggle("showmenu");
+// }
 
-window.onclick = function(event) {
-  if (!event.target.matches('.arrow')&&!(event.target.matches('.menu')||event.target.matches('.menu__item'))) {
-    menu.classList.remove('showmenu')
-  }
-}
-
-
-
-
+// window.onclick = function(event) {
+//   if (!event.target.matches('.arrow')&&!(event.target.matches('.menu')||event.target.matches('.menu__item'))) {
+//     menu.classList.remove('showmenu')
+//   }
+// }
 
 
   //I'm adding this section so I don't have to keep updating this pen every year :-)

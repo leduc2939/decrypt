@@ -176,6 +176,7 @@ mixed_position_state['team_2'] = [];
 var team_1_keywords = [];
 var team_2_keywords = [];
 var wordlist = [];
+var namelist = [];
 
 function fetchLines(url) {
   return fetch(url)
@@ -183,13 +184,23 @@ function fetchLines(url) {
     .then(text => text.split('\n'));
 }
 
-fetchLines('https://gist.githubusercontent.com/leduc2939/a4ca0c8efadec2b21af9dcf3c947b94f/raw/decrypto_word.txt')
+fetchLines('https://gist.githubusercontent.com/leduc2939/4b5758704bc2beda0d7708525f191794/raw/6864798cac0cb6b61b96e33ad1adca438e409ae7/decrypto_wordlist.txt')
   .then(lines => {
     wordlist = lines;
   })
   .catch(error => {
     console.error("Error fetching lines:", error);
   });
+
+fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4604d77a22/raw/675d2a9410db34239c15c4ea4082346f919de1bd/name_list.txt')
+  .then(lines => {
+    wordlist = lines;
+  })
+  .catch(error => {
+    console.error("Error fetching lines:", error);
+});
+
+
 
 io.on('connection', (socket) => {
   user_team[socket.id] = 1;
@@ -232,7 +243,137 @@ io.on('connection', (socket) => {
       team_2_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
     }
     io.emit('newGame_JS',team_1_keywords,team_2_keywords);
-    
+    io.emit('server_stopClock', "1");
+    io.emit('server_stopClock', "2");
+
+    game_state_full_server['team_1'] = {};
+    game_state_full_server['team_2'] = {};
+    game_state_full_server['team_1']['normal_member'] = {};
+    game_state_full_server['team_1']['clue_giver'] = {};
+    game_state_full_server['team_2']['normal_member'] = {};
+    game_state_full_server['team_2']['clue_giver'] = {};
+
+    game_state_full_server['team_1']['normal_member']["team_1_word1"] = "?";
+    game_state_full_server['team_1']['normal_member']["team_1_word2"] = "?";
+    game_state_full_server['team_1']['normal_member']["team_1_word3"] = "?";
+    game_state_full_server['team_1']['normal_member']["team_1_word4"] = "?";
+    game_state_full_server['team_2']['normal_member']["team_2_word1"] = "?";
+    game_state_full_server['team_2']['normal_member']["team_2_word2"] = "?";
+    game_state_full_server['team_2']['normal_member']["team_2_word3"] = "?";
+    game_state_full_server['team_2']['normal_member']["team_2_word4"] = "?";
+
+    game_state_full_server['team_1']['clue_giver']["boxes_with_clue"] = [] ;
+    game_state_full_server['team_2']['clue_giver']["boxes_with_clue"] = [] ;
+    game_state_full_server['team_1']['normal_member']["boxes_with_clue"] = [] ;
+    game_state_full_server['team_2']['normal_member']["boxes_with_clue"] = [] ;
+
+    game_state_full_server['team_1']['clue_giver']["box11"] = {} ;
+    game_state_full_server['team_1']['clue_giver']["box12"] = {} ;
+    game_state_full_server['team_1']['clue_giver']["box13"] = {} ;
+    game_state_full_server['team_1']['clue_giver']["box14"] = {} ;
+    game_state_full_server['team_2']['clue_giver']["box21"] = {} ;
+    game_state_full_server['team_2']['clue_giver']["box22"] = {} ;
+    game_state_full_server['team_2']['clue_giver']["box23"] = {} ;
+    game_state_full_server['team_2']['clue_giver']["box24"] = {} ;
+
+
+    game_state_full_server['team_1']['clue_giver']["box11"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box12"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box13"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box14"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box21"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box22"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box23"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box24"]['innerHTML'] = "" ;
+
+
+    game_state_full_server['team_1']['clue_giver']["box11"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box12"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box13"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box14"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box21"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box22"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box23"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box24"]['contenteditable'] = "true" ;
+
+
+    game_state_full_server['team_1']['clue_giver']["giveClues"] = {}
+    game_state_full_server['team_1']['clue_giver']["submitClues"] = {}
+    game_state_full_server['team_1']['clue_giver']["suggestAnswer"] = {}
+    game_state_full_server['team_1']['clue_giver']["submitAnswer"] = {}
+    game_state_full_server['team_1']['clue_giver']["startNewRound"] = {}
+
+    game_state_full_server['team_1']['normal_member']["giveClues"] = {}
+    game_state_full_server['team_1']['normal_member']["submitClues"] = {}
+    game_state_full_server['team_1']['normal_member']["suggestAnswer"] = {}
+    game_state_full_server['team_1']['normal_member']["submitAnswer"] = {}
+    game_state_full_server['team_1']['normal_member']["startNewRound"] = {}
+
+    game_state_full_server['team_2']['clue_giver']["giveClues"] = {}
+    game_state_full_server['team_2']['clue_giver']["submitClues"] = {}
+    game_state_full_server['team_2']['clue_giver']["suggestAnswer"] = {}
+    game_state_full_server['team_2']['clue_giver']["submitAnswer"] = {}
+    game_state_full_server['team_2']['clue_giver']["startNewRound"] = {}
+
+    game_state_full_server['team_2']['normal_member']["giveClues"] = {}
+    game_state_full_server['team_2']['normal_member']["submitClues"] = {}
+    game_state_full_server['team_2']['normal_member']["suggestAnswer"] = {}
+    game_state_full_server['team_2']['normal_member']["submitAnswer"] = {}
+    game_state_full_server['team_2']['normal_member']["startNewRound"] = {}
+
+    game_state_full_server['team_1']['clue_giver']["giveClues"]['disabled'] = true;
+    game_state_full_server['team_1']['clue_giver']["submitClues"]['disabled'] = true;
+    game_state_full_server['team_1']['clue_giver']["suggestAnswer"]['disabled'] = true;
+    game_state_full_server['team_1']['clue_giver']["submitAnswer"]['disabled'] = true;
+    game_state_full_server['team_1']['clue_giver']["startNewRound"]['disabled'] = true;
+
+    game_state_full_server['team_1']['normal_member']["giveClues"]['disabled'] = true;
+    game_state_full_server['team_1']['normal_member']["submitClues"]['disabled'] = true;
+    game_state_full_server['team_1']['normal_member']["suggestAnswer"]['disabled'] = true;
+    game_state_full_server['team_1']['normal_member']["submitAnswer"]['disabled'] = true;
+    game_state_full_server['team_1']['normal_member']["startNewRound"]['disabled'] = true;
+
+
+    game_state_full_server['team_1']['clue_giver']["submitClues"]['hide'] = false;
+    game_state_full_server['team_1']['clue_giver']["submitAnswer"]['hide'] = false;
+    game_state_full_server['team_1']['normal_member']["submitClues"]['hide'] = false;
+    game_state_full_server['team_1']['normal_member']["submitAnswer"]['hide'] = false;
+
+
+
+    game_state_full_server['team_2']['clue_giver']["giveClues"]['disabled'] = true;
+    game_state_full_server['team_2']['clue_giver']["submitClues"]['disabled'] = true;
+    game_state_full_server['team_2']['clue_giver']["suggestAnswer"]['disabled'] = true;
+    game_state_full_server['team_2']['clue_giver']["submitAnswer"]['disabled'] = true;
+    game_state_full_server['team_2']['clue_giver']["startNewRound"]['disabled'] = true;
+
+    game_state_full_server['team_2']['normal_member']["giveClues"]['disabled'] = true;
+    game_state_full_server['team_2']['normal_member']["submitClues"]['disabled'] = true;
+    game_state_full_server['team_2']['normal_member']["suggestAnswer"]['disabled'] = true;
+    game_state_full_server['team_2']['normal_member']["submitAnswer"]['disabled'] = true;
+    game_state_full_server['team_2']['normal_member']["startNewRound"]['disabled'] = true;
+
+    game_state_full_server['team_2']['clue_giver']["submitClues"]['hide'] = false;
+    game_state_full_server['team_2']['clue_giver']["submitAnswer"]['hide'] = false;
+    game_state_full_server['team_2']['normal_member']["submitClues"]['hide'] = false;
+    game_state_full_server['team_2']['normal_member']["submitAnswer"]['hide'] = false;
+
+    game_state_full_server['team_1']['suggest'] = {};
+    game_state_full_server['team_2']['suggest'] = {};
+
+
+    game_state_full_server['team_1']['team_1_truth'] = [];
+    game_state_full_server['team_1']['team_2_truth'] = [];
+
+    game_state_full_server['team_2']['team_1_truth'] = [];
+    game_state_full_server['team_2']['team_2_truth'] = [];
+
+    game_state_full_server['round_finished'] = false;
+
+
+    clue_giver['team_1'] = "";
+    clue_giver['team_2'] = "";
+
     game_state_full_server['team_1']['normal_member']["team_1_word1"] = team_1_keywords[0];
     game_state_full_server['team_1']['normal_member']["team_1_word2"] = team_1_keywords[1];  
     game_state_full_server['team_1']['normal_member']["team_1_word3"] = team_1_keywords[2];  
@@ -258,6 +399,7 @@ io.on('connection', (socket) => {
     
     console.log(team_1_keywords);
     console.log(team_2_keywords);
+    
     
   })
   
@@ -624,11 +766,23 @@ io.on('connection', (socket) => {
     phase = current_phase;
   });
 
+  socket.on('stopClock', (user_team)=> {
+    io.emit('server_stopClock', user_team);
+  });
 
   socket.on('reconnect_sync_up', (user_id, user_team) => {
     if (game_started){
-        socket.emit('reconnect_sync_up_js', game_state_full_server, phase, clue_giver);
+        socket.emit('reconnect_sync_up_js', game_state_full_server, phase, clue_giver,user_db);
       }
+      else{
+        socket.emit('team_member_update',user_db);
+        console.log('team_member_update sent');
+      }
+  });
+
+  socket.on('generate_random_name', () =>{
+    gen_name = namelist[Math.floor(Math.random())*namelist.length];
+    socket.emit('generated_name', gen_name);
   });
 
   
@@ -649,9 +803,9 @@ io.on('connection', (socket) => {
 
 
 
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
+  socket.on('chat message', (msg, user_name) => {
+    console.log(user_name + " " + msg);
+    io.emit('chat message', msg, user_name);
   });
 
 });
@@ -659,4 +813,5 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });
+
 

@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="style.css" />      
 
 </head>
-<body id="body">
+<body class="body_game" id="body">
     
     <div id = 'whole'>
       <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -30,30 +30,64 @@
         </div>
       </div>
 
+    <div id = container>
+
+    </div>
 
 
-<div class="container" id = "container">
-    <button id="startNewRound" disabled>
-        Start New Round
-    </button>
+    <div class="decryptr--head--row">
+        
+            <button id="startNewRound" class="startNewRound" disabled >
+                New Round
+            </button>
 
-    <div class="countdown-container">
-        <div id="countdown"></div>
+            <div class="countdown-container" id="countdown-container">
+                <div id="countdown"></div>
+            </div>
+
+            <table>
+                <tr>
+                  <td class="table-cell">miscommunicate</td>
+                  <td class="table-cell-blue" id="miscommunicate_blue">0</td>
+                  <td class="table-cell-red" id="miscommunicate_red">0</td>
+                </tr>
+                <tr>
+                  <td class="table-cell">intercept</td>
+                  <td class="table-cell-blue" id="intercept_blue">0</td>
+                  <td class="table-cell-red" id="intercept_red">0</td>
+                </tr>
+            </table>
+
+            <button class="menu-button">Menu</button>
+            <div class="menu">
+      
+                <button id="newGame" class="newGame" >
+                    New Game
+                </button>
+                <hr></hr>
+                <div>Team Thua</div>
+                <ul id="Team_Thua_Members">    
+
+                </ul>      
+                <div>Team Loser</div>
+                <ul id="Team_Loser_Members">    
+
+                </ul> 
+            </div>
+
+            <!-- <a href="javascript:;" class="arrow">◄</a>
+                <ul class="menu">
+                <li class="menu__item">
+                    <button id="newGame">
+                        New Game
+                    </button>
+                    </li>
+                </ul> -->
     </div>
 
 
 
-    <a href="javascript:;" class="arrow">◄</a>
-        <ul class="menu">
-          <li class="menu__item">
-            <button id="newGame">
-                New Game
-            </button>
-
-
-
-          </li>
-        </ul>
+         
     
     
     <div class="decryptr d-flex mt-4">
@@ -189,10 +223,11 @@
 
     
 
-    <ul id="messages"></ul>
+    
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+    <ul id="messages"></ul>
 </div>
 
 </div>
@@ -237,8 +272,12 @@
     var submitAnswer = document.getElementById('submitAnswer');
     var submitClues = document.getElementById('submitClues');
     var suggestAnswer = document.getElementById('suggestAnswer');
-    
+    var timerInterval;
 
+    var miscommunicate_blue = document.getElementById('miscommunicate_blue');
+    var miscommunicate_blue = document.getElementById('miscommunicate_red');
+    var intercept_blue = document.getElementById('intercept_blue'); 
+    var intercept_red = document.getElementById('intercept_red');
 
     socket.on('connect', function() {
         console.log('connected');
@@ -262,14 +301,50 @@
 
     });
 
-    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, clue_giver) => {
+    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, clue_giver, user_db) => {
         phase = current_phase;
         console.log(my_team);
         // console.log(game_state_full_server);
-        reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver);
+        reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db);
+        console.log(user_db);
+        for (user_id in user_db) {
+            if (user_db[user_id]['user_team'] == "1") {
+                if (user_db[user_id]['user_team']){
+                    var member = document.createElement('li');
+                    member.textContent = user_db[user_id]['user_name'];
+                    document.getElementById('Team_Thua_Members').appendChild(member);
+                }
+            } else {
+                if (user_db[user_id]['user_team']){
+                    var member = document.createElement('li');
+                    member.textContent = user_db[user_id]['user_name'];
+                    document.getElementById('Team_Loser_Members').appendChild(member);
+                }
+            }
+        }
     }); 
 
     
+    socket.on('team_member_update', (user_db) => {
+        console.log('received update_team_member');
+        console.log(user_db);
+        for (user_id in user_db) {
+            if (user_db[user_id]['user_team'] == "1") {
+                if (user_db[user_id]['user_team']){
+                    var member = document.createElement('li');
+                    member.textContent = user_db[user_id]['user_name'];
+                    document.getElementById('Team_Thua_Members').appendChild(member);
+                }
+            } else {
+                if (user_db[user_id]['user_team']){
+                    var member = document.createElement('li');
+                    member.textContent = user_db[user_id]['user_name'];
+                    document.getElementById('Team_Loser_Members').appendChild(member);
+                }
+            }
+        }
+        
+    });
 
     // new games: give new html to all users
     var newGames = document.getElementById('newGame');
@@ -443,6 +518,7 @@
     // button for sending submit-answers signal
     
     submitAnswer.addEventListener('click', function(e) {
+        socket.emit('stopClock', my_team);
         console.log('phase is: ' +phase);
         submitAnswer.disabled = true;
         suggestAnswer.disabled = true;
@@ -528,6 +604,7 @@
             socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
             console.log('submitted communication answer');
         }
+        
     });
 
 
@@ -538,6 +615,16 @@
             submitAnswer.disabled = true;
             suggestAnswer.disabled = true;
             pushRight(result, user_id, game_state_correct_answer);
+            
+        }
+        if (result==0) {
+            if (team=="1"){
+                var newvalue = parseInt(miscommunicate_blue.textContent) + 1;
+                miscommunicate_blue.textContent = newvalue;
+            } else{
+                var newvalue = parseInt(miscommunicate_red.textContent) + 1;
+                miscommunicate_red.textContent = newvalue;
+            }
         }
     });
 
@@ -545,6 +632,7 @@
     socket.on('roundCompleted', () => {
         console.log('received roundCompleted');
         startNewRound.disabled = false; 
+        countdownDisplay.textContent = "";
     });
 
     // when click on start new round, send signal to clear everything from boxes, reset the clock, update var round, enable giveClues
@@ -558,6 +646,7 @@
     });
     const countdownDisplay = document.getElementById('countdown');
     
+    
     // receive startNewRound_JS from server and update site
     socket.on('startNewRound_JS', (user_name) => {
         console.log('received startNewRound_JS');
@@ -570,18 +659,18 @@
 
         let remainingTime = 5 * 60; // 5 minutes in seconds
         timerInterval = setInterval(() => {
-        if (remainingTime <= 0) {
-            clearInterval(timerInterval);
-            countdownDisplay.textContent = 'Countdown finished!';
-            return;
-        }
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                countdownDisplay.textContent = "Time's up";
+                return;
+            }
 
-        const minutes = Math.floor(remainingTime / 60);
-        const seconds = remainingTime % 60;
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
 
-        countdownDisplay.textContent = `${minutes}:${seconds}`;
+            countdownDisplay.textContent = `${minutes}:${seconds}`;
 
-        remainingTime--;
+            remainingTime--;
         }, 1000); // Update the countdown every second
  
     });
@@ -595,6 +684,23 @@
         submitClues.hidden = true;
         submitAnswer.disabled = false;
         suggestAnswer.disabled = false;
+
+        clearInterval(timerInterval);
+        var remainingTime = 5 * 60; // 5 minutes in seconds
+        timerInterval = setInterval(() => {
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                countdownDisplay.textContent = "Time's up";
+                return;
+            }
+
+            var minutes = Math.floor(remainingTime / 60);
+            var seconds = remainingTime % 60;
+
+            countdownDisplay.textContent = `${minutes}:${seconds}`;
+
+            remainingTime--;
+        }, 1000); // Update the countdown every second
     });
 
     // receive intercept_res, lock submit button
@@ -605,6 +711,16 @@
             console.log('its my team');
             intercept_res_JS(result, user_name, game_state_correct_answer);
         }
+        if (result==1) {
+            if (user_team=="2"){
+                var newvalue = parseInt(intercept_blue.textContent) + 1;
+                intercept_blue.textContent = newvalue;
+            } else{
+                var newvalue = parseInt(intercept_red.textContent) + 1;
+                intercept_red.textContent = newvalue;
+            }
+    }
+    
     });
 
     // chat
@@ -615,15 +731,16 @@
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         if (input.value) {
-        socket.emit('chat message', input.value);
+        socket.emit('chat message', input.value, my_name);
         input.value = '';
         }
     });
 
-    socket.on('chat message', function(msg) {
+    socket.on('chat message', function(msg, user_name) {
+        var named_msg = `${user_name}: ${msg}`; 
         var item = document.createElement('li');
-        item.textContent = msg;
-        messages.appendChild(item);
+        item.textContent = named_msg;
+        messages.prepend(item);
         window.scrollTo(0, document.body.scrollHeight);
     });
 
@@ -633,8 +750,32 @@
     });
 
     
+    const menuButton = document.querySelector('.menu-button');
+    const menuElement = document.querySelector('.menu');
 
-    
+    menuButton.addEventListener('click', () => {
+        const menuButtonPosition = menuButton.getBoundingClientRect();
+        const menuElementWidth = menuElement.offsetWidth;
+
+        menuElement.style.right = `${window.innerWidth - menuButtonPosition.right}px`;
+        menuElement.style.top = `${menuButtonPosition.top + menuButton.offsetHeight}px`;
+        menuElement.style.display = menuElement.style.display === 'block' ? 'none' : 'block';
+    });
+
+    socket.on('server_stopClock', (user_team)=>{
+        console.log('stopClock received');
+        if (my_team==user_team){
+            clearInterval(timerInterval);
+        }
+        
+    });
+
+    // socket.on('server_clearClock', ()=>{
+    //     console.log('clearClock received');
+    //     countdownDisplay.textContent = "";
+        
+    // });
+        
   
 </script>
 

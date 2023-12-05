@@ -1,8 +1,30 @@
+.body_login {
+    background-image: url('decrypto_background.jpg');
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    /* background-repeat: no-repeat; */
+}
+
+.body_game {
+    background-image: url('conan.jpg');
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    /* background-repeat: no-repeat; */
+}
 .user_name_input {
     position: absolute;
     top: 30%;
     left: 20%;
     right: 20%;
+    border-width: 5px;
 }
 
 .enter_button {
@@ -10,6 +32,7 @@
     top: 50%;
     left: 35%;
     right: 35%;
+    border-width: 5px;
 }
 
 .user_name_input:focus { 
@@ -25,9 +48,11 @@
     top: 40%;
     left: 20%;
     right: 55%;
+    border-width: 5px;
     border: 1px solid rgb(55, 55, 204);
     border-radius: 25px;
     color: #000000;
+    background-color: rgb(130, 152, 226);
   }
 
 .glow_active {
@@ -38,7 +63,7 @@
 }
 
 .glow1 .text {
-font-size: 18px;
+font-size: 15px;
 font-weight: 700;
 display:grid;
 justify-content:center;
@@ -51,9 +76,11 @@ justify-content:center;
     top: 40%;
     left: 55%;
     right: 20%;
+    border-width: 5px;
     border: 1px solid rgb(204, 55, 55);
     border-radius: 25px;
     color: #000000;
+    background-color: #d39c9c;
   }
 
 .glow2:hover {
@@ -75,7 +102,7 @@ justify-content:center;
 }
 
 .glow2 .text {
-font-size: 18px;
+font-size: 15px;
 font-weight: 700;
 display:grid;
 justify-content:center;
@@ -113,21 +140,21 @@ body {
 }
 .decryptr--left {
     /* overflow-x: auto; */
-    width: 20%;
+    width: 25%;
 }
 .decryptr--left > .decryptr--row {
     margin: 0 auto;
 }
 .decryptr--box {
     /* overflow-x: auto; */
-    width: 20%;
+    width: 25%;
 }
 .decryptr--box > .decryptr--row {
     margin: 0 auto;
 }
 .decryptr--right {
     overflow-x: auto;
-    width: 80%;
+    width: 50%;
 }
 .decryptr--row {
     display: flex;
@@ -135,8 +162,18 @@ body {
     min-height: 87px;
     /* margin-bottom: 24px; */
 }
+.decryptr--head--row {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    height: 52px;
+    /* width: max-content; */
+    margin-right: 12px;
+    margin-bottom: 6px;
+}
 .middlerow {
-    width: 100px;
+    width: 1000px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -256,7 +293,7 @@ body {
 }
 
 .giveClues{
-    width: 125px;
+    width: 120px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -270,7 +307,7 @@ body {
     opacity: 0;
 }
 .submit_clue {
-    width: 125px;
+    width: 120px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -280,7 +317,7 @@ body {
 }
 
 .submitAnswer {
-    width: 125px;
+    width: 120px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -290,7 +327,7 @@ body {
 }
 
 .suggest {
-    width: 125px;
+    width: 120px;
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
@@ -337,25 +374,12 @@ body {
 }
 
 
-.arrow{
-    padding:16px;
-    background-color: rgb(190, 190, 190);
-    text-decoration:none;
-    border-radius:10px;
-    font-size: 18px;
-    color:#000000;
-    left: 90%;
-    right:50%;
-    &:hover{
-        transition:0.3s;
-        background-color: #222;
-    }
-} 
+
 .menu{
     position:absolute;
     top: 5%;
-    left: 60%;
-    background-color: #969696;
+    left: 50%;
+    background-color: #dfdfdf;
     border-radius:4px;
     display: none;
     
@@ -374,6 +398,112 @@ body {
 }
 
 .countdown-container {
+    display:inline-block;
+    border: 1px solid rgb(55, 55, 204);
+    width: 100px;
+    height: 50px;
+    border-radius:4px;
+    left: 30%;
     text-align: center;
-    font-size: 24px;
+    font-size: 21px;
+}
+
+.startNewRound {
+    display:inline-block;
+    white-space: nowrap;
+    height: 50px;
+    width:100px
+    /* flex-basis: 10%; */
+}
+
+/* .table {
+    display:inline-block;
+} */
+
+.arrow{
+    display:inline-block;
+    white-space: nowrap;
+    padding:16px;
+    /* background-color: rgb(190, 190, 190); */
+    text-decoration:none;
+    border-radius:5px;
+    font-size: 18px;
+    color:#000000;
+    /* left: 90%;
+    right:50%; */
+    &:hover{
+        transition:0.3s;
+        background-color: #b6b5b5;
+    }
+} 
+
+@media screen and (max-width: 600px) {
+    .decryptr--head--row {
+        display: flex;
+        justify-content: space-between;
+        /* display: grid; */
+        /* grid-template-columns: 20% 50% 30%; */
+    }
+
+    /* .decryptr--head--row div {
+        flex-basis: 100%;
+    } */
+    /* .decryptr--head--row div.startNewRound  {
+        flex-basis: 10%;
+    } */
+    /* .decryptr--head--row div.startNewRound  {
+        grid-column: 1;
+    }
+    .decryptr--head--row div.countdown-container  {
+        grid-column: 2;
+    }
+    .decryptr--head--row div.arrow  {
+        grid-column: 3;
+    } */
+}
+
+.table-cell {
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    text-shadow:
+        0.07em 0 black,
+        0 0.07em black,
+        -0.07em 0 black,
+        0 -0.07em black;
+  }
+
+.table-cell-blue{
+    color:#1c2fda;
+    font-size: 15px;
+    text-shadow:
+        0.07em 0 rgb(12, 0, 80),
+        0 0.07em rgb(62, 64, 160),
+        -0.07em 0 rgb(22, 41, 65),
+        0 -0.07em rgb(29, 15, 219);
+  }
+.table-cell-red {
+    color:#cf2424;
+    font-size: 15px;
+    text-shadow:
+        0.07em 0 rgb(221, 103, 103),
+        0 0.07em rgb(160, 62, 62),
+        -0.07em 0 rgb(65, 22, 22),
+        0 -0.07em rgb(219, 15, 15);
+}
+
+
+.menu-button {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+  }
+  
+.menu {
+position: fixed;
+top: 100%;
+left: 0;
+background-color: rgb(163, 163, 163);
+padding: 10px;
+display: none;
 }
