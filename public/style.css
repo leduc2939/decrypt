@@ -1,3 +1,9 @@
+
+html {
+   
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
 .body_login {
     background-image: url('decrypto_background.jpg');
     position: fixed;
@@ -6,8 +12,16 @@
     width: 100%;
     height: 100%;
     background-size: cover;
+    overflow: scroll;
+
+    /* overflow-y: hidden; */
     /* background-repeat: no-repeat; */
 }
+
+
+.scrollable-content {
+    overflow-y: auto;
+  }
 
 .body_game {
     background-image: url('conan.jpg');
@@ -17,6 +31,9 @@
     width: 100%;
     height: 100%;
     background-size: cover;
+    overflow: scroll;
+    /* display: flex; */
+    /* overflow-y: hidden; */
     /* background-repeat: no-repeat; */
 }
 .user_name_input {
@@ -141,43 +158,48 @@ body {
 }
 .decryptr--left {
     /* overflow-x: auto; */
-    width: 25%;
+    /* width: 25%; */
+    width: 100px;
 }
 .decryptr--left > .decryptr--row {
-    margin: 0 auto;
+    margin: 0;
 }
 .decryptr--box {
     /* overflow-x: auto; */
-    width: 25%;
+    /* width: 25%; */
+    width: 100px;
+    /* height: 45px; */
 }
 .decryptr--box > .decryptr--row {
-    margin: 0 auto;
+    margin: 0;
 }
 .decryptr--right {
     overflow-x: auto;
-    width: 50%;
+    /* width: 50%; */
 }
 .decryptr--row {
     display: flex;
-    width: max-content;
-    min-height: 87px;
+    width: 100px;
+    height:75px;
+    /* min-height: 65px;*/
     /* margin-bottom: 24px; */
 }
 .decryptr--head--row {
     display: flex;
     overflow-x: auto;
     white-space: nowrap;
-    width: 100%;
+    /* width: 100%; */
     height: 52px;
     /* width: max-content; */
-    margin-right: 12px;
-    margin-bottom: 6px;
+    /* margin-right: 12px; */
+    /* margin-bottom: 3px; */
 }
 .middlerow {
     width: 150px;
     height: 30px;
     /* margin-right: 12px; */
-    margin-bottom: 6px;
+    margin-bottom: 3px;
+    margin-top: 3px;
     /* align-items: center;
     text-align: center; */
     /* display: flex;
@@ -214,13 +236,13 @@ body {
 
 .draggable_clue_1 {
     
-    width: 90px;
+    width: 70px;
     height: 65px;
-    margin-right: 6px;
-    margin-left: 6px;
-    margin-bottom: 6px;
-    margin-top: 6px;
-    border: 1px solid blue;
+    margin-right: 0.1px;
+    margin-left: 0.1px;
+    margin-bottom: 0.1px;
+    margin-top: 0.1px;
+    border: 0.1px solid blue;
     background-color: rgb(108, 160, 220);
     display: flex;
     align-items: center;
@@ -228,13 +250,13 @@ body {
 }
 .draggable_clue_2 {
     
-    width: 90px;
+    width: 70px;
     height: 65px;
-    margin-right: 6px;
-    margin-left: 6px;
-    margin-bottom: 6px;
-    margin-top: 6px;
-    border: 1px solid red;
+    margin-right: 0.1px;
+    margin-left: 0.1px;
+    margin-bottom: 0.1px;
+    margin-top: 0.1px;
+    border: 0.1px solid red;
     background-color: rgb(206, 99, 117);
     display: flex;
     align-items: center;
@@ -303,6 +325,7 @@ body {
     height: 30px;
     margin-right: 12px;
     margin-bottom: 6px;
+    left:15px;
 }
 
 .small_block {
@@ -318,7 +341,7 @@ body {
     margin-right: 12px;
     margin-bottom: 6px;
     position:absolute;
-    left: 60%;
+    left: 300px;
     z-index: 99999;
 }
 
@@ -328,7 +351,7 @@ body {
     margin-right: 12px;
     margin-bottom: 6px;
     position:absolute;
-    left: 60%;
+    left: 300px;
     z-index: 99999;
 }
 
@@ -338,7 +361,7 @@ body {
     margin-right: 12px;
     margin-bottom: 6px;
     position:absolute;
-    left: 30%;
+    left: 200px;
     z-index: 99999;
 }
 
@@ -347,8 +370,8 @@ body {
 .box {
     width: 100px;
     height: 74px;
-    margin-right: 12px;
-    margin-bottom: 12px;
+    margin-right: 1px;
+    margin-bottom: 3px;
     border: solid 3px #ccc;
     /* align items in the box */
     display: flex;
@@ -444,30 +467,7 @@ body {
     }
 } 
 
-@media screen and (max-width: 600px) {
-    .decryptr--head--row {
-        display: flex;
-        justify-content: space-between;
-        /* display: grid; */
-        /* grid-template-columns: 20% 50% 30%; */
-    }
 
-    /* .decryptr--head--row div {
-        flex-basis: 100%;
-    } */
-    /* .decryptr--head--row div.startNewRound  {
-        flex-basis: 10%;
-    } */
-    /* .decryptr--head--row div.startNewRound  {
-        grid-column: 1;
-    }
-    .decryptr--head--row div.countdown-container  {
-        grid-column: 2;
-    }
-    .decryptr--head--row div.arrow  {
-        grid-column: 3;
-    } */
-}
 
 .table-cell {
     text-align: center;
@@ -580,6 +580,7 @@ display: none;
     text-shadow: 2px 2px 1px #e78700, -2px 2px 1px #e78700, 2px -2px 1px #e78700, -2px -2px 1px #e78700, 0px 2px 1px #e78700, 0px -2px 1px #e78700, 0px 4px 1px #c96100, 2px 4px 1px #c96100, -2px 4px 1px  #c96100;
     height: 30px;
     width: 100px;
+    left:15px;
 }
   /* .game-button.orange:hover {
     top:2px;
@@ -607,7 +608,7 @@ display: none;
       text-align: center;
       align-items: right;
       position:absolute;
-    left: 60%;
+    left: 230px;
     z-index: 99999;
       /* position: s; */
     }
@@ -657,6 +658,7 @@ display: none;
      text-shadow: 2px 2px 1px #62185a, -2px 2px 1px #3c082f, 2px -2px 1px #2b0639, -2px -2px 1px #570f5d, 0px 2px 1px #680d61, 0px -2px 1px #76487f, 0px 4px 1px #3a042f, 2px 4px 1px #4b0534, -2px 4px 1px #2c012a;
      height: 30px;
      width: 100px;
+     left:3px;
      text-align: center;
      align-items: right;
    }
@@ -689,30 +691,30 @@ display: none;
  } */
 
  .messages {
-    width: 500px;
-    height: 300px;
+    width: 350px;
+    height: 150px;
     border: 1px solid #ccc;
     padding: 10px;
     overflow-y: auto;
     background-color: #f0f1f3c2;
   }
   
-  .chat-message {
+  .messages-message {
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
   
-  .chat-message-sender {
+  .messages-message-sender {
     font-weight: bold;
   }
   
-  .chat-message-content {
+  .messages-message-content {
     font-size: 14px;
   }
   
-  .chat-box-expand-button {
+  .messages-box-expand-button {
     cursor: pointer;
     display: inline-block;
     padding: 5px 10px;
@@ -721,6 +723,49 @@ display: none;
     border-radius: 5px;
   }
   
-  .chat-box-expand-button:hover {
+  .messages-box-expand-button:hover {
     background-color: #eee;
   }
+
+  @media screen and (max-width: 600px) {
+    .decryptr--head--row {
+        display: flex;
+        justify-content: space-between;
+        /* display: grid; */
+        /* grid-template-columns: 20% 50% 30%; */
+    }
+    .messages {
+        display: flex;
+        justify-content: space-between;
+    }
+    /* .whole{
+        display: flex;
+        justify-content: space-between;
+    }  */
+    /* .decryptr--head--row div {
+        flex-basis: 100%;
+    } */
+    /* .decryptr--head--row div.startNewRound  {
+        flex-basis: 10%;
+    } */
+    /* .decryptr--head--row div.startNewRound  {
+        grid-column: 1;
+    }
+    .decryptr--head--row div.countdown-container  {
+        grid-column: 2;
+    }
+    .decryptr--head--row div.arrow  {
+        grid-column: 3;
+    } */
+}
+
+
+@media screen and (max-height: 950px) {
+    .whole {
+        display: flex;
+        flex-direction:column;
+        justify-content: space-between;
+        /* display: grid; */
+        /* grid-template-columns: 20% 50% 30%; */
+    }
+}
