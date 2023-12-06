@@ -1,80 +1,80 @@
-var columns = document.querySelectorAll('.draggable_clue_1');
-var columns2 = document.querySelectorAll('.draggable_clue_2');
-var draggingClass = 'dragging';
-var dragSource;
+// var columns = document.querySelectorAll('.draggable_clue_1');
+// var columns2 = document.querySelectorAll('.draggable_clue_2');
+// var draggingClass = 'dragging';
+// var dragSource;
 
 
-Array.prototype.forEach.call(columns, function (col) {
-  col.addEventListener('dragstart', dragStart, false);
-});
+// Array.prototype.forEach.call(columns, function (col) {
+//   col.addEventListener('dragstart', dragStart, false);
+// });
 
-Array.prototype.forEach.call(columns2, function (col) {
-  col.addEventListener('dragstart', dragStart, false);
-});
+// Array.prototype.forEach.call(columns2, function (col) {
+//   col.addEventListener('dragstart', dragStart, false);
+// });
 
-function dragStart(e) {
-  e.dataTransfer.setData('text/plain', e.target.id);
-  setTimeout(() => {
-      e.target.classList.add('hide');
-  }, 0);
-}
+// function dragStart(e) {
+//   e.dataTransfer.setData('text/plain', e.target.id);
+//   setTimeout(() => {
+//       e.target.classList.add('hide');
+//   }, 0);
+// }
 
-/* drop targets */
-const boxes = document.querySelectorAll('.box');
+// /* drop targets */
+// const boxes = document.querySelectorAll('.box');
 
-boxes.forEach(box => {
-  box.addEventListener('dragenter', dragEnter)
-  box.addEventListener('dragover', dragOver);
-  box.addEventListener('dragleave', dragLeave);
-  box.addEventListener('drop', drop);
-});
+// boxes.forEach(box => {
+//   box.addEventListener('dragenter', dragEnter)
+//   box.addEventListener('dragover', dragOver);
+//   box.addEventListener('dragleave', dragLeave);
+//   box.addEventListener('drop', drop);
+// });
 
 
-function dragEnter(e) {
-  e.preventDefault();
-  e.target.classList.add('drag-over');
-}
+// function dragEnter(e) {
+//   e.preventDefault();
+//   e.target.classList.add('drag-over');
+// }
 
-function dragOver(e) {
-  e.preventDefault();
-  e.target.classList.add('drag-over');
-}
+// function dragOver(e) {
+//   e.preventDefault();
+//   e.target.classList.add('drag-over');
+// }
 
-function dragLeave(e) {
-  e.target.classList.remove('drag-over');
-}
+// function dragLeave(e) {
+//   e.target.classList.remove('drag-over');
+// }
 
-function drop(e) {
-  e.target.classList.remove('drag-over');
+// function drop(e) {
+//   e.target.classList.remove('drag-over');
 
-  // get the draggable element
-  const id = e.dataTransfer.getData('text/plain');
-  // console.log("id: " + id);
-  const draggable = document.getElementById(id);
-  console.log(draggable);
-  console.log(draggable.parentNode);
-  var drag_parent = draggable.parentNode;
-  if (e.target.id.startsWith('b') && e.target.firstChild == null){
-    e.target.appendChild(draggable);
-  } 
-  else if (e.target.id.startsWith('b') && e.target.firstChild) {
-    drag_parent.append(e.target.firstChild);
-    e.target.append(draggable);
-  }
-  else {
-    console.log(e.target.parentNode);
-    e.target.parentNode.append(draggable);
-    // draggable.parentNode.append(e.target);
-    drag_parent.append(e.target);
-  }
-  // add it to the drop target
-  console.log(e.target.id);
+//   // get the draggable element
+//   const id = e.dataTransfer.getData('text/plain');
+//   // console.log("id: " + id);
+//   const draggable = document.getElementById(id);
+//   console.log(draggable);
+//   console.log(draggable.parentNode);
+//   var drag_parent = draggable.parentNode;
+//   if (e.target.id.startsWith('b') && e.target.firstChild == null){
+//     e.target.appendChild(draggable);
+//   } 
+//   else if (e.target.id.startsWith('b') && e.target.firstChild) {
+//     drag_parent.append(e.target.firstChild);
+//     e.target.append(draggable);
+//   }
+//   else {
+//     console.log(e.target.parentNode);
+//     e.target.parentNode.append(draggable);
+//     // draggable.parentNode.append(e.target);
+//     drag_parent.append(e.target);
+//   }
+//   // add it to the drop target
+//   console.log(e.target.id);
   
-  console.log(e.target);
-  console.log(e.target.firstChild);
-  // display the draggable element
-  draggable.classList.remove('hide');
-}
+//   console.log(e.target);
+//   console.log(e.target.firstChild);
+//   // display the draggable element
+//   draggable.classList.remove('hide');
+// }
 
 var row11 = document.getElementById('row11');
 var row12 = document.getElementById('row12');
