@@ -91,6 +91,9 @@ var suggestAnswer = document.getElementById('suggestAnswer');
 var submitClues = document.getElementById('submitClues');
 var submitAnswer = document.getElementById('submitAnswer');
 
+var modal = document.getElementById('modal_game_result');
+var closeModalButton = document.getElementById('close-modal_game_result');
+var game_result_p = document.getElementById('game_result_p'); 
 
 
 function newGame_JS(team_keywords, team) {
@@ -154,19 +157,19 @@ function giveClues_JS (user_team, position_to_be_encoded) {
   let clue_input1 = document.createElement("div");
   clue_input1.id = `input${user_team}1`;
   clue_input1.setAttribute('type','text');
-  clue_input1.setAttribute('class','input');
+  clue_input1.setAttribute('class',`input${user_team}`);
   clue_input1.setAttribute('placeholder','encode word');
   clue_input1.setAttribute('contenteditable', 'true');
   let clue_input2 = document.createElement("div");
   clue_input2.id = `input${user_team}2`;
   clue_input2.setAttribute('type','text');
-  clue_input2.setAttribute('class','input');
+  clue_input2.setAttribute('class',`input${user_team}`);
   clue_input2.setAttribute('placeholder','encode word');
   clue_input2.setAttribute('contenteditable', 'true');
   let clue_input3 = document.createElement("div");
   clue_input3.id = `input${user_team}3`;
   clue_input3.setAttribute('type','text');
-  clue_input3.setAttribute('class','input');
+  clue_input3.setAttribute('class',`input${user_team}`);
   clue_input3.setAttribute('placeholder','encode word');
   clue_input3.setAttribute('contenteditable', 'true');
 
@@ -381,7 +384,7 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
     });
 }
 
-function pushRight (result, user_name, game_state_correct_answerd) {
+function pushRight (result, user_name, game_state_correct_answerd, user_team) {
   if (result == 1){
     console.log(user_name + " has nailed the thing");
   } else {
@@ -390,10 +393,10 @@ function pushRight (result, user_name, game_state_correct_answerd) {
   console.log(game_state_correct_answerd);
   for (key in game_state_correct_answerd){
     if (game_state_correct_answerd[key] != 'null') {
-      let previous_words_1 = document.createElement("div");
-      previous_words_1.setAttribute('class',"previous_words_1");
-      previous_words_1.innerHTML  = game_state_correct_answerd[key];
-      $(`#row${key.slice(-2)}`).append(previous_words_1);
+      let previous_words = document.createElement("div");
+      previous_words.setAttribute('class',`previous_words_${user_team}`);
+      previous_words.innerHTML  = game_state_correct_answerd[key];
+      $(`#row${key.slice(-2)}`).append(previous_words);
     }
     else {
       let previous_words_1 = document.createElement("div");
@@ -409,6 +412,12 @@ function pushRight (result, user_name, game_state_correct_answerd) {
 // clear everything from boxes, reset the clock, update var round,
 // lock startNewRound reset position_to_encode array
 function startNewRound_JS (user_name) {
+  giveClues.disabled = false;
+  submitClues.hidden = false;
+  submitAnswer.hidden = true;
+  startNewRound.disabled = true;
+  
+  console.log('giveClues.disabled = false here');
   var alert = document.createElement("div");
   alert.setAttribute('class',"suggest_alert");
   alert.setAttribute('id',"suggest_alert");
@@ -423,7 +432,7 @@ function startNewRound_JS (user_name) {
   setTimeout(function(){
     alert.remove();
   }, 8000);
-  console.log('giveClues.disabled = false here');
+  
 
   $(`#box11`).empty();
   $(`#box12`).empty();
@@ -436,7 +445,7 @@ function startNewRound_JS (user_name) {
   
 }
 
-function intercept_res_JS (result, user_name, game_state_correct_answer) {
+function intercept_res_JS (result, user_name, game_state_correct_answer, user_team) {
   document.getElementById('submitAnswer').disabled = true;
   document.getElementById('suggestAnswer').disabled = true;
 
@@ -448,15 +457,15 @@ function intercept_res_JS (result, user_name, game_state_correct_answer) {
   console.log(game_state_correct_answer);
   for (key in game_state_correct_answer){
     if (game_state_correct_answer[key] != 'null') {
-      let previous_words_1 = document.createElement("div");
-      previous_words_1.setAttribute('class',"previous_words_1");
-      previous_words_1.innerHTML  = game_state_correct_answer[key];
-      $(`#row${key.slice(-2)}`).append(previous_words_1);
+      let previous_words = document.createElement("div");
+      previous_words.setAttribute('class',`previous_words_${user_team}`);
+      previous_words.innerHTML  = game_state_correct_answer[key];
+      $(`#row${key.slice(-2)}`).append(previous_words);
     }
     else {
-      let previous_words_1 = document.createElement("div");
-      previous_words_1.setAttribute('class',"previous_words_1_empty");
-      $(`#row${key.slice(-2)}`).append(previous_words_1);
+      let previous_words = document.createElement("div");
+      previous_words.setAttribute('class',"previous_words_1_empty");
+      $(`#row${key.slice(-2)}`).append(previous_words);
     }
   }
 
@@ -511,15 +520,15 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     for (key in d){
       console.log(key);
       if (d[key] != 'null') {
-        let previous_words_1 = document.createElement("div");
-        previous_words_1.setAttribute('class',"previous_words_1");
-        previous_words_1.innerHTML  = d[key];
-        $(`#row${key.slice(-2)}`).append(previous_words_1);
+        let previous_words = document.createElement("div");
+        previous_words.setAttribute('class',`previous_words_${user_team}`);
+        previous_words.innerHTML  = d[key];
+        $(`#row${key.slice(-2)}`).append(previous_words);
       }
       else {
-        let previous_words_1 = document.createElement("div");
-        previous_words_1.setAttribute('class',"previous_words_1_empty");
-        $(`#row${key.slice(-2)}`).append(previous_words_1);
+        let previous_words = document.createElement("div");
+        previous_words.setAttribute('class',"previous_words_1_empty");
+        $(`#row${key.slice(-2)}`).append(previous_words);
       }
     }
   }
@@ -530,15 +539,15 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     
     for (key in d){
       if (d[key] != 'null') {
-        let previous_words_1 = document.createElement("div");
-        previous_words_1.setAttribute('class',"previous_words_1");
-        previous_words_1.innerHTML  = d[key];
-        $(`#row${key.slice(-2)}`).append(previous_words_1);
+        let previous_words = document.createElement("div");
+        previous_words.setAttribute('class',`previous_words_${other_team}`);
+        previous_words.innerHTML  = d[key];
+        $(`#row${key.slice(-2)}`).append(previous_words);
       }
       else {
-        let previous_words_1 = document.createElement("div");
-        previous_words_1.setAttribute('class',"previous_words_1_empty");
-        $(`#row${key.slice(-2)}`).append(previous_words_1);
+        let previous_words = document.createElement("div");
+        previous_words.setAttribute('class',"previous_words_1_empty");
+        $(`#row${key.slice(-2)}`).append(previous_words);
       }
     }
   }
@@ -554,19 +563,19 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
       let clue_input1 = document.createElement("div");
       clue_input1.id = `input${user_team}1`;
       clue_input1.setAttribute('type','text');
-      clue_input1.setAttribute('class','input');
+      clue_input1.setAttribute('class',`input${user_team}`);
       clue_input1.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['contenteditable']);
       clue_input1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
       let clue_input2 = document.createElement("div");
       clue_input2.id = `input${user_team}2`;
       clue_input2.setAttribute('type','text');
-      clue_input2.setAttribute('class','input');
+      clue_input2.setAttribute('class',`input${user_team}`);
       clue_input2.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['contenteditable']);
       clue_input2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
       let clue_input3 = document.createElement("div");
       clue_input3.id = `input${user_team}3`;
       clue_input3.setAttribute('type','text');
-      clue_input3.setAttribute('class','input');
+      clue_input3.setAttribute('class',`input${user_team}`);
       clue_input3.setAttribute('contenteditable', clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['contenteditable']);
       clue_input3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
 
@@ -668,17 +677,39 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     console.log(normal_member_obj);
     startNewRound.disabled = false;
     giveClues.disabled = true;
+    
     suggestAnswer.disabled = true;
     submitClues.disabled = true;
+
     submitAnswer.disabled = true;
+    
     submitClues.hidden = false;
     submitAnswer.hidden = false;
   }
-
-  
-
 }
 
+function game_result_JS(team, other_team) {
+  var gay = ["gà đừng hỏi", "thu dọn hành lý chuẩn bị vào hang"]
+  var gratz = ["xuất sắc hoàn thành nhiệm vụ đảng và nhà nước giao phó", "đọc team họ như 1 cuốn sách tập đọc lớp 1", "não vừa to vừa dài cuốn quanh cổ"];
+  if (team=="Tie"){
+    game_result_p.textContent = "It's a tie";
+  } else {
+    if (Math.random() < 0.5) {
+      game_result_p.textContent = team + " "  + gratz[Math.floor(Math.random()*gratz.length)];
+    } else {
+      game_result_p.textContent = other_team + " "  + gay[Math.floor(Math.random()*gay.length)];
+    }
+  }
+  modal.style.display = 'block';
+  modal.style.top = window.innerHeight / 2 - modal.offsetHeight / 2 + 'px';
+  modal.style.left = window.innerWidth / 2 - modal.offsetWidth / 2 + 'px';
+}
+
+
+
+closeModalButton.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
 // const el = document.querySelector('.arrow')
 // const menu = document.querySelector('.menu');
 

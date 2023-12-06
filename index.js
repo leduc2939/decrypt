@@ -655,12 +655,37 @@ io.on('connection', (socket) => {
         game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['hide'] = true;
         console.log('incorrect interception: intercept_res + push right sent');
       }
-      console.log("misconmmunication: "+ misconmunication);
-      console.log("interception: " + interception);
+      console.log(misconmunication);
+      console.log(interception);
       team_finish_interception += 1;
       if (team_finish_interception == 2) {
         console.log('send roundComplete');
-        io.emit('roundCompleted');
+        if (parseInt(misconmunication["team_1"])==2 || parseInt(misconmunication["team_2"])==2 || parseInt(interception["team_2"])==2 || parseInt(interception["team_1"])==2) {
+          console.log("there's a winner");
+          console.log(parseFloat(interception["team_1"]));
+          console.log(parseFloat(interception["team_2"]));
+          console.log(parseFloat(misconmunication["team_1"])*1.1);
+          console.log(parseFloat(misconmunication["team_2"])*1.1);
+          var team_1_score = parseFloat(interception["team_1"]) - parseFloat(misconmunication["team_1"])*1.1; 
+          var team_2_score = parseFloat(interception["team_2"]) - parseFloat(misconmunication["team_2"])*1.1; 
+          console.log(parseFloat(team_1_score));
+          console.log(parseFloat(team_2_score));
+          if (team_1_score == team_2_score){
+            io.emit('game_result', 'Tie', "NoTeam");
+          } else {
+            if (team_1_score > team_2_score) {
+              console.log('team 1 win');
+              io.emit('game_result', 'Team Thua', 'Team Loser');
+            } else {
+              io.emit('game_result', 'Team Loser', 'Team Thua');
+            }
+          }
+          
+          
+            
+        } else {
+          io.emit('roundCompleted');
+        }
         game_state_full_server[`team_1`]['normal_member']["giveClues"]['disabled'] = true;
         game_state_full_server[`team_1`]['normal_member']["submitClues"]['disabled'] = true;
         game_state_full_server[`team_1`]['normal_member']["suggestAnswer"]['disabled'] = true;

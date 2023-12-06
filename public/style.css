@@ -21,6 +21,7 @@ html {
 
 .scrollable-content {
     overflow-y: auto;
+    overflow-x: auto;
   }
 
 .body_game {
@@ -175,11 +176,13 @@ body {
 }
 .decryptr--right {
     overflow-x: auto;
-    /* width: 50%; */
+    width: 50%;
 }
 .decryptr--row {
     display: flex;
-    width: 100px;
+    overflow: hidden;
+    width: max-content;
+    /* width: 100px;  */
     height:75px;
     /* min-height: 65px;*/
     /* margin-bottom: 24px; */
@@ -221,6 +224,22 @@ body {
     text-align: center;
 }
 
+.previous_words_2 {
+    
+    width: 90px;
+    height: 65px;
+    margin-right: 6px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    border: 1px solid red;
+    background-color: rgb(206, 99, 117);
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+
 .previous_words_1_empty {
     width: 90px;
     height: 65px;
@@ -235,27 +254,27 @@ body {
 }
 
 .draggable_clue_1 {
-    
-    width: 70px;
+    width: 90px;
     height: 65px;
-    margin-right: 0.1px;
-    margin-left: 0.1px;
-    margin-bottom: 0.1px;
-    margin-top: 0.1px;
-    border: 0.1px solid blue;
-    background-color: rgb(108, 160, 220);
+    margin-right: 6px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    border: 1px solid blue; 
+    background-color: rgb(108, 160, 220) ; 
+    word-break: break-all; 
     display: flex;
     align-items: center;
     text-align: center;
 }
 .draggable_clue_2 {
     
-    width: 70px;
+    width: 90px;
     height: 65px;
-    margin-right: 0.1px;
-    margin-left: 0.1px;
-    margin-bottom: 0.1px;
-    margin-top: 0.1px;
+    margin-right: 6px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+    margin-top: 6px;
     border: 0.1px solid red;
     background-color: rgb(206, 99, 117);
     display: flex;
@@ -293,7 +312,7 @@ body {
     text-align: center;
     font-size: 25px;
 }
-.input {
+.input1 {
     width: 90px;
     height: 65px;
     margin-right: 6px;
@@ -307,6 +326,21 @@ body {
     text-align: center;
     word-break: break-all;
 }
+.input2 {
+    width: 90px;
+    height: 65px;
+    margin-right: 6px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+    margin-top: 6px;
+    border: 1px solid red;
+    background-color: rgb(206, 99, 117);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    word-break: break-all;
+}
+
 .previous_words_1_empty {
     width: 90px;
     height: 65px;
@@ -760,12 +794,43 @@ display: none;
 }
 
 
-@media screen and (max-height: 950px) {
+/* @media screen and (max-height: 950px) {
     .whole {
         display: flex;
         flex-direction:column;
         justify-content: space-between;
         /* display: grid; */
         /* grid-template-columns: 20% 50% 30%; */
-    }
+    /* } */
+/* }  */
+
+.modal_game_result {
+    position: absolute;
+    top: 45%;
+    left: 15%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000000;
+}
+
+.modal_game_result-content {
+    background-color: #fff;
+    padding: 20px;
+    width: 500px;
+    height: auto;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.close-modal_game_result {
+    position: relative;
+    top: 80%;
+    /* right: 35%; */
+    align-items: center;
+    cursor: pointer;
 }

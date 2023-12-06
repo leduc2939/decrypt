@@ -194,7 +194,7 @@
             <div class="decryptr--row" id="row14">
             </div>
 
-
+            
             
 
             <div class="middlerow">
@@ -204,6 +204,13 @@
                 <button disabled class="game-button green" id="submitClues"> 
                     Submit
                 </button>
+                <div class="modal_game_result" id = "modal_game_result" style="display: none;">
+                    <div class="modal_game_result-content">
+                      <span class="close-modal_game_result" id = "close-modal_game_result">Okay</span>
+                      <h2>Game Result!</h2>
+                      <p id="game_result_p"></p>
+                    </div>
+                  </div>
                 <button disabled class="game-button green" id="submitAnswer">
                     Submit
                 </button>
@@ -278,7 +285,7 @@
     var timerInterval;
 
     var miscommunicate_blue = document.getElementById('miscommunicate_blue');
-    var miscommunicate_blue = document.getElementById('miscommunicate_red');
+    var intercept_red = document.getElementById('miscommunicate_red');
     var intercept_blue = document.getElementById('intercept_blue'); 
     var intercept_red = document.getElementById('intercept_red');
 
@@ -614,19 +621,34 @@
     // received communication result, push correct answers to the right
     socket.on('pushRight', (result, user_id, game_state_correct_answer, team) => {
         console.log('received pushRight for my team');  
-        if (my_team == team) {      
-            submitAnswer.disabled = true;
-            suggestAnswer.disabled = true;
-            pushRight(result, user_id, game_state_correct_answer);
+        var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
+        if (my_team == team) {     
+            if (phase=="2") {
+                submitAnswer.disabled = true;
+                suggestAnswer.disabled = true;
+                pushRight(result, user_id, game_state_correct_answer, other_team);
+            }
+            else {
+                submitAnswer.disabled = true;
+                suggestAnswer.disabled = true;
+                pushRight(result, user_id, game_state_correct_answer, my_team);
+            }
             
         }
         if (result==0) {
             if (team=="1"){
                 var newvalue = parseInt(miscommunicate_blue.textContent) + 1;
                 miscommunicate_blue.textContent = newvalue;
+                console.log("blue miss: " + miscommunicate_blue.textContent);
             } else{
                 var newvalue = parseInt(miscommunicate_red.textContent) + 1;
                 miscommunicate_red.textContent = newvalue;
+                console.log("red miss: " + miscommunicate_red.textContent);
             }
         }
     });
@@ -712,7 +734,7 @@
         console.log('intercept_res received');
         if (my_team!=user_team) {
             console.log('its my team');
-            intercept_res_JS(result, user_name, game_state_correct_answer);
+            intercept_res_JS(result, user_name, game_state_correct_answer, user_team);
         }
         if (result==1) {
             if (user_team=="2"){
@@ -778,7 +800,10 @@
     //     countdownDisplay.textContent = "";
         
     // });
-        
+    
+    socket.on('game_result', (team, other_team) =>{
+        game_result_JS(team, other_team);
+    });
   
 </script>
 
