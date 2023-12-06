@@ -66,14 +66,14 @@
       document.getElementById("teamThua").click();
       my_team = "1";
       socket.emit('generate_random_name');
-      if (sessionStorage.getItem('user_id')){
-        my_user_id = sessionStorage.getItem('user_id');
+      if (localStorage.getItem('user_id')){
+        my_user_id = localStorage.getItem('user_id');
         socket.emit('iden_user_id', my_user_id);
         console.log('user has user_id: ' + my_user_id);
 
       } else {
         my_user_id = uuidv4();
-        sessionStorage.setItem('user_id',my_user_id);
+        localStorage.setItem('user_id',my_user_id);
         socket.emit('iden_user_id', my_user_id);
         console.log('issue user_id: ' + my_user_id);
       } 
@@ -93,8 +93,8 @@
   enter_button.addEventListener('click', function(e) {
       if (userName.value) {
         console.log(userName.value);
-        sessionStorage.setItem('user_team', my_team);
-        sessionStorage.setItem('user_name', userName.value)
+        localStorage.setItem('user_team', my_team);
+        localStorage.setItem('user_name', userName.value)
         socket.emit('enterGame', my_user_id, userName.value, my_team);
         console.log('emit enterGame');
       }

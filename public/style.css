@@ -3,6 +3,11 @@ html {
    
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
   }
 .body_login {
     background-image: url('decrypto_background.jpg');
@@ -13,10 +18,27 @@ html {
     height: 100%;
     background-size: cover;
     overflow: scroll;
+    /* -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    -moz-background-size: cover; -webkit-background-size: cover; -o-background-size: cover;  */
+    /* width:100vw;
+    height:100vw; */
+    background-position:center center;
+    background-size: cover
+}
+
+/* @media only screen and (min-width:1px) and (max-width:700px) {
+  .image {
+    background-position:left center;
+  }
+} */
+
 
     /* overflow-y: hidden; */
     /* background-repeat: no-repeat; */
-}
+
 
 
 .scrollable-content {
@@ -25,7 +47,7 @@ html {
   }
 
 .body_game {
-    background-image: url('conan.jpg');
+    background-image: url('bg3.jpeg');
     position: fixed;
     top: 0;
     left: 0;
@@ -33,10 +55,25 @@ html {
     height: 100%;
     background-size: cover;
     overflow: scroll;
+    background-color: rgb(66, 58, 58);
+    background-size: cover ;
+    background-repeat: repeat;
+    /* -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;  */
+    /* width:100vw;
+    height:100vw; */
+    /* -moz-background-size: cover; -webkit-background-size: cover; -o-background-size: cover; 
+    background-position:center center;
+    
+}
+
     /* display: flex; */
     /* overflow-y: hidden; */
     /* background-repeat: no-repeat; */
 }
+
 .user_name_input {
     position: absolute;
     top: 30%;
@@ -49,8 +86,9 @@ html {
 .enter_button {
     position: absolute;
     top: 50%;
-    left: 35%;
-    right: 35%;
+    /* left: 35%;
+    right: 35%; */
+    margin:auto;
     border-width: 5px;
 }
 
@@ -291,7 +329,28 @@ body {
     display: flex;
     align-items: center;
     text-align: center;
-    text-wrap: wrap;
+    background-image: url('tv_screen.jpeg');
+    font-size: 15px;
+    text-shadow:
+        0.07em 0 rgb(25, 38, 221),
+        0 0.07em rgb(75, 126, 126),
+        -0.07em 0 rgb(95, 172, 184),
+        0 -0.07em rgb(35, 16, 201);
+    /* top: 0;
+    left: 0; */
+    /* width: 100%;
+    height: 100%; */
+    /* background-size: cover; */
+    /* overflow: scroll; */
+    /* -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    -moz-background-size: cover; -webkit-background-size: cover; -o-background-size: cover;  */
+    /* width:100vw;
+    height:100vw; */
+    /* background-position:center center; */
+    background-size: cover
 }
 
 .decryptr--item2 {
@@ -304,6 +363,28 @@ body {
     display: flex;
     align-items: center;
     text-align: center;
+    background-image: url('tv_screen.jpeg');
+    font-size: 15px;
+    text-shadow:
+        0.07em 0 rgb(218, 67, 67),
+        0 0.07em rgb(224, 18, 18),
+        -0.07em 0 rgb(184, 60, 60),
+        0 -0.07em rgb(240, 85, 85);
+    /* top: 0;
+    left: 0; */
+    /* width: 100%;
+    height: 100%; */
+    /* background-size: cover; */
+    /* overflow: scroll; */
+    /* -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    -moz-background-size: cover; -webkit-background-size: cover; -o-background-size: cover;  */
+    /* width:100vw;
+    height:100vw; */
+    /* background-position:center center; */
+    background-size: cover
 }
 .decryptr--input {
     width: 100%;

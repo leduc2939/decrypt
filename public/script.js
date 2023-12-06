@@ -412,10 +412,15 @@ function pushRight (result, user_name, game_state_correct_answerd, user_team) {
 // clear everything from boxes, reset the clock, update var round,
 // lock startNewRound reset position_to_encode array
 function startNewRound_JS (user_name) {
-  giveClues.disabled = false;
-  submitClues.hidden = false;
-  submitAnswer.hidden = true;
-  startNewRound.disabled = true;
+  // giveClues.disabled = false;
+  // submitClues.hidden = false;
+  // submitAnswer.hidden = true;
+  // startNewRound.disabled = true;
+
+  $('#giveClues').disabled = false;
+  $('#submitClues').hidden = false;
+  $('#submitAnswer').hidden = true;
+  $('#startNewRound').disabled = true;
   
   console.log('giveClues.disabled = false here');
   var alert = document.createElement("div");

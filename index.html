@@ -289,21 +289,24 @@
     var intercept_blue = document.getElementById('intercept_blue'); 
     var intercept_red = document.getElementById('intercept_red');
 
+    const menuButton = document.getElementById('menu-button');
+    const menuElement = document.getElementById('menu');
+
     socket.on('connect', function() {
         console.log('connected');
-        if (sessionStorage.getItem('user_id')){
-            my_user_id = sessionStorage.getItem('user_id');
+        if (localStorage.getItem('user_id')){
+            my_user_id = localStorage.getItem('user_id');
             socket.emit('iden_user_id', my_user_id);
         } else {
             my_user_id = uuidv4();
-            sessionStorage.setItem('user_id',my_user_id);
-            sessionStorage.setItem('user_team','1');
-            sessionStorage.setItem('user_name','noname');
+            localStorage.setItem('user_id',my_user_id);
+            localStorage.setItem('user_team','1');
+            localStorage.setItem('user_name','noname');
             socket.emit('iden_user_id', my_user_id)
         } 
-        my_user_id = sessionStorage.getItem('user_id');
-        my_team = sessionStorage.getItem('user_team');
-        my_name = sessionStorage.getItem('user_name');
+        my_user_id = localStorage.getItem('user_id');
+        my_team = localStorage.getItem('user_team');
+        my_name = localStorage.getItem('user_name');
         console.log(my_user_id);
         console.log(my_team);
         
@@ -365,6 +368,7 @@
     // receive keywords from server
     socket.on('newGame_JS', (team_1_keywords,team_2_keywords) => {
         console.log('received newGame signal');
+        menuElement.style.display = 'none';
         if (my_team=="1") {
             newGame_JS(team_1_keywords, my_team);
         } else {
@@ -775,8 +779,7 @@
     });
 
     
-    const menuButton = document.getElementById('menu-button');
-    const menuElement = document.getElementById('menu');
+    
 
     menuButton.addEventListener('click', () => {
         const menuButtonPosition = menuButton.getBoundingClientRect();
