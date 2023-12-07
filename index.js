@@ -203,6 +203,13 @@ fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4
 
 
 io.on('connection', (socket) => {
+  // process.argv.forEach(function (val, index, array) {
+  //   console.log(index + ': ' + val);
+  //   console.log()
+  // });
+  console.log(process.argv[2]);
+  socket.emit("gen_uuid", (process.argv[2]));
+
   user_team[socket.id] = 1;
   console.log('user ' + socket.id + ' connected');
   
@@ -229,7 +236,7 @@ io.on('connection', (socket) => {
   socket.on('newGames', (user_id, user_name) => {
     console.log('user: ' + user_name + ' has started a new game');
     round_no = 1;
-    phase = 1;
+    phase = "1";
     misconmunication = {'team_1':0, 'team_2':0};
     interception = {'team_1':0,'team_2':0};
     position_to_be_encoded['team_1'] = [1,2,3,4];
@@ -266,6 +273,11 @@ io.on('connection', (socket) => {
     game_state_full_server['team_2']['clue_giver']["boxes_with_clue"] = [] ;
     game_state_full_server['team_1']['normal_member']["boxes_with_clue"] = [] ;
     game_state_full_server['team_2']['normal_member']["boxes_with_clue"] = [] ;
+
+    game_state_full_server[`team_1`]['clue_giver']['disabled_clue'] = false;
+    game_state_full_server[`team_1`]['normal_member']['disabled_clue'] = false;
+    game_state_full_server[`team_2`]['clue_giver']['disabled_clue'] = false;
+    game_state_full_server[`team_2`]['normal_member']['disabled_clue'] = false;
 
     game_state_full_server['team_1']['clue_giver']["box11"] = {} ;
     game_state_full_server['team_1']['clue_giver']["box12"] = {} ;
@@ -474,6 +486,8 @@ io.on('connection', (socket) => {
     game_state_full_server[`team_${user_team}`]['clue_giver'][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`]['innerHTML'] = input1_value;
     game_state_full_server[`team_${user_team}`]['clue_giver'][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`]['innerHTML'] = input2_value;
     game_state_full_server[`team_${user_team}`]['clue_giver'][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`]['innerHTML'] = input3_value;
+
+    game_state_full_server[`team_${user_team}`]['clue_giver']['disabled_clue'] = true;
     
     game_state_full_server[`team_${user_team}`]['normal_member']['boxes_with_clue'] = mixed_position;
 
@@ -493,6 +507,13 @@ io.on('connection', (socket) => {
 
     game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
     game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
+    
+    // $(`#input${my_team}1`).addClass('disabled_clue');
+    //     $(`#input${my_team}2`).addClass('disabled_clue');
+    //     $(`#input${my_team}3`).addClass('disabled_clue');
+    //     $(`#input${my_team}1`).attr('contenteditable','false');
+    //     $(`#input${my_team}2`).attr('contenteditable','false');
+    //     $(`#input${my_team}3`).attr('contenteditable','false');
     // console.log( user_id, user_name, user_team, input2_value, input3_value, input1_value, mixed_position);
 
     console.log(game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"])

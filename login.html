@@ -40,6 +40,7 @@
 <script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <script>
   
+  let current_env = "";
   let my_user_id = "";
   var socket = io();
   let my_team = "";
@@ -66,17 +67,6 @@
       document.getElementById("teamThua").click();
       my_team = "1";
       socket.emit('generate_random_name');
-      if (localStorage.getItem('user_id')){
-        my_user_id = localStorage.getItem('user_id');
-        socket.emit('iden_user_id', my_user_id);
-        console.log('user has user_id: ' + my_user_id);
-
-      } else {
-        my_user_id = uuidv4();
-        localStorage.setItem('user_id',my_user_id);
-        socket.emit('iden_user_id', my_user_id);
-        console.log('issue user_id: ' + my_user_id);
-      } 
   });
 
   socket.on('recognized', (user_id, user_info) =>{
@@ -85,19 +75,56 @@
     }
   });
 
-  
+  socket.on("gen_uuid", (env) => {
+    current_env = env;
+    if (current_env=='prod') {
+      if (localStorage.getItem('user_id')){
+          my_user_id = localStorage.getItem('user_id');
+          socket.emit('iden_user_id', my_user_id);
+          console.log('user has user_id: ' + my_user_id);
 
+        } else {
+          my_user_id = uuidv4();
+          localStorage.setItem('user_id',my_user_id);
+          socket.emit('iden_user_id', my_user_id);
+          console.log('issue user_id: ' + my_user_id);
+        } 
+    } else {
+      if (sessionStorage.getItem('user_id')){
+        my_user_id = sessionStorage.getItem('user_id');
+        socket.emit('iden_user_id', my_user_id);
+        console.log('user has user_id: ' + my_user_id);
+
+      } else {
+        my_user_id = uuidv4();
+        sessionStorage.setItem('user_id',my_user_id);
+        socket.emit('iden_user_id', my_user_id);
+        console.log('issue user_id: ' + my_user_id);
+      } 
+    }
+  });
 
   var userName = document.getElementById('user_name_input');
   var enter_button = document.getElementById('enter_button');
   enter_button.addEventListener('click', function(e) {
+    if (current_env=='prod') {  
       if (userName.value) {
-        console.log(userName.value);
-        localStorage.setItem('user_team', my_team);
-        localStorage.setItem('user_name', userName.value)
-        socket.emit('enterGame', my_user_id, userName.value, my_team);
-        console.log('emit enterGame');
-      }
+          console.log(userName.value);
+          localStorage.setItem('user_team', my_team);
+          localStorage.setItem('user_name', userName.value)
+          socket.emit('enterGame', my_user_id, userName.value, my_team);
+          console.log('emit enterGame');
+        }
+    } 
+    else {  
+      if (userName.value) {
+          console.log(userName.value);
+          sessionStorage.setItem('user_team', my_team);
+          sessionStorage.setItem('user_name', userName.value)
+          socket.emit('enterGame', my_user_id, userName.value, my_team);
+          console.log('emit enterGame');
+        }
+    }
   });
 
   socket.on('generated_name', (name) =>{

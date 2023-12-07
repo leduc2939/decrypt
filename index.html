@@ -11,22 +11,6 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />   
-    <link rel="stylesheet" href="libs/mobile-drag-drop/release/default.css">
-    <script src="libs/mobile-drag-drop/release/index.min.js"></script>   
-    <script>
-        class WC extends HTMLElement {
-            constructor() {
-                super();
-                this.attachShadow({ mode: 'open' });
-                const div = document.createElement('div');
-                div.innerHTML = 'Test WC';
-                div.style.background = 'red'
-                div.style.pointerEvents = 'auto';
-                this.shadowRoot.appendChild(div);
-            }
-        }
-        customElements.define('w-c', WC)
-    </script>
 
 </head>
 <body class="body_game" id="body">
@@ -165,16 +149,16 @@
 
         <div class="decryptr--box">
             <div class="decryptr--row" id="boxrow11">
-                <div class="box" id="box11"></div>
+                <div class="box1" id="box11" tabindex="1"></div>
             </div>
             <div class="decryptr--row" id="boxrow12">
-                <div class="box" id="box12"></div>
+                <div class="box1" id="box12" tabindex="2"></div>
             </div>
             <div class="decryptr--row" id="boxrow13">
-                <div class="box" id="box13"></div>
+                <div class="box1" id="box13" tabindex="3"></div>
             </div>
             <div class="decryptr--row" id="boxrow14">
-                <div class="box" id="box14"> </div>
+                <div class="box1" id="box14" tabindex="4"> </div>
             </div>
 
             <div class="middlerow">
@@ -184,16 +168,16 @@
             </div>
 
             <div class="decryptr--row" id="boxrow21">
-                <div class="box" id="box21"></div>
+                <div class="box2" id="box21" tabindex="5"></div>
             </div>
             <div class="decryptr--row" id="boxrow22">
-                <div class="box" id="box22"></div>
+                <div class="box2" id="box22" tabindex="6"></div>
             </div>
             <div class="decryptr--row" id="boxrow23">
-                <div class="box" id="box23"></div>
+                <div class="box2" id="box23" tabindex="7"></div>
             </div>
             <div class="decryptr--row" id="boxrow24">
-                <div class="box" id="box24"> </div>
+                <div class="box2" id="box24" tabindex="8"> </div>
             </div>
 
         </div>
@@ -272,492 +256,6 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-            //        var DEBUG = false;
-
-            var allowDragWithTwoFingersOnly = function (event) {
-
-// only allow drag with two fingers
-return (event.touches.length === 2);
-};
-
-var threshold = 10;
-var startX, startY;
-
-var allowHorizontalDragOnly = function (event) {
-
-var touch = event.touches[0];
-
-if (startX === undefined || startY === undefined) {
-    startX = touch.clientX;
-    startY = touch.clientY;
-
-    // we are uncertain if we shall start a drag operation.. return undefined
-    return;
-}
-
-var deltaX = Math.abs(startX - touch.clientX),
-    deltaY = Math.abs(startY - touch.clientY);
-
-console.log("startX: " + startX);
-console.log("startY: " + startY);
-
-console.log("deltaX: " + deltaX);
-console.log("deltaY: " + deltaY);
-
-if (deltaX > threshold || deltaY > threshold) {
-
-    console.log("threshold reached.");
-
-    // reset our initial values
-    startX = undefined;
-    startY = undefined;
-
-    if (deltaX > deltaY) {
-
-        console.log('horizontal drag detected, starting drag');
-        // we know for sure to start it, return true
-        return true;
-    } else {
-
-        console.log('vertical scroll detected, aborting drag');
-        // we know for sure to abort it, return false
-        return false;
-    }
-}
-};
-
-var alertAction = function (event) {
-
-event.stopImmediatePropagation();
-event.preventDefault();
-alert("I'm your default action override");
-return true;
-};
-
-var urlParams = new URLSearchParams(window.location.search);
-var holdToDrag = urlParams.get('holdToDrag');
-
-var polyfillApplied = MobileDragDrop.polyfill({
-//            dragImageCenterOnTouch: true,
-//            dragImageOffset: {
-//                x: 0,
-//                y: 0
-//            },
-//            dragStartConditionOverride: allowHorizontalDragOnly,
-//            defaultActionOverride: alertAction,
-dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride,
-holdToDrag: holdToDrag
-});
-
-var userAgentEl = document.getElementById("userAgent");
-userAgentEl.innerText = navigator.userAgent;
-
-var appliedMessageEl = document.getElementById("appliedMessage");
-var appliedMessage = "<b>Polyfill inactive</b>: Current browser was detected to handle drag'n'drop quite well on its own ;)";
-if (polyfillApplied) {
-
-appliedMessage = "<b>Polyfill activated</b>: Detected current browser not capable of HTML5 drag'n'drop (or somebody set forceApply is to true)";
-
-if (holdToDrag) {
-    appliedMessage += ". holdToDrag is active with a delay of " + holdToDrag + "ms";
-}
-}
-appliedMessageEl.innerHTML = appliedMessage;
-
-/**
-* ---------------------------------------------------------------------------------------------------------
-*/
-
-var missed = ['hey!', 'missed it :(', 'that was close..', 'ARRRR'];
-var eat = ['yum!', 'gulp', 'burp!', 'nom'];
-var yum = document.createElement('p');
-
-/**
-* ---------------------------------------------------------------------------------------------------------
-*/
-
-var links = document.querySelectorAll('li > a'), el = null;
-for (var i = 0; i < links.length; i++) {
-el = links[i];
-
-el.setAttribute('draggable', 'true');
-
-addEvent(el, 'dragstart', function (e) {
-    console.log('dragstart');
-
-    e.dataTransfer.effectAllowed = 'copyLink';
-
-    //TODO fails on desktop safari because drag is immediately aborted
-//                this.style.display = "none";
-
-    console.log('setting data: ' + this.id);
-
-    e.dataTransfer.setData('Text', this.id); // required otherwise doesn't work
-});
-
-addEvent(el, 'drag', function (e) {
-    console.log('drag');
-});
-
-addEvent(el, 'dragend', function (e) {
-
-//                this.style.display = "block";
-
-    console.log('dragend with effect: ' + e.dataTransfer.dropEffect);
-});
-
-addEvent(el, 'click', function (e) {
-    console.log('clicked on draggable');
-
-    console.log('click offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-});
-
-// Custom event fires only if holdToDrag is true
-addEvent(el, 'dnd-poly-dragstart-pending', function (e) {
-    console.log('dnd-poly-dragstart-pending');
-
-    e.preventDefault();
-    e.stopPropagation(); // stop it here to prevent it bubble up
-});
-
-addEvent(el, 'dnd-poly-dragstart-cancel', function (e) {
-    console.log('dnd-poly-dragstart-cancel');
-
-    e.preventDefault();
-    e.stopPropagation(); // stop it here to prevent it bubble up
-});
-}
-
-var draggables = document.querySelectorAll('.draggable');
-var dragHandles = document.querySelectorAll('.drag-handle');
-var noDrags = document.querySelectorAll('.no-drag');
-
-for (var i = 0; i < draggables.length; i++) {
-makeElementDraggable(draggables[i]);
-}
-
-for (var i = 0; i < dragHandles.length; i++) {
-makeElementDragHandle(dragHandles[i]);
-}
-
-for (var i = 0; i < noDrags.length; i++) {
-
-makeElementNoDrag(noDrags[i]);
-}
-
-function makeElementDraggable(element) {
-
-element.setAttribute('draggable', 'true');
-
-addEvent(element, 'dragstart', function (e) {
-
-    // Check whether the element is draggable, since dragstart might be triggered on a child.
-    if (element.getAttribute('draggable') == 'false') return true;
-
-    console.log('dragstart');
-
-    e.dataTransfer.effectAllowed = 'copyLink';
-
-    console.log('setting data: ' + this.id);
-
-    e.dataTransfer.setData('Text', this.id); // required otherwise doesn't work
-
-    // Try setting a proper drag image if triggered on a dnd-handle (won't work in IE).
-    if (e._dndHandle && e.dataTransfer.setDragImage) {
-
-        e.dataTransfer.setDragImage(element);
-    }
-});
-
-addEvent(element, 'drag', function (e) {
-    console.log('drag');
-});
-
-addEvent(element, 'dragend', function (e) {
-    console.log('dragend with effect: ' + e.dataTransfer.dropEffect);
-});
-
-addEvent(element, 'click', function (e) {
-    console.log('clicked on draggable');
-});
-}
-
-function makeElementDragHandle(element) {
-element.setAttribute('draggable', 'true');
-
-addEvent(element, 'dragstart', function (event) {
-    console.log("drag handle start");
-    event._dndHandle = true;
-});
-
-addEvent(element, 'dragend', function (event) {
-    console.log("drag handle end");
-    event._dndHandle = true;
-});
-}
-
-function makeElementNoDrag(element) {
-
-// Set as draggable so that we can cancel the events explicitly
-element.setAttribute('draggable', 'true');
-
-/**
- * Since the element is draggable, the browser's default operation is to drag it on dragstart.
- * We will prevent that and also stop the event from bubbling up.
- */
-addEvent(element, 'dragstart', function (event) {
-
-    console.log("nodrag: dragstart");
-
-    if (!event._dndHandle) {
-
-        console.log("nodrag: no dnd handle");
-        // If a child element already reacted to dragstart and set a dataTransfer object, we will
-        // allow that. For example, this is the case for user selections inside of input elements.
-        if (!(event.dataTransfer.types && event.dataTransfer.types.length)) {
-
-            console.log("nodrag: prevent default");
-            event.preventDefault();
-        }
-        console.log("nodrag: stopPropagation");
-        event.stopPropagation();
-    }
-});
-
-/**
- * Stop propagation of dragend events, otherwise dnd-moved might be triggered and the element
- * would be removed.
- */
-addEvent(element, 'dragend', function (event) {
-    if (!event._dndHandle) {
-        event.stopPropagation();
-    }
-});
-}
-
-/**
-* ---------------------------------------------------------------------------------------------------------
-*/
-
-var bin = document.querySelector('#bin');
-
-addEvent(bin, 'dragenter', function (e) {
-console.log('bin dragenter');
-
-console.log('bin offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-
-e.preventDefault();
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.add('over');
-
-});
-
-addEvent(bin, 'dragover', function (e) {
-console.log('bin dragover');
-
-console.log('bin offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-
-e.preventDefault(); // allows us to drop
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-e.dataTransfer.dropEffect = 'link'; // we have to set it for firefox to be happy
-});
-
-addEvent(bin, 'dragexit', function (e) {
-console.log('bin dragexit');
-
-console.log('bin offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-});
-
-addEvent(bin, 'dragleave', function (e) {
-console.log('bin dragleave');
-
-console.log('bin offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.remove('over');
-});
-
-addEvent(bin, 'drop', function (e) {
-console.log('bin drop');
-
-console.log('bin offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-// stupid nom text + fade effect
-yum.innerHTML = missed[parseInt(Math.random() * missed.length)];
-
-var y = yum.cloneNode(true);
-bin.appendChild(y);
-
-setTimeout(function () {
-    y.classList.add('fadeout');
-}, 250);
-e.preventDefault();
-});
-
-/**
-* ---------------------------------------------------------------------------------------------------------
-*/
-
-var innerBin = document.querySelector('#innerBin');
-
-bin.classList.add('zoom');
-
-addEvent(innerBin, 'dragenter', function (e) {
-console.log('apperture dragenter');
-
-e.preventDefault();
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.add('in');
-});
-
-addEvent(innerBin, 'dragover', function (e) {
-console.log('apperture dragover');
-
-e.preventDefault(); // allows us to drop
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-e.dataTransfer.dropEffect = 'copy';
-});
-
-addEvent(innerBin, 'dragexit', function (e) {
-console.log('apperture dragexit');
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.remove('in');
-});
-
-addEvent(innerBin, 'dragleave', function (e) {
-console.log('apperture dragleave');
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.remove('in');
-});
-
-addEvent(innerBin, 'drop', function (e) {
-console.log('apperture drop');
-
-e.stopPropagation(); // stop it here to prevent it bubble up
-
-bin.classList.remove('in');
-
-var el = document.getElementById(e.dataTransfer.getData('Text'));
-
-el.parentNode.removeChild(el);
-
-// stupid nom text + fade effect
-yum.innerHTML = eat[parseInt(Math.random() * eat.length)];
-
-var y = yum.cloneNode(true);
-bin.appendChild(y);
-
-setTimeout(function () {
-    y.classList.add('fadeout');
-}, 250);
-
-e.preventDefault();
-});
-
-
-/**
-* ---------------------------------------------------------------------------------------------------------
-*/
-
-function makeFlexBoxedDraggable(el) {
-if (el.hasAttribute('draggable') === false) {
-    console.log('setting flexboxed item draggable programmatically');
-
-    el.setAttribute('draggable', 'true');
-}
-
-addEvent(el, 'dragstart', function (e) {
-    console.log('dragstart');
-
-    e.dataTransfer.effectAllowed = 'copyMove';
-    e.dataTransfer.setData('Text', "Test"); // required otherwise doesn't work
-});
-
-addEvent(el, 'drag', function (e) {
-    console.log('drag');
-});
-
-addEvent(el, 'dragend', function (e) {
-    console.log('dragend with effect: ' + e.dataTransfer.dropEffect);
-});
-
-addEvent(el, 'click', function (e) {
-    console.log('clicked on draggable');
-
-    console.log('click offsetX, offsetY: ' + e.offsetX + ", " + e.offsetY);
-});
-}
-
-var flexboxedDraggables = document.querySelectorAll('ul > li.flex-boxed');
-for (var k = 0; k < flexboxedDraggables.length; k++) {
-var flexboxedDraggable = flexboxedDraggables[k];
-makeFlexBoxedDraggable(flexboxedDraggable);
-}
-
-var draggableFlexContainer = document.querySelector('ul[draggable="true"].dropzone')
-makeFlexBoxedDraggable(draggableFlexContainer);
-
-var flexboxedDropzones = document.querySelectorAll('.flex-boxed.dropzone');
-
-for (var j = 0; j < flexboxedDropzones.length; j++) {
-var flexboxedDropzone = flexboxedDropzones[j];
-
-addEvent(flexboxedDropzone, 'dragenter', function (e) {
-    console.log('flexbox dropzone dragenter');
-
-    e.preventDefault();
-    e.stopPropagation(); // stop it here to prevent it bubble up
-});
-
-addEvent(flexboxedDropzone, 'dragover', function (e) {
-    console.log('flexbox dropzone dragover');
-
-    e.preventDefault(); // allows us to drop
-    e.stopPropagation(); // stop it here to prevent it bubble up
-
-    e.dataTransfer.dropEffect = 'copy';
-});
-
-addEvent(flexboxedDropzone, 'dragexit', function (e) {
-    console.log('flexbox dropzone dragexit');
-
-    e.stopPropagation(); // stop it here to prevent it bubble up
-});
-
-addEvent(flexboxedDropzone, 'dragleave', function (e) {
-    console.log('flexbox dropzone dragleave');
-
-    e.stopPropagation(); // stop it here to prevent it bubble up
-});
-
-addEvent(flexboxedDropzone, 'drop', function (e) {
-    console.log('flexbox dropzone drop');
-
-    e.stopPropagation(); // stop it here to prevent it bubble up
-    e.preventDefault();
-});
-
-}
-
-try {
-            window.addEventListener('touchmove', function () {
-            }, {passive: false})
-        } catch (e) {
-        }
-
 
     var socket = io();
     
@@ -793,26 +291,61 @@ try {
     const menuButton = document.getElementById('menu-button');
     const menuElement = document.getElementById('menu');
 
-    socket.on('connect', function() {
-        console.log('connected');
-        if (localStorage.getItem('user_id')){
-            my_user_id = localStorage.getItem('user_id');
-            socket.emit('iden_user_id', my_user_id);
-        } else {
-            my_user_id = uuidv4();
-            localStorage.setItem('user_id',my_user_id);
-            localStorage.setItem('user_team','1');
-            localStorage.setItem('user_name','noname');
-            socket.emit('iden_user_id', my_user_id)
-        } 
-        my_user_id = localStorage.getItem('user_id');
-        my_team = localStorage.getItem('user_team');
-        my_name = localStorage.getItem('user_name');
-        console.log(my_user_id);
-        console.log(my_team);
-        
-        socket.emit('reconnect_sync_up', my_user_id, my_team);
+    var clue_selected = false;
+    var clicked_on_clue = false;
+    var second_clicked_on_box = false;
 
+    const boxes = document.querySelectorAll('box1, box2');
+    const draggable_all_clues = document.querySelectorAll('draggable_clue_1, draggable_clue_2');
+
+    
+
+    socket.on('connect', function(env) {
+        console.log('connected');
+
+    });
+
+    socket.on("gen_uuid", (env) => {
+        if (env == 'prod') {
+            console.log(env);
+            
+            if (localStorage.getItem('user_id')){
+                my_user_id = localStorage.getItem('user_id');
+                socket.emit('iden_user_id', my_user_id);
+            } else {
+                my_user_id = uuidv4();
+                localStorage.setItem('user_id',my_user_id);
+                localStorage.setItem('user_team','1');
+                localStorage.setItem('user_name','noname');
+                socket.emit('iden_user_id', my_user_id)
+            } 
+            my_user_id = localStorage.getItem('user_id');
+            my_team = localStorage.getItem('user_team');
+            my_name = localStorage.getItem('user_name');
+            console.log(my_user_id);
+            console.log(my_team);
+            
+            socket.emit('reconnect_sync_up', my_user_id, my_team);
+        }
+        else {
+            if (sessionStorage.getItem('user_id')){
+                my_user_id = sessionStorage.getItem('user_id');
+                socket.emit('iden_user_id', my_user_id);
+            } else {
+                my_user_id = uuidv4();
+                sessionStorage.setItem('user_id',my_user_id);
+                sessionStorage.setItem('user_team','1');
+                sessionStorage.setItem('user_name','noname');
+                socket.emit('iden_user_id', my_user_id)
+            } 
+            my_user_id = sessionStorage.getItem('user_id');
+            my_team = sessionStorage.getItem('user_team');
+            my_name = sessionStorage.getItem('user_name');
+            console.log(my_user_id);
+            console.log(my_team);
+            
+            socket.emit('reconnect_sync_up', my_user_id, my_team);
+        }
     });
 
     socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, clue_giver, user_db) => {
@@ -918,11 +451,12 @@ try {
     submitClues.addEventListener('click', function(e) {
         submitClues.setAttribute('disabled', true);
         socket.emit('submitClues', my_user_id, my_name, my_team, $(`#input${my_team}1`).html(), $(`#input${my_team}2`).html(), $(`#input${my_team}3`).html());
-        
-        for (pos of position_to_be_encoded){
-            document.getElementById(`box${my_team}${position_to_be_encoded[pos]}`).setAttribute('contenteditable', 'false');
-        }
-        
+        $(`#input${my_team}1`).addClass('disabled_clue');
+        $(`#input${my_team}2`).addClass('disabled_clue');
+        $(`#input${my_team}3`).addClass('disabled_clue');
+        $(`#input${my_team}1`).attr('contenteditable','false');
+        $(`#input${my_team}2`).attr('contenteditable','false');
+        $(`#input${my_team}3`).attr('contenteditable','false');
     });
 
     // received rearrangement singal: clues are now rearranged randomly
@@ -1024,9 +558,13 @@ try {
     // receive suggest-rearrangement signal, displays for everyone to see
     socket.on('rearrangeSuggest_JS', ( user_name, user_team, d, phase) => {
         console.log('received rearrangeSuggest_JS ');
-
-        if (user_team == my_team) {           
-        rearrangeSuggest_JS( user_name, user_team, d, phase);
+        if (phase=="1") {
+            if (user_team == my_team && my_user_id != clue_giver) {           
+                rearrangeSuggest_JS( user_name, user_team, d, phase);
+            }
+        }
+        else {
+            rearrangeSuggest_JS( user_name, user_team, d, phase);
         }
     });
 
@@ -1080,6 +618,11 @@ try {
             console.log(d);
             socket.emit('submitAnswer', my_user_id, my_name, other_team, d);
             console.log('submitted interception answer');
+            var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
+            draggable_all_clues.forEach(draggable =>{
+                console.log(draggable);
+                draggable.classList.add("disabled_clue");
+            });
         } 
         else {
             let box1Children = document.getElementById(`box${my_team}1`).children;
@@ -1118,6 +661,11 @@ try {
             console.log(d);
             socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
             console.log('submitted communication answer');
+            var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+            draggable_all_clues.forEach(draggable =>{
+                console.log(draggable);
+                draggable.classList.add("disabled_clue");
+            });
         }
         
     });
@@ -1137,10 +685,16 @@ try {
                 submitAnswer.disabled = true;
                 suggestAnswer.disabled = true;
                 pushRight(result, user_id, game_state_correct_answer, other_team);
+                
             }
             else {
                 submitAnswer.disabled = true;
                 suggestAnswer.disabled = true;
+                var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+                draggable_all_clues.forEach(draggable =>{
+                    console.log(draggable);
+                    draggable.classList.add("disabled_clue");
+                });
                 pushRight(result, user_id, game_state_correct_answer, my_team);
             }
             
@@ -1170,8 +724,8 @@ try {
         console.log('start new round clicked');
         socket.emit('startNewRound', my_name);
         giveClues.disabled = false;
-        submitClues.hidden = false;
-        submitAnswer.hidden = true;
+        submitClues.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
+        submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
         startNewRound.disabled = true;
     });
     const countdownDisplay = document.getElementById('countdown');
@@ -1183,8 +737,8 @@ try {
         startNewRound_JS(user_name);
         phase = '1';
         giveClues.disabled = false;
-        submitClues.hidden = false;
-        submitAnswer.hidden = true;
+        submitClues.hidden = false; console.log("startNewRound_JS: submitAnswer.hidden = false");
+        submitAnswer.hidden = true; console.log("startNewRound_JS: submitAnswer.hidden = true");
         startNewRound.disabled = true;
 
         let remainingTime = 5 * 60; // 5 minutes in seconds
@@ -1210,8 +764,8 @@ try {
         console.log('received rearrangeClues_intercept_JS');
         phase = "2";
         rearrangeClues_intercept_JS(round_d, mixed_position, my_team);
-        submitAnswer.hidden = false;
-        submitClues.hidden = true;
+        submitAnswer.hidden = false; console.log("rearrangeClues_intercept_JS: submitAnswer.hidden = false");
+        submitClues.hidden = true; console.log("rearrangeClues_intercept_JS: submitAnswer.hidden = true");
         submitAnswer.disabled = false;
         suggestAnswer.disabled = false;
 
@@ -1307,6 +861,49 @@ try {
     
     socket.on('game_result', (team, other_team) =>{
         game_result_JS(team, other_team);
+    });
+
+    draggable_all_clues.forEach(draggable => {
+            draggable.addEventListener('click', function() {
+                if (clue_selected==false) {
+                    clicked_on_clue = draggable;
+                    clue_selected = true;
+                    console.log('clue_selected');
+                    console.log(clicked_on_clue.parentNode.classList);
+                }
+            });
+        });
+
+    boxes.forEach(box => {
+        box.addEventListener('click', function() {
+            if (clue_selected==false){
+                box.blur();
+            }
+            else {
+                if (box.children.length == 0) {
+                    box.appendChild(clicked_on_clue);
+                    console.log(box);
+                    clue_selected = false;
+                    box.blur();
+                    }
+                else {
+                    if (box.id==clicked_on_clue.parentNode.id){
+                        console.log('same box');
+                    } else {
+                        var second_clicked_on_clue = box.firstElementChild;
+                        box.removeChild(box.firstElementChild);
+                        var original_box = clicked_on_clue.parentNode;
+                        clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                        box.appendChild(clicked_on_clue);
+                        original_box.appendChild(second_clicked_on_clue);
+                        clue_selected = false;
+                        box.blur();
+                        original_box.blur();
+                    }
+                };
+        
+        }
+        });
     });
   
 </script>

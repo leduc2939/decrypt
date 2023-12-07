@@ -150,9 +150,10 @@ function newGame_JS(team_keywords, team) {
 
 function giveClues_JS (user_team, position_to_be_encoded) {
 
-  document.getElementById('submitAnswer').classList.add('hide');
-  document.getElementById('submitClues').classList.remove('hide');
-  document.getElementById('submitClues').disabled = false;
+  submitClues.disabled = false; 
+  submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
+  submitClues.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
+
 
   let clue_input1 = document.createElement("div");
   clue_input1.id = `input${user_team}1`;
@@ -181,30 +182,28 @@ function giveClues_JS (user_team, position_to_be_encoded) {
 
 function rearrangeClues_JS(user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position) {
   
-  // document.getElementById('submitClues').classList.add('hide');
-  // document.getElementById('submitAnswer').classList.remove('hide');
-  document.getElementById('submitClues').hidden = true;
-  document.getElementById('submitAnswer').hidden = false;
+  submitClues.hidden = true;  console.log("startNewRound: submitClues.hidden = true");
+  submitAnswer.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
 
   let clue1 = document.createElement("div");
   clue1.id = `input${user_team}1`;
   // clue1.setAttribute('type','text');
   clue1.setAttribute('class',`draggable_clue_${user_team}`);
-  clue1.setAttribute('draggable', 'true');
+  // clue1.setAttribute('draggable', 'true');
   clue1.innerHTML  = input1_value;
 
   let clue2 = document.createElement("div");
   clue2.id = `input${user_team}2`;
   // clue2.setAttribute('type','text');
   clue2.setAttribute('class',`draggable_clue_${user_team}`);
-  clue2.setAttribute('draggable', 'true');
+  // clue2.setAttribute('draggable', 'true');
   clue2.innerHTML = input2_value;
 
   let clue3 = document.createElement("div");
   clue3.id = `input${user_team}3`;
   // clue3.setAttribute('type','text');
   clue3.setAttribute('class',`draggable_clue_${user_team}`);
-  clue3.setAttribute('draggable', 'true');
+  // clue3.setAttribute('draggable', 'true');
   clue3.innerHTML = input3_value;
 
   $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
@@ -212,13 +211,59 @@ function rearrangeClues_JS(user_id, user_name, user_team, input1_value, input2_v
   $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
   console.log('appened')
 
-  columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
-  draggingClass = 'dragging';
-  dragSource;
+  // columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
+  // draggingClass = 'dragging';
+  // dragSource;
     
-  Array.prototype.forEach.call(columns, function (col) {
-      col.addEventListener('dragstart', dragStart, false);
-    });
+  // Array.prototype.forEach.call(columns, function (col) {
+  //     col.addEventListener('dragstart', dragStart, false);
+  //   });
+
+  var boxes = document.querySelectorAll('.box1, .box2');
+  var draggable_all_clues = document.querySelectorAll('.draggable_clue_1, .draggable_clue_2');
+  console.log(draggable_all_clues);
+  draggable_all_clues.forEach(draggable => {
+    draggable.addEventListener('click', function() {
+        if (clue_selected==false) {
+            clicked_on_clue = draggable;
+            clue_selected = true;
+            console.log('clue_selected');
+            console.log(clicked_on_clue.parentNode.classList);
+          }
+      });
+  });
+
+  boxes.forEach(box => {
+  box.addEventListener('click', function() {
+      if (clue_selected==false){
+          box.blur();
+      }
+      else {
+          if (box.children.length == 0) {
+              box.appendChild(clicked_on_clue);
+              console.log(box);
+              clue_selected = false;
+              box.blur();
+              }
+          else {
+              if (box.id==clicked_on_clue.parentNode.id){
+                  console.log('same box');
+              } else {
+                  var second_clicked_on_clue = box.firstElementChild;
+                  box.removeChild(box.firstElementChild);
+                  var original_box = clicked_on_clue.parentNode;
+                  clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                  box.appendChild(clicked_on_clue);
+                  original_box.appendChild(second_clicked_on_clue);
+                  clue_selected = false;
+                  box.blur();
+                  original_box.blur();
+              }
+          };
+
+  }
+  });
+  });
 }
 
 
@@ -286,13 +331,59 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   //   $(`#box${team}4`).prepend(clue4);
   // }
 
-  columns = document.querySelectorAll(`.draggable_clue_${box.charAt(3)}`);
-  draggingClass = 'dragging';
-  dragSource;
+  // columns = document.querySelectorAll(`.draggable_clue_${box.charAt(3)}`);
+  // draggingClass = 'dragging';
+  // dragSource;
     
-  Array.prototype.forEach.call(columns, function (col) {
-      col.addEventListener('dragstart', dragStart, false);
-    });
+  // Array.prototype.forEach.call(columns, function (col) {
+  //     col.addEventListener('dragstart', dragStart, false);
+  //   });
+  console.log('reattach events for boxes');
+  var boxes = document.querySelectorAll('.box1, .box2');
+  var draggable_all_clues = document.querySelectorAll('.draggable_clue_1, .draggable_clue_2');
+  console.log(draggable_all_clues);
+  draggable_all_clues.forEach(draggable => {
+    draggable.addEventListener('click', function() {
+        if (clue_selected==false) {
+            clicked_on_clue = draggable;
+            clue_selected = true;
+            console.log('clue_selected');
+            console.log(clicked_on_clue.parentNode.classList);
+          }
+      });
+  });
+
+  boxes.forEach(box => {
+  box.addEventListener('click', function() {
+      if (clue_selected==false){
+          box.blur();
+      }
+      else {
+          if (box.children.length == 0) {
+              box.appendChild(clicked_on_clue);
+              console.log(box);
+              clue_selected = false;
+              box.blur();
+              }
+          else {
+              if (box.id==clicked_on_clue.parentNode.id){
+                  console.log('same box');
+              } else {
+                  var second_clicked_on_clue = box.firstElementChild;
+                  box.removeChild(box.firstElementChild);
+                  var original_box = clicked_on_clue.parentNode;
+                  clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                  box.appendChild(clicked_on_clue);
+                  original_box.appendChild(second_clicked_on_clue);
+                  clue_selected = false;
+                  box.blur();
+                  original_box.blur();
+              }
+          };
+
+  }
+  });
+  });
 
   if (user_name != "reconnect_user") {
     var alert = document.createElement("div");
@@ -315,10 +406,12 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
 
 function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
 
-  document.getElementById('submitClues').classList.add('hide');
-  document.getElementById('submitAnswer').classList.remove('hide');
-  document.getElementById('submitAnswer').disabled = false;
-  document.getElementById('suggestAnswer').disabled = false;
+  submitAnswer.hidden = false;
+  submitClues.hidden = true;
+  console.log("startNewRound: submitAnswer.hidden = false");
+  console.log("startNewRound: submitClues.hidden = true");
+  submitAnswer.disabled = false;
+  suggestAnswer.disabled = false;
 
   // rearrangeClues_intercept_JS(game_state_full_server['round_boxes'], game_state_full_server['round_boxes']['mixed_position'], user_team);
   console.log('rearrangeClues_intercept_JS');
@@ -347,21 +440,21 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   clue1.id = `input${other_team}1`;
   // clue1.setAttribute('type','text');
   clue1.setAttribute('class',`draggable_clue_${other_team}`);
-  clue1.setAttribute('draggable', 'true');
+  // clue1.setAttribute('draggable', 'true');
   clue1.innerHTML  = input[0];
 
   let clue2 = document.createElement("div");
   clue2.id = `input${other_team}2`;
   // clue2.setAttribute('type','text');
   clue2.setAttribute('class',`draggable_clue_${other_team}`);
-  clue2.setAttribute('draggable', 'true');
+  // clue2.setAttribute('draggable', 'true');
   clue2.innerHTML = input[1];
 
   let clue3 = document.createElement("div");
   clue3.id = `input${other_team}3`;
   // clue3.setAttribute('type','text');
   clue3.setAttribute('class',`draggable_clue_${other_team}`);
-  clue3.setAttribute('draggable', 'true');
+  // clue3.setAttribute('draggable', 'true');
   clue3.innerHTML = input[2];
 
   $(`#box${other_team}1`).empty();
@@ -375,13 +468,62 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   console.log('appened')
   // console.log($(`#box${other_team}${mixed_position[1]}`));
 
-  columns = document.querySelectorAll(`.draggable_clue_${other_team}`);
-  draggingClass = 'dragging';
-  dragSource;
+  // columns = document.querySelectorAll(`.draggable_clue_${other_team}`);
+  // draggingClass = 'dragging';
+  // dragSource;
     
-  Array.prototype.forEach.call(columns, function (col) {
-      col.addEventListener('dragstart', dragStart, false);
-    });
+  // Array.prototype.forEach.call(columns, function (col) {
+  //     col.addEventListener('dragstart', dragStart, false);
+  //   });
+
+  console.log('reattach events for boxes');
+  var boxes = document.querySelectorAll('.box1, .box2');
+  var draggable_all_clues = document.querySelectorAll('.draggable_clue_1, .draggable_clue_2');
+  console.log(draggable_all_clues);
+  draggable_all_clues.forEach(draggable => {
+    draggable.addEventListener('click', function() {
+        if (clue_selected==false) {
+            clicked_on_clue = draggable;
+            clue_selected = true;
+            console.log('clue_selected');
+            console.log(clicked_on_clue.parentNode.classList);
+          }
+      });
+  });
+
+  boxes.forEach(box => {
+  box.addEventListener('click', function() {
+      if (clue_selected==false){
+          box.blur();
+      }
+      else {
+          if (box.children.length == 0) {
+              box.appendChild(clicked_on_clue);
+              console.log(box);
+              clue_selected = false;
+              box.blur();
+              }
+          else {
+              if (box.id==clicked_on_clue.parentNode.id){
+                  console.log('same box');
+              } else {
+                  var second_clicked_on_clue = box.firstElementChild;
+                  box.removeChild(box.firstElementChild);
+                  var original_box = clicked_on_clue.parentNode;
+                  clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                  box.appendChild(clicked_on_clue);
+                  original_box.appendChild(second_clicked_on_clue);
+                  clue_selected = false;
+                  box.blur();
+                  original_box.blur();
+              }
+          };
+
+  }
+  });
+
+
+  });
 }
 
 function pushRight (result, user_name, game_state_correct_answerd, user_team) {
@@ -412,15 +554,15 @@ function pushRight (result, user_name, game_state_correct_answerd, user_team) {
 // clear everything from boxes, reset the clock, update var round,
 // lock startNewRound reset position_to_encode array
 function startNewRound_JS (user_name) {
-  // giveClues.disabled = false;
-  // submitClues.hidden = false;
-  // submitAnswer.hidden = true;
-  // startNewRound.disabled = true;
+  giveClues.disabled = false;
+  submitClues.hidden = false;
+  submitAnswer.hidden = true;
+  startNewRound.disabled = true;
 
-  $('#giveClues').disabled = false;
-  $('#submitClues').hidden = false;
-  $('#submitAnswer').hidden = true;
-  $('#startNewRound').disabled = true;
+  // $('#giveClues').disabled = false;
+  // $('#submitClues').hidden = false;
+  // $('#submitAnswer').hidden = true;
+  // $('#startNewRound').disabled = true;
   
   console.log('giveClues.disabled = false here');
   var alert = document.createElement("div");
@@ -451,8 +593,8 @@ function startNewRound_JS (user_name) {
 }
 
 function intercept_res_JS (result, user_name, game_state_correct_answer, user_team) {
-  document.getElementById('submitAnswer').disabled = true;
-  document.getElementById('suggestAnswer').disabled = true;
+  submitAnswer.disabled = true;
+  suggestAnswer.disabled = true;
 
   if (result == 1){
     console.log(user_name + " has nailed the thing");
@@ -473,6 +615,12 @@ function intercept_res_JS (result, user_name, game_state_correct_answer, user_te
       $(`#row${key.slice(-2)}`).append(previous_words);
     }
   }
+
+  var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${user_team}`);
+  draggable_all_clues.forEach(draggable =>{
+      console.log(draggable);
+      draggable.classList.add("disabled_clue");
+  });
 
   var alert = document.createElement("div");
   alert.setAttribute('class',"suggest_alert");
@@ -559,8 +707,10 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
   // when someone already clicked on giveClues, box_with_clue is filled, reconnected 
   // cluegiver and normal players have different view
-  if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) {  
+  if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) { 
+    console.log('repopulate clues'); 
     if (user_id==clue_giver[`team_${user_team}`]) {
+      console.log('repopulate clues for cluegiver')
       
       // whether content has be filled or not, editable or not, apply such configs
       var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
@@ -596,7 +746,18 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
       submitClues.hidden = clue_giver_obj["submitClues"]['hide'];
       submitAnswer.hidden = clue_giver_obj["submitAnswer"]['hide'];
+
+      // console.log((game_state_full_server[`team_${user_team}`]['clue_giver'][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`]['disabled_clue']));
+      console.log(game_state_full_server[`team_${user_team}`]['clue_giver']['disabled_clue']);
+      if (game_state_full_server[`team_${user_team}`]['clue_giver']['disabled_clue']) {
+        $(`#box${user_team}${position_to_be_encoded[0]}`).addClass('disabled_clue');
+        $(`#box${user_team}${position_to_be_encoded[1]}`).addClass('disabled_clue');
+        $(`#box${user_team}${position_to_be_encoded[2]}`).addClass('disabled_clue');
+        console.log($(`#box${user_team}${position_to_be_encoded[2]}`));
+      }
+
       
+
     }
     else {
       console.log('normal member');
@@ -613,21 +774,21 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
         clue1.id = `input${user_team}1`;
         // clue1.setAttribute('type','text');
         clue1.setAttribute('class',`draggable_clue_${user_team}`);
-        clue1.setAttribute('draggable', 'true');
+        // clue1.setAttribute('draggable', 'true');
         clue1.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[0]}`]['innerHTML'];
       
         let clue2 = document.createElement("div");
         clue2.id = `input${user_team}2`;
         // clue2.setAttribute('type','text');
         clue2.setAttribute('class',`draggable_clue_${user_team}`);
-        clue2.setAttribute('draggable', 'true');
+        // clue2.setAttribute('draggable', 'true');
         clue2.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[1]}`]['innerHTML'];
       
         let clue3 = document.createElement("div");
         clue3.id = `input${user_team}3`;
         // clue3.setAttribute('type','text');
         clue3.setAttribute('class',`draggable_clue_${user_team}`);
-        clue3.setAttribute('draggable', 'true');
+        // clue3.setAttribute('draggable', 'true');
         clue3.innerHTML = clue_giver_obj[`box${user_team}${position_to_be_encoded[2]}`]['innerHTML'];
       
         $(`#box${user_team}${mixed_position[0]}`).prepend(clue1);
@@ -635,13 +796,59 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
         $(`#box${user_team}${mixed_position[2]}`).prepend(clue3);
         console.log('appened')
       
-        columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
-        draggingClass = 'dragging';
-        dragSource;
+        // columns = document.querySelectorAll(`.draggable_clue_${user_team}`);
+        // draggingClass = 'dragging';
+        // dragSource;
           
-        Array.prototype.forEach.call(columns, function (col) {
-            col.addEventListener('dragstart', dragStart, false);
-          });
+        // Array.prototype.forEach.call(columns, function (col) {
+        //     col.addEventListener('dragstart', dragStart, false);
+        //   });
+        console.log('reattach events for boxes');
+        var boxes = document.querySelectorAll('.box1, .box2');
+        var draggable_all_clues = document.querySelectorAll('.draggable_clue_1, .draggable_clue_2');
+        console.log(draggable_all_clues);
+        draggable_all_clues.forEach(draggable => {
+          draggable.addEventListener('click', function() {
+              if (clue_selected==false) {
+                  clicked_on_clue = draggable;
+                  clue_selected = true;
+                  console.log('clue_selected');
+                  console.log(clicked_on_clue.parentNode.classList);
+                }
+            });
+        });
+
+        boxes.forEach(box => {
+        box.addEventListener('click', function() {
+            if (clue_selected==false){
+                box.blur();
+            }
+            else {
+                if (box.children.length == 0) {
+                    box.appendChild(clicked_on_clue);
+                    console.log(box);
+                    clue_selected = false;
+                    box.blur();
+                    }
+                else {
+                    if (box.id==clicked_on_clue.parentNode.id){
+                        console.log('same box');
+                    } else {
+                        var second_clicked_on_clue = box.firstElementChild;
+                        box.removeChild(box.firstElementChild);
+                        var original_box = clicked_on_clue.parentNode;
+                        clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                        box.appendChild(clicked_on_clue);
+                        original_box.appendChild(second_clicked_on_clue);
+                        clue_selected = false;
+                        box.blur();
+                        original_box.blur();
+                    }
+                };
+
+        }
+        });
+        });
    
       }
 
@@ -660,9 +867,14 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
   }
 
-  // if phase 2, other teams' boxes should be populated
+  // if phase 2, other teams' boxes should be populated and ours should be added with disabled class
   if (phase=="2") {
     rearrangeClues_intercept_JS(game_state_full_server['round_boxes'], game_state_full_server['round_boxes']['mixed_position'], user_team);
+    var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${user_team}`);
+    draggable_all_clues.forEach(draggable =>{
+        console.log(draggable);
+        draggable.classList.add("disabled_clue");
+    });
   }
 
   // if someone already suggested something, change view accordingly for reconnected 

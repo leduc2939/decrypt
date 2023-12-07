@@ -291,6 +291,10 @@ body {
     opacity: 0;
 }
 
+.disabled_clue {
+    pointer-events: none;
+    opacity: 0.4;
+}
 .draggable_clue_1 {
     width: 90px;
     height: 65px;
@@ -305,6 +309,10 @@ body {
     align-items: center;
     text-align: center;
 }
+.draggable_clue_1:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 .draggable_clue_2 {
     
     width: 90px;
@@ -319,6 +327,10 @@ body {
     align-items: center;
     text-align: center;
 }
+.draggable_clue_2:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 .keyword1 {
     width: 100px;
     height: 75px;
@@ -482,7 +494,7 @@ body {
 
 
 
-.box {
+.box1 {
     width: 100px;
     height: 74px;
     margin-right: 1px;
@@ -494,6 +506,40 @@ body {
     align-items: center;
     justify-content: center;
 
+}
+.box1:focus {
+    
+    border-radius: 25px;
+    color: #000000;
+    box-shadow: 0 0 2px #ffffff, 0 0 10px #010058, 0 0 20px #aa0bca, 0 0 30px #00d5ff,
+    0 0 40px #540bca, 0 0 50px #5452d8;
+    -webkit-animation: blink 0.7s infinite alternate;
+    animation: blink 0.7s infinite alternate;
+   
+}
+
+.box2 {
+    width: 100px;
+    height: 74px;
+    margin-right: 1px;
+    margin-bottom: 3px;
+    border: solid 3px #ccc;
+    /* align items in the box */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+.box2:focus {
+    
+    border-radius: 25px;
+    color: #000000;
+    box-shadow: 0 0 2px #fff, 0 0 10px #fff, 0 0 20px #ca0b0b, 0 0 30px #ca670b,
+        0 0 40px #ca710b, 0 0 50px rgb(255, 188, 4);
+    -webkit-animation: blink 0.7s infinite alternate;
+    animation: blink 0.7s infinite alternate;
+   
 }
 
 .drag-over {
