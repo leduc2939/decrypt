@@ -95,6 +95,12 @@ var modal = document.getElementById('modal_game_result');
 var closeModalButton = document.getElementById('close-modal_game_result');
 var game_result_p = document.getElementById('game_result_p'); 
 
+var miscommunicate_blue = document.getElementById('miscommunicate_blue');
+var intercept_red = document.getElementById('miscommunicate_red');
+var intercept_blue = document.getElementById('intercept_blue'); 
+var intercept_red = document.getElementById('intercept_red');
+
+var countdownDisplay = document.getElementById('countdown');
 
 function newGame_JS(team_keywords, team) {
   console.log('newGame_JS');
@@ -146,13 +152,20 @@ function newGame_JS(team_keywords, team) {
     row24.removeChild(row24.lastChild);
   }
 
+  miscommunicate_blue.textContent = 0;
+  miscommunicate_red.textContent = 0;
+  intercept_blue.textContent = 0;
+  intercept_red.textContent = 0;
+  
+  countdownDisplay.textContent = ""
+
 }
 
 function giveClues_JS (user_team, position_to_be_encoded) {
 
   submitClues.disabled = false; 
   submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
-  submitClues.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
+  submitClues.hidden = false; console.log("startNewRound: submitClues.hidden = false");
 
 
   let clue_input1 = document.createElement("div");
@@ -297,7 +310,7 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
       let clue = document.createElement("div");
       clue.id = `input${box.charAt(3)}${c}`;
       clue.setAttribute('class',`draggable_clue_${box.charAt(3)}`);
-      clue.setAttribute('draggable', 'true');
+      // clue.setAttribute('draggable', 'true');
       clue.innerHTML  = d[box];
       console.log(clue)
       $(`#${box}`).prepend(clue);
@@ -413,6 +426,8 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   submitAnswer.disabled = false;
   suggestAnswer.disabled = false;
 
+
+
   // rearrangeClues_intercept_JS(game_state_full_server['round_boxes'], game_state_full_server['round_boxes']['mixed_position'], user_team);
   console.log('rearrangeClues_intercept_JS');
   console.log(round_d);
@@ -492,37 +507,44 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
   });
 
   boxes.forEach(box => {
-  box.addEventListener('click', function() {
-      if (clue_selected==false){
-          box.blur();
-      }
-      else {
-          if (box.children.length == 0) {
-              box.appendChild(clicked_on_clue);
-              console.log(box);
-              clue_selected = false;
-              box.blur();
-              }
-          else {
-              if (box.id==clicked_on_clue.parentNode.id){
-                  console.log('same box');
-              } else {
-                  var second_clicked_on_clue = box.firstElementChild;
-                  box.removeChild(box.firstElementChild);
-                  var original_box = clicked_on_clue.parentNode;
-                  clicked_on_clue.parentNode.removeChild(clicked_on_clue);
-                  box.appendChild(clicked_on_clue);
-                  original_box.appendChild(second_clicked_on_clue);
-                  clue_selected = false;
-                  box.blur();
-                  original_box.blur();
-              }
-          };
+    box.addEventListener('click', function() {
+        if (clue_selected==false){
+            box.blur();
+        }
+        else {
+            if (box.children.length == 0) {
+                box.appendChild(clicked_on_clue);
+                console.log(box);
+                clue_selected = false;
+                box.blur();
+                }
+            else {
+                if (box.id==clicked_on_clue.parentNode.id){
+                    console.log('same box');
+                } else {
+                    var second_clicked_on_clue = box.firstElementChild;
+                    box.removeChild(box.firstElementChild);
+                    var original_box = clicked_on_clue.parentNode;
+                    clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                    box.appendChild(clicked_on_clue);
+                    original_box.appendChild(second_clicked_on_clue);
+                    clue_selected = false;
+                    box.blur();
+                    original_box.blur();
+                }
+            };
 
-  }
+        }
+    });
+
+
   });
 
 
+  var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${user_team}`);
+  draggable_all_clues.forEach(draggable =>{
+      console.log(draggable);
+      draggable.classList.add("disabled_clue");
   });
 }
 
@@ -589,6 +611,13 @@ function startNewRound_JS (user_name) {
   $(`#box22`).empty();
   $(`#box23`).empty();
   $(`#box24`).empty(); 
+
+  var draggable_all_clues = document.querySelectorAll('.draggable_clue_1, .draggable_clue_2');
+  draggable_all_clues.forEach(draggable =>{
+      
+      draggable.classList.remove("disabled_clue");
+      console.log(draggable);
+  });
   
 }
 
@@ -905,21 +934,21 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   }
 }
 
-function game_result_JS(team, other_team) {
-  var gay = ["gà đừng hỏi", "thu dọn hành lý chuẩn bị vào hang"]
-  var gratz = ["xuất sắc hoàn thành nhiệm vụ đảng và nhà nước giao phó", "đọc team họ như 1 cuốn sách tập đọc lớp 1", "não vừa to vừa dài cuốn quanh cổ"];
-  if (team=="Tie"){
-    game_result_p.textContent = "It's a tie";
+function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
+  if (winner=="Tie"){
+    game_result_p.textContent = gratz_words;
   } else {
-    if (Math.random() < 0.5) {
-      game_result_p.textContent = team + " "  + gratz[Math.floor(Math.random()*gratz.length)];
+    if (my_team==winner) {
+      game_result_p.textContent = "Team bạn "  + gratz_words;
     } else {
-      game_result_p.textContent = other_team + " "  + gay[Math.floor(Math.random()*gay.length)];
+      game_result_p.textContent = "Team bạn "  + gay_words;
     }
   }
   modal.style.display = 'block';
-  modal.style.top = window.innerHeight / 2 - modal.offsetHeight / 2 + 'px';
-  modal.style.left = window.innerWidth / 2 - modal.offsetWidth / 2 + 'px';
+
+
+  // modal.style.top = window.innerHeight / 2 - modal.offsetHeight / 2 + 'px';
+  // modal.style.left = window.innerWidth / 2 - modal.offsetWidth / 2 + 'px';
 }
 
 
@@ -927,6 +956,47 @@ function game_result_JS(team, other_team) {
 closeModalButton.addEventListener('click', () => {
   modal.style.display = 'none';
 });
+
+
+
+var paragraph = document.getElementById('state_alert');
+function textEffect(animationName) {
+  var text = paragraph.innerHTML,
+		chars = text.length,
+		newText = '',
+		animation = animationName,
+		char,
+		i;
+
+    for (i = 0; i < chars; i += 1) {
+      newText += '<i>' + text.charAt(i) + '</i>';
+    }
+
+	  paragraph.innerHTML = newText;
+
+    var wrappedChars = document.getElementsByTagName('i'),
+    wrappedCharsLen = wrappedChars.length,
+    j = 0;
+
+    function addEffect () {
+      setTimeout(function () {
+        wrappedChars[j].className = animation;
+        j += 1;
+        if (j < wrappedCharsLen) {
+          addEffect();
+        }
+      }, 150)
+    }
+
+	  addEffect();
+
+};
+
+
+
+
+
+
 // const el = document.querySelector('.arrow')
 // const menu = document.querySelector('.menu');
 

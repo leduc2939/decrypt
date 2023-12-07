@@ -691,14 +691,26 @@ io.on('connection', (socket) => {
           var team_2_score = parseFloat(interception["team_2"]) - parseFloat(misconmunication["team_2"])*1.1; 
           console.log(parseFloat(team_1_score));
           console.log(parseFloat(team_2_score));
+          var gay = ["gà đừng hỏi", "thu dọn hành lý chuẩn bị vào hang", "không cần phải buồn, mình có thực lực thì mới buồn chứ"]
+          var gratz = ["xuất sắc hoàn thành nhiệm vụ đảng và nhà nước giao phó", "đọc team họ như 1 cuốn sách tập đọc lớp 1", "não vừa to vừa dài cuốn quanh cổ"];
+          var gay_words = "";
+          var gratz_words = "";
+          var hoa_words = "2 team không thể chung 1 hang";
+
+          gratz_words =  gratz[Math.floor(Math.random()*gratz.length)];
+          
+          gay_words =  gay[Math.floor(Math.random()*gay.length)];
+          
+          
+          
           if (team_1_score == team_2_score){
-            io.emit('game_result', 'Tie', "NoTeam");
+            io.emit('game_result', 'Tie', "Tie", hoa_words, hoa_words);
           } else {
             if (team_1_score > team_2_score) {
               console.log('team 1 win');
-              io.emit('game_result', 'Team Thua', 'Team Loser');
+              io.emit('game_result', '1', '2', gratz_words, gay_words);
             } else {
-              io.emit('game_result', 'Team Loser', 'Team Thua');
+              io.emit('game_result', '2', '1', gratz_words, gay_words);
             }
           }
           

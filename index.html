@@ -165,6 +165,7 @@
                 <button class="game-button orange" id="suggestAnswer" disabled>
                     Suggest
                 </button>
+                <p id="state_alert"></p>
             </div>
 
             <div class="decryptr--row" id="boxrow21">
@@ -206,9 +207,9 @@
                 </button>
                 <div class="modal_game_result" id = "modal_game_result" style="display: none;">
                     <div class="modal_game_result-content">
-                      <span class="close-modal_game_result" id = "close-modal_game_result">Okay</span>
-                      <h2>Game Result!</h2>
-                      <p id="game_result_p"></p>
+                      <h5>Game Result!</h5>
+                      <e id="game_result_p"></e>
+                      <button class="close-modal_game_result" id = "close-modal_game_result">Okay</button>
                     </div>
                   </div>
                 <button disabled class="game-button green" id="submitAnswer">
@@ -267,6 +268,7 @@
     let game_state_full = {};
     game_state_full['team_1'] = {};
     game_state_full['team_2'] = {};
+    var round = 1;
 
     let position_to_be_encoded = [];
     
@@ -298,7 +300,7 @@
     const boxes = document.querySelectorAll('box1, box2');
     const draggable_all_clues = document.querySelectorAll('draggable_clue_1, draggable_clue_2');
 
-    
+    var state_alert = document.getElementById('state_alert');
 
     socket.on('connect', function(env) {
         console.log('connected');
@@ -409,6 +411,7 @@
             newGame_JS(team_2_keywords, my_team);
         }
         phase = 1;
+        round = 1;
     });
 
     // function isScriptLoaded(url) {
@@ -564,7 +567,9 @@
             }
         }
         else {
-            rearrangeSuggest_JS( user_name, user_team, d, phase);
+            if (user_team==my_team){
+                rearrangeSuggest_JS( user_name, user_team, d, phase);
+            }
         }
     });
 
@@ -717,6 +722,15 @@
         console.log('received roundCompleted');
         startNewRound.disabled = false; 
         countdownDisplay.textContent = "";
+        round += 1;
+        state_alert.innerHTML = "Round\nCompleted";
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 5000);
+
     });
 
     // when click on start new round, send signal to clear everything from boxes, reset the clock, update var round, enable giveClues
@@ -728,7 +742,7 @@
         submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
         startNewRound.disabled = true;
     });
-    const countdownDisplay = document.getElementById('countdown');
+    
     
     
     // receive startNewRound_JS from server and update site
@@ -740,6 +754,14 @@
         submitClues.hidden = false; console.log("startNewRound_JS: submitAnswer.hidden = false");
         submitAnswer.hidden = true; console.log("startNewRound_JS: submitAnswer.hidden = true");
         startNewRound.disabled = true;
+
+        state_alert.innerHTML = `Round ${round}`;
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 5000);
 
         let remainingTime = 5 * 60; // 5 minutes in seconds
         timerInterval = setInterval(() => {
@@ -756,7 +778,7 @@
 
             remainingTime--;
         }, 1000); // Update the countdown every second
- 
+        
     });
 
     // make it draggable swappable for opponents
@@ -768,6 +790,14 @@
         submitClues.hidden = true; console.log("rearrangeClues_intercept_JS: submitAnswer.hidden = true");
         submitAnswer.disabled = false;
         suggestAnswer.disabled = false;
+
+        state_alert.innerHTML = `Intercept!`;
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 5000);
 
         clearInterval(timerInterval);
         var remainingTime = 5 * 60; // 5 minutes in seconds
@@ -859,8 +889,8 @@
         
     // });
     
-    socket.on('game_result', (team, other_team) =>{
-        game_result_JS(team, other_team);
+    socket.on('game_result', (winner, loser, gratz_words, gay_words) =>{
+        game_result_JS(my_team, winner, loser, gratz_words, gay_words);
     });
 
     draggable_all_clues.forEach(draggable => {
