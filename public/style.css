@@ -10,7 +10,7 @@ html {
 
   }
 .body_login {
-    background-image: url('decrypto_background.jpg');
+    background-image: url('moon2.png');
     position: fixed;
     top: 0;
     left: 0;
@@ -18,6 +18,7 @@ html {
     height: 100%;
     background-size: cover;
     overflow: scroll;
+    background-repeat: no-repeat ;
     /* -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -25,9 +26,28 @@ html {
     -moz-background-size: cover; -webkit-background-size: cover; -o-background-size: cover;  */
     /* width:100vw;
     height:100vw; */
-    background-position:center center;
-    background-size: cover
+    /* background-position:center; */
+    background-size: cover;
+    background-color: #000;
 }
+
+@media only screen and (max-width: 768px) {
+    /* .body_login {
+      background-size: contain;
+    } */
+    /* .user_name_input{
+        transform: translateX(-40%);
+    }
+    .game-button.enter_game{
+        transform: translateX(-40%);
+    }
+    .glow1{
+        transform: translateX(-40%);
+    }
+    .glow2{
+        transform: translateX(-40%);
+    } */
+  }
 
 /* @media only screen and (min-width:1px) and (max-width:700px) {
   .image {
@@ -77,19 +97,18 @@ html {
 .user_name_input {
     position: absolute;
     top: 30%;
-    left: 20%;
-    right: 20%;
+    /* left: 20%; */
+    /* right: 20%;  */
+    /* left: 42%; */
+    /* display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: center; */
+    transform: translateX(-50%);
     border-width: 5px;
     background-color: #adadadc4;
-}
+    /* left:20%; */
 
-.enter_button {
-    position: absolute;
-    top: 50%;
-    /* left: 35%;
-    right: 35%; */
-    margin:auto;
-    border-width: 5px;
 }
 
 .user_name_input:focus { 
@@ -98,18 +117,32 @@ html {
     box-shadow:0 0 10px #9ecaed;
 }
 
+.enter_button {
+    position: absolute;
+    top: 50%;
+    /* left: 35%;
+    right: 35%; */
+    /* transform: translateX(35%); */
+    border-width: 5px;
+    left:20%;
+}
+
+
+
 .glow1 {
     text-align: center;
     display: block;
     position: absolute;
     top: 40%;
-    left: 20%;
-    right: 55%;
+    /* left: 20%;
+    right: 55%; */
+    transform: translateX(-55%);
     border-width: 5px;
     border: 1px solid rgb(55, 55, 204);
     border-radius: 25px;
     color: #000000;
     background-color: rgba(130, 152, 226, 0.525);
+    /* left:20%; */
   }
 
 .glow_active {
@@ -131,13 +164,15 @@ justify-content:center;
     display: block;
     position: absolute;
     top: 40%;
-    left: 55%;
-    right: 20%;
+    /* left: 55%;
+    right: 20%; */
+    transform: translateX(55%);
     border-width: 5px;
     border: 1px solid rgb(204, 55, 55);
     border-radius: 25px;
     color: #000000;
     background-color: #d39c9c84;
+    /* left:55%; */
   }
 
 .glow2:hover {
@@ -187,6 +222,12 @@ background: transparent !important;
 }
   
   
+.glow1, .glow2, .user_name_input {
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin: 0 auto;  
+    flex-grow: 1;
+}
 
 body {
     font-family: 'Open Sans', sans-serif;
@@ -700,7 +741,7 @@ display: none;
     border-top: 3px solid rgba(255,255,255,.3);
     color: #fff !important;
     border-radius: 8px;
-    left:0%;
+    /* left:0%; */
     /* padding: 8px 15px 10px;
     box-shadow: 0 6px 0 #266b91, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #12517d, 0 12px 0 5px #1a6b9a, 0 15px 0 5px #0c405e, 0 15px 1px 6px rgba(0,0,0,.3); */
   }
@@ -842,9 +883,10 @@ display: none;
      /* align-items: right; */
      position: absolute;
     top: 50%;
-    left: 35%;
-    right: 35%;
     font-size: 20px;
+    /* left: 45%;
+    right: 40%;  */
+    transform:translate(-45%);
      }
  /* .game-button.enter_game:hover {
    top:2px;
@@ -938,7 +980,7 @@ display: none;
 .modal_game_result {
     position: absolute;
     top: 45%;
-    left: 15%;
+    left: 5%;
     width: 100%;
     height: 100%;
     /* background-color: rgba(0, 0, 0, 0.7); */
@@ -951,8 +993,8 @@ display: none;
 .modal_game_result-content {
     background-color: #fff;
     padding: 20px;
-    width: 500px;
-    height: auto;
+    width: 300px;
+    height: 200px;
     position: relative;
     border-radius: 5px;
     font:15px;
@@ -961,10 +1003,10 @@ display: none;
 
 .close-modal_game_result {
     position: relative;
-    top: 80%;
-    bottom:10%;
-    left:35%;
-    right:35%;
+    top: 70%;
+    /* bottom:10%; */
+    /* left:35%; */
+    /* right:35%; */
     /* right: 35%; */
     align-items: center;
     cursor: pointer;
@@ -980,12 +1022,12 @@ p {
 	line-height: 2em;
     position: absolute;
     z-index: 9999999;
-    top:40%;
-    left: 32%;
+    top:35%;
+    left: 30%;
     text-shadow:
         0.07em 0 rgb(73, 73, 73),
         0 0.07em rgb(44, 44, 44),
-        -0.07em 0 rgb(160, 160, 160),
+        -0.07em 0 rgb(85, 85, 85),
         0 -0.07em rgb(63, 63, 63);
     
 }

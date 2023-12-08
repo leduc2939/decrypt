@@ -102,6 +102,8 @@ var intercept_red = document.getElementById('intercept_red');
 
 var countdownDisplay = document.getElementById('countdown');
 
+
+
 function newGame_JS(team_keywords, team) {
   console.log('newGame_JS');
   startNewRound.disabled = false;
@@ -159,6 +161,10 @@ function newGame_JS(team_keywords, team) {
   
   countdownDisplay.textContent = ""
 
+  var boxes = document.querySelectorAll('.box1, .box2');
+  boxes.forEach(box => {
+    box.classList.remove('disabled_clue')
+  });
 }
 
 function giveClues_JS (user_team, position_to_be_encoded) {
@@ -190,6 +196,11 @@ function giveClues_JS (user_team, position_to_be_encoded) {
   $(`#box${user_team}${position_to_be_encoded[0]}`).prepend(clue_input1);
   $(`#box${user_team}${position_to_be_encoded[1]}`).prepend(clue_input2);
   $(`#box${user_team}${position_to_be_encoded[2]}`).prepend(clue_input3);
+
+  var boxes = document.querySelectorAll('.box1, .box2');
+  boxes.forEach(box => {
+    box.classList.remove('disabled_clue')
+  });
 
 }
 
@@ -618,6 +629,11 @@ function startNewRound_JS (user_name) {
       draggable.classList.remove("disabled_clue");
       console.log(draggable);
   });
+
+  var boxes = document.querySelectorAll('.box1, .box2');
+  boxes.forEach(box => {
+    box.classList.remove('disabled_clue')
+  });
   
 }
 
@@ -779,9 +795,9 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
       // console.log((game_state_full_server[`team_${user_team}`]['clue_giver'][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`]['disabled_clue']));
       console.log(game_state_full_server[`team_${user_team}`]['clue_giver']['disabled_clue']);
       if (game_state_full_server[`team_${user_team}`]['clue_giver']['disabled_clue']) {
-        $(`#box${user_team}${position_to_be_encoded[0]}`).addClass('disabled_clue');
-        $(`#box${user_team}${position_to_be_encoded[1]}`).addClass('disabled_clue');
-        $(`#box${user_team}${position_to_be_encoded[2]}`).addClass('disabled_clue');
+        $(`#input${user_team}1`).addClass('disabled_clue');
+        $(`#input${user_team}2`).addClass('disabled_clue');
+        $(`#input${user_team}3`).addClass('disabled_clue');
         console.log($(`#box${user_team}${position_to_be_encoded[2]}`));
       }
 
