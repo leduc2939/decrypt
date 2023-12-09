@@ -431,6 +431,7 @@ io.on('connection', (socket) => {
 
     game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'] = position_to_be_encoded[`team_${user_team}`];
     clue_giver[`team_${user_team}`] = user_id
+    console.log(clue_giver[`team_${user_team}`])
     game_state_full_server[`team_${user_team}`]['clue_giver']["giveClues"]['disabled'] = true;
     game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"]['disabled'] = false;
     game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
@@ -676,6 +677,7 @@ io.on('connection', (socket) => {
         game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['hide'] = true;
         console.log('incorrect interception: intercept_res + push right sent');
       }
+      
       console.log(misconmunication);
       console.log(interception);
       team_finish_interception += 1;
@@ -796,6 +798,9 @@ io.on('connection', (socket) => {
     
     clue_giver['team_1'] = "";
     clue_giver['team_2'] = "";
+    game_state_full_server['round_finished'] = false;
+    game_state_full_server['team_1']['suggest'] = {};
+    game_state_full_server['team_2']['suggest'] = {};
 
   });
 

@@ -754,7 +754,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   // cluegiver and normal players have different view
   if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) { 
     console.log('repopulate clues'); 
-    if (user_id==clue_giver[`team_${user_team}`]) {
+    if (user_id==clue_giver) {
       console.log('repopulate clues for cluegiver')
       
       // whether content has be filled or not, editable or not, apply such configs
@@ -798,7 +798,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
         $(`#input${user_team}1`).addClass('disabled_clue');
         $(`#input${user_team}2`).addClass('disabled_clue');
         $(`#input${user_team}3`).addClass('disabled_clue');
-        console.log($(`#box${user_team}${position_to_be_encoded[2]}`));
+        console.log($(`#input${user_team}3`).addClass('disabled_clue'));
       }
 
       
@@ -906,6 +906,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
       submitClues.hidden = normal_member_obj["submitClues"]['hide'];
       submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+
       // console.log(normal_member_obj);
       // console.log(submitClues);
     }
@@ -923,15 +924,22 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   }
 
   // if someone already suggested something, change view accordingly for reconnected 
+  console.log(clue_giver);
+  console.log(user_id);
+  console.log(game_state_full_server[`team_${user_team}`]['suggest']);
   if (Object.keys(game_state_full_server[`team_${user_team}`]['suggest']).length > 0) {
-    // if (phase=="2") {
-    //   // console.log(game_state_full_server[`team_${user_team}`]['suggest']);
-    //   rearrangeSuggest_JS('reconnect_user', other_team, game_state_full_server[`team_${user_team}`]['suggest']);
-    // } else {
-    //   rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest']);
-    // }
-    rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest'], phase);
-    console.log(game_state_full_server[`team_${user_team}`]['suggest']);
+    
+    if (user_id==clue_giver && phase=="1") {
+      
+      console.log("phase 1 clue giver doens't get suggestions");
+      $(`#input${user_team}1`).addClass('disabled_clue');
+      $(`#input${user_team}2`).addClass('disabled_clue');
+      $(`#input${user_team}3`).addClass('disabled_clue');
+      
+    } else {
+      rearrangeSuggest_JS('reconnect_user', user_team, game_state_full_server[`team_${user_team}`]['suggest'], phase);
+      console.log(game_state_full_server[`team_${user_team}`]['suggest']);
+    }
   }
 
   if (game_state_full_server['round_finished']) {

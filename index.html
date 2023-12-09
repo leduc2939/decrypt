@@ -350,9 +350,12 @@
         }
     });
 
-    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, clue_giver, user_db) => {
+    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, current_clue_giver, user_db) => {
         phase = current_phase;
+        clue_giver = current_clue_giver[`team_${my_team}`];
         console.log(my_team);
+        console.log(clue_giver);
+        console.log(my_user_id)
         // console.log(game_state_full_server);
         reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db);
         console.log(user_db);
