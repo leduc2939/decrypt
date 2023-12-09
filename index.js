@@ -150,6 +150,7 @@ game_state_full_server['team_1']['team_2_truth'] = [];
 game_state_full_server['team_2']['team_1_truth'] = [];
 game_state_full_server['team_2']['team_2_truth'] = [];
 
+
 game_state_full_server['round_finished'] = false;
 
 let clue_giver = {}
@@ -177,6 +178,9 @@ var team_1_keywords = [];
 var team_2_keywords = [];
 var wordlist = [];
 var namelist = [];
+game_state[`round_0`] = {}; 
+game_state[`round_0`]['team_1'] = {};
+game_state[`round_0`]['team_2'] = {};
 
 function fetchLines(url) {
   return fetch(url)
@@ -409,6 +413,12 @@ io.on('connection', (socket) => {
     game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
     game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
     
+    game_state_full_server[`team_1`]['clue_giver']["startNewRound"]['disabled'] = false;
+    game_state_full_server[`team_1`]['normal_member']["startNewRound"]['disabled'] = false;
+    game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
+    game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
+    
+
     console.log(team_1_keywords);
     console.log(team_2_keywords);
     
@@ -567,6 +577,8 @@ io.on('connection', (socket) => {
         console.log('incorrect');
         console.log('push right signal sent');
       }
+      game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
       team_finish += 1;
       if (team_finish == 2) {
         if (round_no >= 2) {
@@ -618,7 +630,7 @@ io.on('connection', (socket) => {
           // game_state_full_server[`team_1`]['suggest'] = {};
           // game_state_full_server[`team_2`]['suggest'] = {};
 
-          console.log(game_state_full_server[`team_2`]['normal_member']);
+          // console.log(game_state_full_server[`team_2`]['normal_member']);
 
         } else {
           io.emit('roundCompleted');
@@ -627,7 +639,28 @@ io.on('connection', (socket) => {
     }
     else {
       console.log(user_name + " just submitted interception");
+      game_state_full_server[`team_${other_team}`]['normal_member']["giveClues"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["submitClues"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["submitAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["startNewRound"]['disabled'] = true;
+
+      game_state_full_server[`team_${other_team}`]['normal_member']["submitClues"]['hide'] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["submitAnswer"]['hide'] = false;
+
+      game_state_full_server[`team_${other_team}`]['clue_giver']["giveClues"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['clue_giver']["submitClues"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['clue_giver']["submitAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${other_team}`]['clue_giver']["startNewRound"]['disabled'] = true;
+
+      game_state_full_server[`team_${other_team}`]['clue_giver']["submitClues"]['hide'] = false;
+      game_state_full_server[`team_${other_team}`]['clue_giver']["submitAnswer"]['hide'] = true;
+
+      game_state_full_server[`team_${other_team}`]['clue_giver']["disabled_clue"] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["disabled_clue"] = true
       
+      console.log(game_state_full_server[`team_${other_team}`]);
       if (
         d[`box${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
         d[`box${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
@@ -636,47 +669,14 @@ io.on('connection', (socket) => {
         io.emit('intercept_res', 1, user_name, game_state[`round_${round_no}`][`team_${user_team}`], user_team);
         interception[`team_${other_team}`] +=1;
         game_state_full_server[`team_${other_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
-        game_state_full_server[`team_${user_team}`]['normal_member']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["startNewRound"]['disabled'] = true;
-
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
-
-        game_state_full_server[`team_${user_team}`]['clue_giver']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["startNewRound"]['disabled'] = true;
-
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['hide'] = true;
         console.log('correct interception: intercept_res + push right sent');
       } 
       else {
         io.emit('intercept_res', 0, user_name, game_state[`round_${round_no}`][`team_${user_team}`], user_team);
         game_state_full_server[`team_${other_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
-        game_state_full_server[`team_${user_team}`]['normal_member']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["startNewRound"]['disabled'] = true;
-
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
-        game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
-
-        game_state_full_server[`team_${user_team}`]['clue_giver']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["startNewRound"]['disabled'] = true;
-
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_${user_team}`]['clue_giver']["submitAnswer"]['hide'] = true;
         console.log('incorrect interception: intercept_res + push right sent');
       }
+      
       
       console.log(misconmunication);
       console.log(interception);
@@ -721,42 +721,7 @@ io.on('connection', (socket) => {
         } else {
           io.emit('roundCompleted');
         }
-        game_state_full_server[`team_1`]['normal_member']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_1`]['normal_member']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_1`]['normal_member']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_1`]['normal_member']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_1`]['normal_member']["startNewRound"]['disabled'] = false;
-
-        game_state_full_server[`team_1`]['normal_member']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_1`]['normal_member']["submitAnswer"]['hide'] = true;
-
-        game_state_full_server[`team_1`]['clue_giver']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_1`]['clue_giver']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_1`]['clue_giver']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_1`]['clue_giver']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_1`]['clue_giver']["startNewRound"]['disabled'] = false;
-
-        game_state_full_server[`team_1`]['clue_giver']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_1`]['clue_giver']["submitAnswer"]['hide'] = true;
-
-        game_state_full_server[`team_2`]['normal_member']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_2`]['normal_member']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_2`]['normal_member']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_2`]['normal_member']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
-
-        game_state_full_server[`team_2`]['normal_member']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_2`]['normal_member']["submitAnswer"]['hide'] = true;
-
-        game_state_full_server[`team_2`]['clue_giver']["giveClues"]['disabled'] = true;
-        game_state_full_server[`team_2`]['clue_giver']["submitClues"]['disabled'] = true;
-        game_state_full_server[`team_2`]['clue_giver']["suggestAnswer"]['disabled'] = true;
-        game_state_full_server[`team_2`]['clue_giver']["submitAnswer"]['disabled'] = true;
-        game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
-
-        game_state_full_server[`team_2`]['clue_giver']["submitClues"]['hide'] = false;
-        game_state_full_server[`team_2`]['clue_giver']["submitAnswer"]['hide'] = true;
-
+        
         game_state_full_server['round_finished'] = true;
       }
     }
@@ -801,7 +766,12 @@ io.on('connection', (socket) => {
     game_state_full_server['round_finished'] = false;
     game_state_full_server['team_1']['suggest'] = {};
     game_state_full_server['team_2']['suggest'] = {};
-
+    game_state_full_server[`team_1`]['clue_giver']['boxes_with_clue'] = [];
+    game_state_full_server[`team_2`]['clue_giver']['boxes_with_clue'] = [];
+    game_state_full_server[`team_1`]['clue_giver']["disabled_clue"] = false;
+    game_state_full_server[`team_1`]['normal_member']["disabled_clue"] = false;
+    game_state_full_server[`team_2`]['clue_giver']["disabled_clue"] = false;
+    game_state_full_server[`team_2`]['normal_member']["disabled_clue"] = false;
   });
 
   // sync current state of the game
