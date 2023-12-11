@@ -418,6 +418,8 @@
         // console.log(game_state_full_server);
         reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db, misconmunication, interception);
         // console.log(user_db);
+        $(`#Team_Loser_Members`).empty();
+        $(`#Team_Thua_Members`).empty();
         for (user_id in user_db) {
             if (user_db[user_id]['user_team'] == "1") {
                 if (user_db[user_id]['user_team']){
@@ -439,6 +441,8 @@
     socket.on('team_member_update', (user_db) => {
         console.log('received update_team_member');
         console.log(user_db);
+        $(`#Team_Loser_Members`).empty();
+        $(`#Team_Thua_Members`).empty();
         for (user_id in user_db) {
             if (user_db[user_id]['user_team'] == "1") {
                 if (user_db[user_id]['user_team']){
