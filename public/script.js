@@ -96,12 +96,14 @@ var closeModalButton = document.getElementById('close-modal_game_result');
 var game_result_p = document.getElementById('game_result_p'); 
 
 var miscommunicate_blue = document.getElementById('miscommunicate_blue');
-var intercept_red = document.getElementById('miscommunicate_red');
+var miscommunicate_red = document.getElementById('miscommunicate_red');
 var intercept_blue = document.getElementById('intercept_blue'); 
 var intercept_red = document.getElementById('intercept_red');
 
 var countdownDisplay = document.getElementById('countdown');
-
+var clue_selected = false;
+var clicked_on_clue = false;
+var second_clicked_on_box = false;
 
 
 function newGame_JS(team_keywords, team) {
@@ -294,17 +296,13 @@ function rearrangeClues_JS(user_id, user_name, user_team, input1_value, input2_v
 function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   console.log(d);
   console.log('rearrangeSuggest_JS');
-  var team = "";
-  if (phase =="2") {
-    if (user_team == '1'){
-      team = '2';
-    } else {
-      team = '1';
-    }
+  var other_team = "";
+  if (user_team == "1") {
+    other_team = "2";
   } else {
-    team = user_team;
+    other_team = "1";
   }
-
+   
 
   for (box in d) {
   $(`#${box}`).empty();
@@ -312,7 +310,7 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   $(`#${box}`).empty();
   $(`#${box}`).empty();
   }
-
+  console.log(d);
   var c = 1;
   for (box in d) {
     if (d[box] != 'null') {
@@ -330,7 +328,7 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   }
 
   
-  // if (d[`box${team}2`] != 'null') {
+  // if (d[`boxother_${team}2`] != 'null') {
   //   let clue2 = document.createElement("div");
   //   clue2.id = `input${team}2`;
   //   clue2.setAttribute('class',`draggable_clue_${team}`);
@@ -362,53 +360,107 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
   // Array.prototype.forEach.call(columns, function (col) {
   //     col.addEventListener('dragstart', dragStart, false);
   //   });
-  
-  // console.log('reattach events for boxes');
-  // var boxes = document.querySelectorAll(`.box${user_team}`);
-  // var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${user_team}`);
-  // console.log(draggable_all_clues);
-  // draggable_all_clues.forEach(draggable => {
-  //   draggable.addEventListener('click', function() {
-  //       if (clue_selected==false) {
-  //           clicked_on_clue = draggable;
-  //           clue_selected = true;
-  //           console.log('clue_selected');
-  //           console.log(clicked_on_clue.parentNode.classList);
-  //         }
-  //     });
-  // });
+  if (phase==1) {
+    console.log('reattach events for boxes');
+    var boxes = document.querySelectorAll(`.box${user_team}`);
+    var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${user_team}`);
+    console.log(boxes);
+    console.log(draggable_all_clues);
+    draggable_all_clues.forEach(draggable => {
+      draggable.addEventListener('click', function() {
+          if (clue_selected==false) {
+              clicked_on_clue = draggable;
+              clue_selected = true;
+              console.log('clue_selected');
+              console.log(clicked_on_clue.parentNode.classList);
+            }
+        });
+    });
 
-  // boxes.forEach(box => {
-  // box.addEventListener('click', function() {
-  //     if (clue_selected==false){
-  //         box.blur();
-  //     }
-  //     else {
-  //         if (box.children.length == 0) {
-  //             box.appendChild(clicked_on_clue);
-  //             console.log(box);
-  //             clue_selected = false;
-  //             box.blur();
-  //             }
-  //         else {
-  //             if (box.id==clicked_on_clue.parentNode.id){
-  //                 console.log('same box');
-  //             } else {
-  //                 var second_clicked_on_clue = box.firstElementChild;
-  //                 box.removeChild(box.firstElementChild);
-  //                 var original_box = clicked_on_clue.parentNode;
-  //                 clicked_on_clue.parentNode.removeChild(clicked_on_clue);
-  //                 box.appendChild(clicked_on_clue);
-  //                 original_box.appendChild(second_clicked_on_clue);
-  //                 clue_selected = false;
-  //                 box.blur();
-  //                 original_box.blur();
-  //             }
-  //         };
+    boxes.forEach(box => {
+      box.addEventListener('click', function() {
+          if (clue_selected==false){
+              box.blur();
+          }
+          else {
+              if (box.children.length == 0) {
+                  box.appendChild(clicked_on_clue);
+                  console.log(box);
+                  clue_selected = false;
+                  box.blur();
+                  }
+              else {
+                  if (box.id==clicked_on_clue.parentNode.id){
+                      console.log('same box');
+                  } else {
+                      var second_clicked_on_clue = box.firstElementChild;
+                      box.removeChild(box.firstElementChild);
+                      var original_box = clicked_on_clue.parentNode;
+                      clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                      box.appendChild(clicked_on_clue);
+                      original_box.appendChild(second_clicked_on_clue);
+                      clue_selected = false;
+                      box.blur();
+                      original_box.blur();
+                  }
+              };
 
-  // }
-  // });
-  // });
+          }
+        });
+    });
+  } else {
+    console.log('reattach events for boxes');
+    var boxes = document.querySelectorAll(`.box${other_team}`);
+    var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
+    console.log(boxes);
+    console.log(draggable_all_clues);
+    draggable_all_clues.forEach(draggable => {
+      draggable.addEventListener('click', function() {
+          if (clue_selected==false) {
+              clicked_on_clue = draggable;
+              clue_selected = true;
+              console.log('clue_selected');
+              console.log(clicked_on_clue.parentNode.classList);
+            }
+        });
+    });
+
+    boxes.forEach(box => {
+      box.addEventListener('click', function() {
+          if (clue_selected==false){
+              box.blur();
+          }
+          else {
+              if (box.children.length == 0) {
+                  box.appendChild(clicked_on_clue);
+                  console.log(box);
+                  clue_selected = false;
+                  box.blur();
+                  }
+              else {
+                  if (box.id==clicked_on_clue.parentNode.id){
+                      console.log('same box');
+                  } else {
+                      var second_clicked_on_clue = box.firstElementChild;
+                      box.removeChild(box.firstElementChild);
+                      var original_box = clicked_on_clue.parentNode;
+                      clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                      box.appendChild(clicked_on_clue);
+                      original_box.appendChild(second_clicked_on_clue);
+                      clue_selected = false;
+                      box.blur();
+                      original_box.blur();
+                  }
+              };
+
+          }
+        });
+    });
+  }
+
+  clue_selected = false;
+  clicked_on_clue = false;
+  second_clicked_on_box = false;
 
   if (user_name != "reconnect_user") {
     var alert = document.createElement("div");
@@ -427,6 +479,7 @@ function rearrangeSuggest_JS ( user_name, user_team, d, phase) {
       alert.remove();
     }, 8000);
   }
+
 }
 
 function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
@@ -683,7 +736,7 @@ function intercept_res_JS (result, user_name, game_state_correct_answer, user_te
   }, 8000);
 }
 
-function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver){
+function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver, user_db, misconmunication, interception){
 
   console.log('syncing');
   console.log(game_state_full_server);
@@ -751,6 +804,14 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     }
   }
 
+  // score sync
+  misconmunication, interception
+  miscommunicate_blue.textContent = misconmunication['team_1'];
+  miscommunicate_red.textContent = misconmunication['team_2'];
+  intercept_blue.textContent = interception['team_1'];
+  intercept_red.textContent = interception['team_2'];
+
+  countdownDisplay.textContent = game_state_full_server[`team_${user_team}`]['team_remaining_time'];
   // when someone already clicked on giveClues, box_with_clue is filled, reconnected 
   // cluegiver and normal players have different view
   if (game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'].length > 0) { 
@@ -976,6 +1037,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
         submitClues.hidden = normal_member_obj["submitClues"]['hide'];
         submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
         if (normal_member_obj['disabled_clue']) {
+          console.log('disable clues if already guessed');
           $(`#input${user_team}1`).addClass('disabled_clue');
           $(`#input${user_team}2`).addClass('disabled_clue');
           $(`#input${user_team}3`).addClass('disabled_clue');
@@ -998,6 +1060,14 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
       $(`#input${user_team}1`).addClass('disabled_clue');
       $(`#input${user_team}2`).addClass('disabled_clue');
       $(`#input${user_team}3`).addClass('disabled_clue');
+
+      if (normal_member_obj['disabled_clue_other_team']) {
+        console.log('disable clues other team if already guessed');
+        $(`#input${other_team}1`).addClass('disabled_clue');
+        $(`#input${other_team}2`).addClass('disabled_clue');
+        $(`#input${other_team}3`).addClass('disabled_clue');
+      }
+
     }
   }
 
@@ -1028,6 +1098,7 @@ function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
     }
   }
   modal.style.display = 'block';
+  // modal.show();
 
 
   // modal.style.top = window.innerHeight / 2 - modal.offsetHeight / 2 + 'px';
@@ -1075,8 +1146,103 @@ function textEffect(animationName) {
 
 };
 
+// chat
+    // var messages = document.getElementById('messages');
+    // var form = document.getElementById('form');
+    // var input = document.getElementById('input');
+
+    // form.addEventListener('submit', function(e) {
+    //     e.preventDefault();
+    //     if (input.value) {
+    //     socket.emit('chat message', input.value, my_name);
+    //     input.value = '';
+    //     }
+    // });
+
+    // socket.on('chat message', function(msg, user_name) {
+    //     var named_msg = `${user_name}: ${msg}`; 
+    //     var item = document.createElement('li');
+    //     item.textContent = named_msg;
+    //     messages.prepend(item);
+    //     window.scrollTo(0, document.body.scrollHeight);
+    // });
+
+    // socket.on('redirecttonewgame', newgameurl => {
+    // // redirect to new url
+    // window.location = newgameurl;
+    // });
 
 
+// const msgerForm = get(".msger-inputarea");
+// const msgerInput = get(".msger-input");
+// const msgerChat = get(".msger-chat");
+
+// const BOT_MSGS = [
+//   "Hi, how are you?",
+//   "Ohh... I can't understand what you trying to say. Sorry!",
+//   "I like to play games... But I don't know how to play!",
+//   "Sorry if my answers are not relevant. :))",
+//   "I feel sleepy! :("
+// ];
+
+// Icons made by Freepik from www.flaticon.com
+// const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
+// const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+// const BOT_NAME = "BOT";
+// const PERSON_NAME = "Sajad";
+
+// msgerForm.addEventListener("submit", event => {
+//   event.preventDefault();
+
+//   const msgText = msgerInput.value;
+//   if (!msgText) return;
+
+//   appendMessage(PERSON_NAME, "right", msgText);
+//   msgerInput.value = "";
+
+//   botResponse();
+// });
+
+// function appendMessage(name, side, text) {
+//   const msgHTML = `
+//     <div class="msg ${side}-msg">
+//       <div class="msg-bubble">
+//         <div class="msg-info">
+//           <div class="msg-info-name">${name}</div>
+//         </div>
+//         <div class="msg-text">${text}</div>
+//       </div>
+//     </div>
+//   `;
+//   msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
+//   msgerChat.scrollTop += 500;
+// }
+
+// function botResponse() {
+//   const r = random(0, BOT_MSGS.length - 1);
+//   const msgText = BOT_MSGS[r];
+//   const delay = msgText.split(" ").length * 100;
+
+//   setTimeout(() => {
+//     appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
+//   }, delay);
+// }
+
+// // Utils
+// function get(selector, root = document) {
+//   return root.querySelector(selector);
+// }
+
+// function formatDate(date) {
+//   const h = "0" + date.getHours();
+//   const m = "0" + date.getMinutes();
+
+//   return `${h.slice(-2)}:${m.slice(-2)}`;
+// }
+
+// function random(min, max) {
+//   return Math.floor(Math.random() * (max - min) + min);
+// }
 
 
 

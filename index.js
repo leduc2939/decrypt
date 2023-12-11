@@ -150,6 +150,13 @@ game_state_full_server['team_1']['team_2_truth'] = [];
 game_state_full_server['team_2']['team_1_truth'] = [];
 game_state_full_server['team_2']['team_2_truth'] = [];
 
+game_state_full_server[`team_2`]['clue_giver']["disabled_clue"] = false;
+game_state_full_server[`team_2`]['normal_member']["disabled_clue"] = false;
+game_state_full_server[`team_2`]['clue_giver']["disabled_clue_other_team"] = false;
+game_state_full_server[`team_2`]['normal_member']["disabled_clue_other_team"] = false;
+
+game_state_full_server[`team_1`]['team_remaining_time'] = 0;
+game_state_full_server[`team_2`]['team_remaining_time'] = 0;
 
 game_state_full_server['round_finished'] = false;
 
@@ -181,6 +188,15 @@ var namelist = [];
 game_state[`round_0`] = {}; 
 game_state[`round_0`]['team_1'] = {};
 game_state[`round_0`]['team_2'] = {};
+game_state[`round_1`] = {}; 
+game_state[`round_1`]['team_1'] = {};
+game_state[`round_1`]['team_2'] = {};
+
+var interval_1;
+var interval_2;
+var interval = {};
+interval['team_1'] = interval_1;
+interval['team_2'] = interval_2;
 
 function fetchLines(url) {
   return fetch(url)
@@ -211,8 +227,14 @@ io.on('connection', (socket) => {
   //   console.log(index + ': ' + val);
   //   console.log()
   // });
-  console.log(process.argv[2]);
-  socket.emit("gen_uuid", (process.argv[2]));
+  let env = process.argv[2];
+  if (env=='prod') {
+    round_no = 0;
+  }
+
+  console.log(env);
+  socket.emit("gen_uuid", (env));
+
 
   user_team[socket.id] = 1;
   console.log('user ' + socket.id + ' connected');
@@ -233,6 +255,7 @@ io.on('connection', (socket) => {
   socket.on('enterGame', (user_id, user_name, user_team) => {
     user_db[user_id]['user_name'] = user_name;
     user_db[user_id]['user_team'] = user_team;
+    socket.emit('team_member_update',user_db);
     console.log(user_db[user_id]);
   }); 
 
@@ -254,9 +277,12 @@ io.on('connection', (socket) => {
       team_2_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
     }
     io.emit('newGame_JS',team_1_keywords,team_2_keywords);
-    io.emit('server_stopClock', "1");
-    io.emit('server_stopClock', "2");
-
+    clearInterval(interval[`team_1`]);
+    clearInterval(interval[`team_2`]);
+    // io.emit('server_stopClock', "1");
+    // io.emit('server_stopClock', "2");
+    game_state_full_server[`team_1`]['team_remaining_time'] = 0;
+    game_state_full_server[`team_2`]['team_remaining_time'] = 0;
     game_state_full_server['team_1'] = {};
     game_state_full_server['team_2'] = {};
     game_state_full_server['team_1']['normal_member'] = {};
@@ -437,7 +463,7 @@ io.on('connection', (socket) => {
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] = '';
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] = '';
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${left_out_position}`] = 'null';
-    io.emit('giveClues_JS', user_id, user_team, position_to_be_encoded[`team_${user_team}`]);
+    io.emit('giveClues_JS', user_id, user_name, user_team, position_to_be_encoded[`team_${user_team}`]);
 
     game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'] = position_to_be_encoded[`team_${user_team}`];
     clue_giver[`team_${user_team}`] = user_id
@@ -542,15 +568,8 @@ io.on('connection', (socket) => {
   // if both team done submitting, and round >= 2 then send rearrange signal 
   // but swap clues else send roundCompleted signal
   
-  socket.on('submitAnswer', (user_id, user_name, user_team, d) => {
-    game_state_full_server[`team_${user_team}`]['normal_member']["giveClues"]['disabled'] = true;
-    game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['disabled'] = true;
-    game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
-    game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['disabled'] = true;
-    game_state_full_server[`team_${user_team}`]['normal_member']["startNewRound"]['disabled'] = true;
-
-    game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
-    game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
+  socket.on('submitAnswer', (user_id, user_name, user_team, d, team_remaining_time) => {
+    
     var other_team = '';
       if (user_team == '1'){
           other_team = '2';
@@ -559,16 +578,28 @@ io.on('connection', (socket) => {
       }
 
     if (phase=='1') {
+      clearInterval(interval[`team_${user_team}`]);
+      game_state_full_server[`team_${user_team}`]['team_remaining_time'] = team_remaining_time;
+      game_state_full_server[`team_${user_team}`]['normal_member']["giveClues"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["startNewRound"]['disabled'] = true;
+
+      game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
       console.log(user_name + " just submitted communication");
       if (
-        d[`box${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
-        d[`box${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
-        d[`box${position_to_be_encoded[`team_${user_team}`][2]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`]
-      ) { 
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`]
+        ) { 
         io.emit('pushRight', 1, user_name, game_state[`round_${round_no}`][`team_${user_team}`], user_team);
         game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
         console.log('correct');
         console.log('push right signal sent');
+        game_state_full_server[`team_${user_team}`]['suggest'] = d;
+        console.log(d);
       } 
       else {
         misconmunication[`team_${user_team}`] +=1;
@@ -576,16 +607,46 @@ io.on('connection', (socket) => {
         game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
         console.log('incorrect');
         console.log('push right signal sent');
+        game_state_full_server[`team_${user_team}`]['suggest'] = d;
+        console.log(d);
       }
+
       game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
+      
       team_finish += 1;
       if (team_finish == 2) {
+        game_state_full_server[`team_1`]['team_remaining_time'] = 0;
+        game_state_full_server[`team_2`]['team_remaining_time'] = 0;
         if (round_no >= 2) {
           var mixed_position = [1,2,3,4];
           phase = "2";
           mixed_position.splice(Math.floor(Math.random()*4),1);
           io.emit('rearrangeClues_intercept_JS', game_state[`round_${round_no}`], mixed_position);
+          const startTime = Date.now();
+          const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+          var total_time = Math.max(0, duration - (Date.now() - startTime));
+          io.emit('countdown', total_time);
+
+        
+          interval['team_1'] = setInterval(() => {
+            var remainingTime = Math.max(0, duration - (Date.now() - startTime));
+            console.log(remainingTime);
+            io.emit('countdown', "1", remainingTime);
+            if (remainingTime <= 0) {
+              clearInterval(interval['team_1']);
+            }
+          }, 1000);
+
+          interval['team_2'] = setInterval(() => {
+            var remainingTime = Math.max(0, duration - (Date.now() - startTime));
+            console.log(remainingTime);
+            io.emit('countdown', "2",remainingTime);
+            if (remainingTime <= 0) {
+              clearInterval(interval['team_2']);
+            }
+          }, 1000);
           console.log('start interception round: send rearrangeClues_intercept_JS');
 
           game_state_full_server['round_boxes'] = game_state[`round_${round_no}`];
@@ -637,8 +698,13 @@ io.on('connection', (socket) => {
         }
       }
     }
+    // phase 2
     else {
+      clearInterval(interval[`team_${other_team}`]);
+      game_state_full_server[`team_${other_team}`]['team_remaining_time'] = team_remaining_time;
       console.log(user_name + " just submitted interception");
+      console.log('lock buttons');
+      console.log(game_state_full_server[`team_${other_team}`]['normal_member']);
       game_state_full_server[`team_${other_team}`]['normal_member']["giveClues"]['disabled'] = true;
       game_state_full_server[`team_${other_team}`]['normal_member']["submitClues"]['disabled'] = true;
       game_state_full_server[`team_${other_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
@@ -659,12 +725,14 @@ io.on('connection', (socket) => {
 
       game_state_full_server[`team_${other_team}`]['clue_giver']["disabled_clue"] = true;
       game_state_full_server[`team_${other_team}`]['normal_member']["disabled_clue"] = true
+      game_state_full_server[`team_${other_team}`]['clue_giver']["disabled_clue_other_team"] = true;
+      game_state_full_server[`team_${other_team}`]['normal_member']["disabled_clue_other_team"] = true;
       
       console.log(game_state_full_server[`team_${other_team}`]);
       if (
-        d[`box${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
-        d[`box${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
-        d[`box${position_to_be_encoded[`team_${user_team}`][2]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`]
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
+        d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`]
       ) { 
         io.emit('intercept_res', 1, user_name, game_state[`round_${round_no}`][`team_${user_team}`], user_team);
         interception[`team_${other_team}`] +=1;
@@ -740,8 +808,6 @@ io.on('connection', (socket) => {
     game_state[`round_${round_no}`] = {}; 
     game_state[`round_${round_no}`]['team_1'] = {};
     game_state[`round_${round_no}`]['team_2'] = {};
-    io.emit('startNewRound_JS', user_name);
-
     
     game_state_full_server[`team_1`]['normal_member']["giveClues"]['disabled'] = false;
     game_state_full_server[`team_1`]['normal_member']["submitClues"]['disabled'] = true;
@@ -768,11 +834,48 @@ io.on('connection', (socket) => {
     game_state_full_server['team_2']['suggest'] = {};
     game_state_full_server[`team_1`]['clue_giver']['boxes_with_clue'] = [];
     game_state_full_server[`team_2`]['clue_giver']['boxes_with_clue'] = [];
+
     game_state_full_server[`team_1`]['clue_giver']["disabled_clue"] = false;
     game_state_full_server[`team_1`]['normal_member']["disabled_clue"] = false;
+    game_state_full_server[`team_1`]['clue_giver']["disabled_clue_other_team"] = false;
+    game_state_full_server[`team_1`]['normal_member']["disabled_clue_other_team"] = false;
+
     game_state_full_server[`team_2`]['clue_giver']["disabled_clue"] = false;
     game_state_full_server[`team_2`]['normal_member']["disabled_clue"] = false;
+    game_state_full_server[`team_2`]['clue_giver']["disabled_clue_other_team"] = false;
+    game_state_full_server[`team_2`]['normal_member']["disabled_clue_other_team"] = false;
+
+    io.emit('startNewRound_JS', user_name);
+
+    const startTime = Date.now();
+    const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+    var total_time = Math.max(0, duration - (Date.now() - startTime));
+    io.emit('countdown', total_time);
+
+  
+    interval['team_1'] = setInterval(() => {
+      var remainingTime = Math.max(0, duration - (Date.now() - startTime));
+      console.log(remainingTime);
+      io.emit('countdown', "1", remainingTime);
+      if (remainingTime <= 0) {
+        clearInterval(interval['team_1']);
+      }
+    }, 1000);
+
+    interval['team_2'] = setInterval(() => {
+      var remainingTime = Math.max(0, duration - (Date.now() - startTime));
+      // console.log(remainingTime);
+      io.emit('countdown', "2",remainingTime);
+      if (remainingTime <= 0) {
+        clearInterval(interval['team_2']);
+      }
+    }, 1000);
+
+    game_state_full_server[`team_1`]['team_remaining_time'] = 0;
+    game_state_full_server[`team_2`]['team_remaining_time'] = 0;
   });
+
 
   // sync current state of the game
   socket.on('sync_up', (serializedHTML, user_team, is_all, is_clue_giver, current_phase) => {
@@ -805,7 +908,8 @@ io.on('connection', (socket) => {
 
   socket.on('reconnect_sync_up', (user_id, user_team) => {
     if (game_started){
-        socket.emit('reconnect_sync_up_js', game_state_full_server, phase, clue_giver,user_db);
+        socket.emit('reconnect_sync_up_js', game_state_full_server, phase, clue_giver,user_db, misconmunication, interception);
+        socket.emit('team_member_update',user_db);
       }
       else{
         socket.emit('team_member_update',user_db);
@@ -839,7 +943,7 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', (msg, user_name) => {
     console.log(user_name + " " + msg);
-    io.emit('chat message', msg, user_name);
+    socket.broadcast.emit('chat message', msg, user_name);
   });
 
 });

@@ -1,11 +1,1 @@
-2nd round, normal member, communication phase:
-submit, suggest buttons disabled if reconnect and last round was clue giver
-
-2nd round, normal member, communication phase:
-see last round suggestion of interception phase if reconnect 
-
-1st round, normal member, interception phase:
-his own team clues not disabled if he hasn't suggested after reconnection, 
-
-1st round, normal member, interception phase:
-other team clues and suggest, submit button become enabled again after reconnection eventhough submitted
+polyfill for other firefox, chrome

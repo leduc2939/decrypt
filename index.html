@@ -212,6 +212,31 @@
                       <button class="close-modal_game_result" id = "close-modal_game_result">Okay</button>
                     </div>
                   </div>
+                   <!-- <div class="modal_game_result" style="display: none">
+                    <div class="modal_game_result-content">
+                      <h5>Game Result!</h5>
+                      <e></e>
+                      <button class="close-modal_game_result"  id = "close-modal_game_result" >Okay</button>
+                    </div>
+                  </div> -->
+                  <!-- <div class="modal fade" id="modal_game_result" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h6 class="modal-title" id="exampleModalLabel">Result</h6>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <e id="game_result_p"></e>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
                 <button disabled class="game-button green" id="submitAnswer">
                     Submit
                 </button>
@@ -234,11 +259,45 @@
 
     
 
-    
-    <form id="form" action="">
+    <!-- //chat -->
+    <!-- <form id="form" action="">
       <input id="input" autocomplete="off" /><button class="game-button">Send</button>
     </form>
-    <ul id="messages" class="messages"></ul>
+    <ul id="messages" class="messages"></ul> -->
+
+
+        <form class="msger-inputarea">
+            <input type="text" class="msger-input" placeholder="Enter your message...">
+            <button type="submit" class="msger-send-btn">Send</button>
+          </form>
+   <main class="msger-chat">
+          <!-- <div class="msg left-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name"></div>
+                <div class="msg-info-time"></div>
+              </div>
+      
+              <div class="msg-text">
+              </div>
+            </div>
+          </div> -->
+      
+          <!-- <div class="msg right-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name"></div>
+                <div class="msg-info-time"></div>
+              </div>
+      
+              <div class="msg-text">
+              </div>
+            </div>
+          </div> -->
+        </main>
+      
+        
+
 </div>
 
 </div>
@@ -286,7 +345,7 @@
     var timerInterval;
 
     var miscommunicate_blue = document.getElementById('miscommunicate_blue');
-    var intercept_red = document.getElementById('miscommunicate_red');
+    var miscommunicate_red = document.getElementById('miscommunicate_red');
     var intercept_blue = document.getElementById('intercept_blue'); 
     var intercept_red = document.getElementById('intercept_red');
 
@@ -350,14 +409,14 @@
         }
     });
 
-    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, current_clue_giver, user_db) => {
+    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, current_clue_giver, user_db, misconmunication, interception) => {
         phase = current_phase;
         clue_giver = current_clue_giver[`team_${my_team}`];
         console.log(my_team);
         console.log(clue_giver);
         console.log(my_user_id)
         // console.log(game_state_full_server);
-        reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db);
+        reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db, misconmunication, interception);
         // console.log(user_db);
         for (user_id in user_db) {
             if (user_db[user_id]['user_team'] == "1") {
@@ -437,7 +496,7 @@
     });
 
     // received give-clues signal: changes HTML accordingly 
-    socket.on('giveClues_JS', (user_id, user_team, position_to_be_encoded) => {
+    socket.on('giveClues_JS', (user_id, user_name, user_team, position_to_be_encoded) => {
         console.log('received giveClues_JS signal');
         if (my_user_id == user_id){
             console.log(my_name + ' is giving clues');
@@ -450,6 +509,20 @@
             giveClues.disabled = true;
         }
         clue_giver = user_id;
+        var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has taken charge of encoding the message';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
     });
 
     // button for sending submit-clues signal
@@ -617,14 +690,19 @@
             else {
                 box4word = 'null';}
 
-            let d = {
-                'box1': box1word,
-                'box2': box2word,
-                'box3': box3word,
-                'box4': box4word
-                };
+            let wl = [box1word, box2word, box3word, box4word];
+            let d = {};
+            for (let i = 0; i < 4; i++) {
+                d[`box${other_team}${i+1}`] = wl[i];
+            }
+                // `box${other_team}1`: box1word,
+                // `box${user_team}2`: box2word,
+                // `box${user_team}3`: box3word,
+                // `box${user_team}4`: box4word
+                // };
             console.log(d);
-            socket.emit('submitAnswer', my_user_id, my_name, other_team, d);
+            var team_remaining_time = countdownDisplay.textContent;
+            socket.emit('submitAnswer', my_user_id, my_name, other_team, d, team_remaining_time);
             console.log('submitted interception answer');
             var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
             draggable_all_clues.forEach(draggable =>{
@@ -660,14 +738,20 @@
             else {
                 box4word = 'null';}
 
-            let d = {
-                'box1': box1word,
-                'box2': box2word,
-                'box3': box3word,
-                'box4': box4word
-                };
+            // let d = {
+            //     'box1': box1word,
+            //     'box2': box2word,
+            //     'box3': box3word,
+            //     'box4': box4word
+            //     };
+            let wl = [box1word, box2word, box3word, box4word];
+            let d = {};
+            for (let i = 0; i < 4; i++) {
+                d[`box${my_team}${i+1}`] = wl[i];
+            }
             console.log(d);
-            socket.emit('submitAnswer', my_user_id, my_name, my_team, d);
+            var team_remaining_time = countdownDisplay.textContent;
+            socket.emit('submitAnswer', my_user_id, my_name, my_team, d, team_remaining_time);
             console.log('submitted communication answer');
             var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
             draggable_all_clues.forEach(draggable =>{
@@ -753,6 +837,7 @@
         console.log('received startNewRound_JS');
         startNewRound_JS(user_name);
         phase = '1';
+        clue_giver = "";
         giveClues.disabled = false;
         submitClues.hidden = false; console.log("startNewRound_JS: submitAnswer.hidden = false");
         submitAnswer.hidden = true; console.log("startNewRound_JS: submitAnswer.hidden = true");
@@ -766,21 +851,21 @@
             console.log('state_alert.hidden = true;');
         }, 5000);
 
-        let remainingTime = 5 * 60; // 5 minutes in seconds
-        timerInterval = setInterval(() => {
-            if (remainingTime <= 0) {
-                clearInterval(timerInterval);
-                countdownDisplay.textContent = "Time's up";
-                return;
-            }
+        // let remainingTime = 5 * 60; // 5 minutes in seconds
+        // timerInterval = setInterval(() => {
+        //     if (remainingTime <= 0) {
+        //         clearInterval(timerInterval);
+        //         countdownDisplay.textContent = "Time's up";
+        //         return;
+        //     }
 
-            const minutes = Math.floor(remainingTime / 60);
-            const seconds = remainingTime % 60;
+        //     const minutes = Math.floor(remainingTime / 60);
+        //     const seconds = remainingTime % 60;
 
-            countdownDisplay.textContent = `${minutes}:${seconds}`;
+        //     countdownDisplay.textContent = `${minutes}:${seconds}`;
 
-            remainingTime--;
-        }, 1000); // Update the countdown every second
+        //     remainingTime--;
+        // }, 1000); // Update the countdown every second
         
     });
 
@@ -802,22 +887,22 @@
             console.log('state_alert.hidden = true;');
         }, 5000);
 
-        clearInterval(timerInterval);
-        var remainingTime = 5 * 60; // 5 minutes in seconds
-        timerInterval = setInterval(() => {
-            if (remainingTime <= 0) {
-                clearInterval(timerInterval);
-                countdownDisplay.textContent = "Time's up";
-                return;
-            }
+        // clearInterval(timerInterval);
+        // var remainingTime = 5 * 60; 
+        // timerInterval = setInterval(() => {
+        //     if (remainingTime <= 0) {
+        //         clearInterval(timerInterval);
+        //         countdownDisplay.textContent = "Time's up";
+        //         return;
+        //     }
 
-            var minutes = Math.floor(remainingTime / 60);
-            var seconds = remainingTime % 60;
+        //     var minutes = Math.floor(remainingTime / 60);
+        //     var seconds = remainingTime % 60;
 
-            countdownDisplay.textContent = `${minutes}:${seconds}`;
+        //     countdownDisplay.textContent = `${minutes}:${seconds}`;
 
-            remainingTime--;
-        }, 1000); // Update the countdown every second
+        //     remainingTime--;
+        // }, 1000); 
     });
 
     // receive intercept_res, lock submit button
@@ -840,31 +925,6 @@
     
     });
 
-    // chat
-    var messages = document.getElementById('messages');
-    var form = document.getElementById('form');
-    var input = document.getElementById('input');
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (input.value) {
-        socket.emit('chat message', input.value, my_name);
-        input.value = '';
-        }
-    });
-
-    socket.on('chat message', function(msg, user_name) {
-        var named_msg = `${user_name}: ${msg}`; 
-        var item = document.createElement('li');
-        item.textContent = named_msg;
-        messages.prepend(item);
-        window.scrollTo(0, document.body.scrollHeight);
-    });
-
-    socket.on('redirecttonewgame', newgameurl => {
-    // redirect to new url
-    window.location = newgameurl;
-    });
 
     
     
@@ -878,13 +938,13 @@
         menuElement.style.display = menuElement.style.display === 'block' ? 'none' : 'block';
     });
 
-    socket.on('server_stopClock', (user_team)=>{
-        console.log('stopClock received');
-        if (my_team==user_team){
-            clearInterval(timerInterval);
-        }
+    // socket.on('server_stopClock', (user_team)=>{
+    //     console.log('stopClock received');
+    //     if (my_team==user_team){
+    //         clearInterval(timerInterval);
+    //     }
         
-    });
+    // });
 
     // socket.on('server_clearClock', ()=>{
     //     console.log('clearClock received');
@@ -938,6 +998,133 @@
         }
         });
     });
+
+    socket.on('countdown', (user_team, remainingTime) => {
+        if (user_team==my_team) {
+            var minutes = Math.floor(remainingTime / 60000).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                maximumSignificantDigits: 2,
+                useGrouping: false
+            });
+            var seconds = ((remainingTime % 60000)/1000).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                maximumSignificantDigits: 2,
+                useGrouping: false
+            });;
+
+            countdownDisplay.textContent = `${minutes}:${seconds}`;
+            if (remainingTime<=0) {
+                if (clue_giver=="") {
+                    // socket.emit('submitAnswer', user_id, user_name, user_team, d, team_remaining_time);
+                }
+                else {
+                    setTimeout(() => {
+                        submitAnswer.click();
+                    }, Math.random()*1000);
+                }
+            }
+        }
+           
+    });
+
+    socket.on('stop_countdown', (remainingTime, user_team) =>{
+        if (my_team==user_team) {
+            countdownDisplay.textContent = remainingTime;
+        }
+    });
+
+
+
+
+    // chat
+    // var messages = document.getElementById('messages');
+    // var form = document.getElementById('form');
+    // var input = document.getElementById('input');
+
+    // form.addEventListener('submit', function(e) {
+    //     e.preventDefault();
+    //     if (input.value) {
+    //     socket.emit('chat message', input.value, my_name);
+    //     input.value = '';
+    //     }
+    // });
+
+    // socket.on('chat message', function(msg, user_name) {
+    //     var named_msg = `${user_name}: ${msg}`; 
+    //     var item = document.createElement('li');
+    //     item.textContent = named_msg;
+    //     messages.prepend(item);
+    //     window.scrollTo(0, document.body.scrollHeight);
+    // });
+
+    // socket.on('redirecttonewgame', newgameurl => {
+    // // redirect to new url
+    // window.location = newgameurl;
+    // });
+
+
+const msgerForm = get(".msger-inputarea");
+const msgerInput = get(".msger-input");
+const msgerChat = get(".msger-chat");
+
+const BOT_MSGS = [
+  "Hi, how are you?",
+  "Ohh... I can't understand what you trying to say. Sorry!",
+  "I like to play games... But I don't know how to play!",
+  "Sorry if my answers are not relevant. :))",
+  "I feel sleepy! :("
+];
+
+// Icons made by Freepik from www.flaticon.com
+const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
+const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+const BOT_NAME = "BOT";
+const PERSON_NAME = "Sajad";
+
+msgerForm.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const msgText = msgerInput.value;
+  if (!msgText) return;
+
+  socket.emit('chat message', msgText, my_name);
+  appendMessage(my_name, "right", msgText);
+  msgerInput.value = "";
+
+});
+
+
+socket.on('chat message', function(msg, user_name) {    
+        appendMessage(user_name, "left", msg);
+        // window.scrollTo(0, document.body.scrollHeight);
+    });
+
+function appendMessage(name, side, text) {
+  const msgHTML = `
+    <div class="msg ${side}-msg">
+      <div class="msg-bubble">
+        <div class="msg-info">
+          <div class="msg-info-name">${name}</div>
+        </div>
+        <div class="msg-text">${text}</div>
+      </div>
+    </div>
+  `;
+  msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
+//   msgerChat.scrollTop += 500;
+}
+
+// Utils
+function get(selector, root = document) {
+  return root.querySelector(selector);
+}
+
+function formatDate(date) {
+  const h = "0" + date.getHours();
+  const m = "0" + date.getMinutes();
+
+  return `${h.slice(-2)}:${m.slice(-2)}`;
+}
   
 </script>
 
