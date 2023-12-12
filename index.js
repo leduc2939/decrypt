@@ -641,7 +641,13 @@ io.on('connection', (socket) => {
           mixed_position.splice(Math.floor(Math.random()*4),1);
           io.emit('rearrangeClues_intercept_JS', game_state[`round_${round_no}`], mixed_position);
           const startTime = Date.now();
-          const duration = 5 * 7 * 1000; // 5 minutes in milliseconds
+          var duration;
+          if (env=='prod') {
+            duration = 5 * 60 * 1000;
+          } else {
+            duration = 5 * 7 * 1000;
+          }
+          // 5 minutes in milliseconds
           var total_time = Math.max(0, duration - (Date.now() - startTime));
 
           var team_1_mem = [];
@@ -884,7 +890,13 @@ io.on('connection', (socket) => {
     io.emit('startNewRound_JS', user_name);
 
     const startTime = Date.now();
-    const duration = 5 * 7 * 1000; // 5 minutes in milliseconds
+    var duration;
+    if (env=='prod') {
+      duration = 5 * 60 * 1000;
+    } else {
+      duration = 5 * 7 * 1000;
+    }
+     // 5 minutes in milliseconds
 
     var total_time = Math.max(0, duration - (Date.now() - startTime));
     // io.emit('countdown', ?, total_time);
