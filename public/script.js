@@ -765,7 +765,25 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   submitClues.hidden = normal_member_obj["submitClues"]['hide'];
   submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
   
+  $(`#box11`).empty();
+  $(`#box12`).empty();
+  $(`#box13`).empty();
+  $(`#box14`).empty();  
+  $(`#box21`).empty();
+  $(`#box22`).empty();
+  $(`#box23`).empty();
+  $(`#box24`).empty(); 
+  $(`#row11`).empty();
+  $(`#row12`).empty();
+  $(`#row13`).empty();
+  $(`#row14`).empty();
+  $(`#row21`).empty();
+  $(`#row22`).empty();
+  $(`#row23`).empty();
+  $(`#row24`).empty();
+  
   // in case number of communications > 0, populates rowxx view for my team
+
   console.log(game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]);
   for (d of game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]){
     // console.log(game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]);
@@ -805,7 +823,6 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   }
 
   // score sync
-  misconmunication, interception
   miscommunicate_blue.textContent = misconmunication['team_1'];
   miscommunicate_red.textContent = misconmunication['team_2'];
   intercept_blue.textContent = interception['team_1'];
@@ -818,6 +835,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     console.log('repopulate clues'); 
     if (user_id==clue_giver) {
       console.log('repopulate clues for cluegiver')
+      
       
       // whether content has be filled or not, editable or not, apply such configs
       var position_to_be_encoded = clue_giver_obj['boxes_with_clue']; 
