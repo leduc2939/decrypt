@@ -1010,7 +1010,7 @@
         });
     });
 
-    socket.on('countdown', (user_team, remainingTime, user_db) => {
+    socket.on('countdown', (user_team, remainingTime, team_mem, team_seed) => {
         if (user_team==my_team) {
             var minutes = Math.floor(remainingTime / 60000).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
@@ -1029,7 +1029,13 @@
                     // socket.emit('submitAnswer', user_id, user_name, user_team, d, team_remaining_time);
                 }
                 else {
-                    
+                    console.log(team_mem);
+                    team_mem.splice(team_mem.indexOf(clue_giver), 1)
+                    console.log(team_mem);
+                    console.log(team_mem[team_seed]);
+                    if (my_user_id == team_mem[team_seed]) {
+                        submitAnswer.click();
+                    }
                 }
             }
         }

@@ -221,9 +221,9 @@ fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4
 });
 
 let env = process.argv[2];
-  if (env=='prod') {
-    round_no = 0;
-  }
+if (env=='prod') {
+  round_no = 0;
+}
 
 io.on('connection', (socket) => {
   // process.argv.forEach(function (val, index, array) {
@@ -247,14 +247,15 @@ io.on('connection', (socket) => {
   user_team[socket.id] = 1;
   console.log('socket ' + socket.id + ' connected');
   
-
+  
   socket.on('disconnect', (user_id) => {
     console.log('user ' + socket.id + ' disconnected');
     for (user_id in user_db) {
       if (user_db[user_id]['user_socket_id'] == socket.id){
         console.log('disconneceted');
-        console.log(user_db[user_id]['user_name']);
         console.log(user_db[user_id]);
+        delete user_db[user_id];
+        console.log(user_db);
       }
     }
     
@@ -269,10 +270,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('enterGame', (user_id, user_name, user_team) => {
-    user_db[user_id]['user_name'] = user_name;
-    user_db[user_id]['user_team'] = user_team;
-    socket.emit('team_member_update',user_db);
-    console.log(user_db[user_id]);
+    // user_db[user_id]['user_name'] = user_name;
+    // user_db[user_id]['user_team'] = user_team;
+    // socket.emit('team_member_update',user_db);
+    // console.log(user_db[user_id]);
   }); 
 
 
@@ -640,9 +641,25 @@ io.on('connection', (socket) => {
           mixed_position.splice(Math.floor(Math.random()*4),1);
           io.emit('rearrangeClues_intercept_JS', game_state[`round_${round_no}`], mixed_position);
           const startTime = Date.now();
-          const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
-
+          const duration = 5 * 7 * 1000; // 5 minutes in milliseconds
           var total_time = Math.max(0, duration - (Date.now() - startTime));
+
+          var team_1_mem = [];
+          var team_2_mem = [];
+
+          for (user_id in user_db) {
+            if (user_db[user_id]['user_team']  == '1'){
+              team_1_mem.push(user_id);
+            }
+          }
+          for (user_id in user_db) {
+            if (user_db[user_id]['user_team']  == '2'){
+              team_2_mem.push(user_id);
+            }
+          }
+          
+          var team_1_seed = Math.floor(Math.random()*(team_1_mem.length-1)) ;
+          var team_2_seed = Math.floor(Math.random()*(team_1_mem.length-1)) ;
           // io.emit('countdown', ? , total_time, user_db);
           console.log('countdown user_db');
           console.log(user_db);
@@ -652,16 +669,16 @@ io.on('connection', (socket) => {
           interval['team_1'] = setInterval(() => {
             var remainingTime = Math.max(0, duration - (Date.now() - startTime));
             // console.log(remainingTime);
-            io.emit('countdown', "1", remainingTime, user_db);
+            io.emit('countdown', "1", remainingTime, team_1_mem, team_1_seed);
             if (remainingTime <= 0) {
               clearInterval(interval['team_1']);
             }
           }, 1000);
-
+      
           interval['team_2'] = setInterval(() => {
             var remainingTime = Math.max(0, duration - (Date.now() - startTime));
             // console.log(remainingTime);
-            io.emit('countdown', "2",remainingTime, user_db);
+            io.emit('countdown', "2", remainingTime, team_2_mem, team_2_seed);
             if (remainingTime <= 0) {
               clearInterval(interval['team_2']);
             }
@@ -867,17 +884,32 @@ io.on('connection', (socket) => {
     io.emit('startNewRound_JS', user_name);
 
     const startTime = Date.now();
-    const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const duration = 5 * 7 * 1000; // 5 minutes in milliseconds
 
     var total_time = Math.max(0, duration - (Date.now() - startTime));
     // io.emit('countdown', ?, total_time);
     console.log('countdown user_db');
     console.log(user_db);
-  
+    var team_1_mem = [];
+    var team_2_mem = [];
+
+    for (user_id in user_db) {
+      if (user_db[user_id]['user_team']  == '1'){
+        team_1_mem.push(user_id);
+      }
+    }
+    for (user_id in user_db) {
+      if (user_db[user_id]['user_team']  == '2'){
+        team_2_mem.push(user_id);
+      }
+    }
+    
+    var team_1_seed = Math.floor(Math.random()*(team_1_mem.length-1)) ;
+    var team_2_seed = Math.floor(Math.random()*(team_1_mem.length-1)) ;
     interval['team_1'] = setInterval(() => {
       var remainingTime = Math.max(0, duration - (Date.now() - startTime));
       // console.log(remainingTime);
-      io.emit('countdown', "1", remainingTime, user_db);
+      io.emit('countdown', "1", remainingTime, team_1_mem, team_1_seed);
       if (remainingTime <= 0) {
         clearInterval(interval['team_1']);
       }
@@ -886,7 +918,7 @@ io.on('connection', (socket) => {
     interval['team_2'] = setInterval(() => {
       var remainingTime = Math.max(0, duration - (Date.now() - startTime));
       // console.log(remainingTime);
-      io.emit('countdown', "2",remainingTime, user_db);
+      io.emit('countdown', "2", remainingTime, team_2_mem, team_2_seed);
       if (remainingTime <= 0) {
         clearInterval(interval['team_2']);
       }
