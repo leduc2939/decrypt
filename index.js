@@ -220,28 +220,44 @@ fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4
     console.error("Error fetching lines:", error);
 });
 
-
+let env = process.argv[2];
+  if (env=='prod') {
+    round_no = 0;
+  }
 
 io.on('connection', (socket) => {
   // process.argv.forEach(function (val, index, array) {
   //   console.log(index + ': ' + val);
   //   console.log()
   // });
-  let env = process.argv[2];
-  if (env=='prod') {
-    round_no = 0;
-  }
+
+  // socket.on('log_user_socket', (socket_id, user_id, user_name, user_team) => {
+  //   user_db[user_id] = {};
+  //   user_db[user_id]['user_name'] = user_name;
+  //   user_db[user_id]['user_team'] = user_team;
+  //   user_db[user_id]['user_socket_id'] = socket_id;
+  //   console.log('log_user_socket');
+  //   console.log(user_db[user_id])
+  // });
 
   console.log(env);
   socket.emit("gen_uuid", (env));
 
 
   user_team[socket.id] = 1;
-  console.log('user ' + socket.id + ' connected');
+  console.log('socket ' + socket.id + ' connected');
   
 
-  socket.on('disconnect', () => {
-    console.log('user' + socket.id + 'disconnected');
+  socket.on('disconnect', (user_id) => {
+    console.log('user ' + socket.id + ' disconnected');
+    for (user_id in user_db) {
+      if (user_db[user_id]['user_socket_id'] == socket.id){
+        console.log('disconneceted');
+        console.log(user_db[user_id]['user_name']);
+        console.log(user_db[user_id]);
+      }
+    }
+    
   });
 
   socket.on('iden_user_id', (user_id) => {
@@ -627,13 +643,16 @@ io.on('connection', (socket) => {
           const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
 
           var total_time = Math.max(0, duration - (Date.now() - startTime));
-          io.emit('countdown', total_time);
-
-        
+          // io.emit('countdown', ? , total_time, user_db);
+          console.log('countdown user_db');
+          console.log(user_db);
+          // for (user_id in user_db) {
+          //   user_db[user_id]['user_team'] == "1"
+          // }
           interval['team_1'] = setInterval(() => {
             var remainingTime = Math.max(0, duration - (Date.now() - startTime));
-            console.log(remainingTime);
-            io.emit('countdown', "1", remainingTime);
+            // console.log(remainingTime);
+            io.emit('countdown', "1", remainingTime, user_db);
             if (remainingTime <= 0) {
               clearInterval(interval['team_1']);
             }
@@ -641,8 +660,8 @@ io.on('connection', (socket) => {
 
           interval['team_2'] = setInterval(() => {
             var remainingTime = Math.max(0, duration - (Date.now() - startTime));
-            console.log(remainingTime);
-            io.emit('countdown', "2",remainingTime);
+            // console.log(remainingTime);
+            io.emit('countdown', "2",remainingTime, user_db);
             if (remainingTime <= 0) {
               clearInterval(interval['team_2']);
             }
@@ -851,13 +870,14 @@ io.on('connection', (socket) => {
     const duration = 5 * 60 * 1000; // 5 minutes in milliseconds
 
     var total_time = Math.max(0, duration - (Date.now() - startTime));
-    io.emit('countdown', total_time);
-
+    // io.emit('countdown', ?, total_time);
+    console.log('countdown user_db');
+    console.log(user_db);
   
     interval['team_1'] = setInterval(() => {
       var remainingTime = Math.max(0, duration - (Date.now() - startTime));
-      console.log(remainingTime);
-      io.emit('countdown', "1", remainingTime);
+      // console.log(remainingTime);
+      io.emit('countdown', "1", remainingTime, user_db);
       if (remainingTime <= 0) {
         clearInterval(interval['team_1']);
       }
@@ -866,7 +886,7 @@ io.on('connection', (socket) => {
     interval['team_2'] = setInterval(() => {
       var remainingTime = Math.max(0, duration - (Date.now() - startTime));
       // console.log(remainingTime);
-      io.emit('countdown', "2",remainingTime);
+      io.emit('countdown', "2",remainingTime, user_db);
       if (remainingTime <= 0) {
         clearInterval(interval['team_2']);
       }
@@ -906,7 +926,12 @@ io.on('connection', (socket) => {
     io.emit('server_stopClock', user_team);
   });
 
-  socket.on('reconnect_sync_up', (user_id, user_team) => {
+  socket.on('reconnect_sync_up', (user_socket_id, user_id, user_name, user_team) => {
+    user_db[user_id] = {};
+    user_db[user_id]['user_name'] = user_name;
+    user_db[user_id]['user_team'] = user_team;
+    user_db[user_id]['user_socket_id'] = user_socket_id;
+    console.log(user_db[user_id]);
     if (game_started){
         socket.emit('reconnect_sync_up_js', game_state_full_server, phase, clue_giver,user_db, misconmunication, interception);
         socket.emit('team_member_update',user_db);
@@ -923,7 +948,6 @@ io.on('connection', (socket) => {
     socket.emit('generated_name', gen_name);
   });
 
-  
 
 
 

@@ -1131,9 +1131,15 @@ function textEffect(animationName) {
     var wrappedChars = document.getElementsByTagName('i'),
     wrappedCharsLen = wrappedChars.length,
     j = 0;
-
+    console.log('wrappedChars');
+    console.log(wrappedChars);
     function addEffect () {
       setTimeout(function () {
+        console.log('wrappedChars[j]');
+        console.log(wrappedChars[j]);
+        console.log(j);
+        // console.log('wrappedChars[j].className');
+        // console.log(wrappedChars[j].className);
         wrappedChars[j].className = animation;
         j += 1;
         if (j < wrappedCharsLen) {

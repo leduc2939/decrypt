@@ -322,6 +322,7 @@
     let my_user_id = "";
     let my_name = "";
     let my_team = "";
+    let my_socket_id = "";
     let phase = "1";
     let clue_giver = "";
     let game_state_full = {};
@@ -361,10 +362,15 @@
 
     var state_alert = document.getElementById('state_alert');
 
+
     socket.on('connect', function(env) {
         console.log('connected');
-
+        // socket.emit('log_user_socket', socket.id, my_user_id, my_name, my_team);
+        // socket.emit('my_identity', my_user_id, my_name, my_team);
+        console.log(socket.id);
+        my_socket_id = socket.id
     });
+
 
     socket.on("gen_uuid", (env) => {
         if (env == 'prod') {
@@ -385,8 +391,8 @@
             my_name = localStorage.getItem('user_name');
             console.log(my_user_id);
             console.log(my_team);
-            
-            socket.emit('reconnect_sync_up', my_user_id, my_team);
+            console.log(socket.id);
+            socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, my_team);
         }
         else {
             if (sessionStorage.getItem('user_id')){
@@ -404,8 +410,9 @@
             my_name = sessionStorage.getItem('user_name');
             console.log(my_user_id);
             console.log(my_team);
+            console.log(socket.id);
             
-            socket.emit('reconnect_sync_up', my_user_id, my_team);
+            socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, my_team);
         }
     });
 
@@ -820,7 +827,7 @@
         setTimeout(() => {
         state_alert.hidden = true;
             console.log('state_alert.hidden = true;');
-        }, 5000);
+        }, 6000);
 
     });
 
@@ -853,7 +860,7 @@
         setTimeout(() => {
         state_alert.hidden = true;
             console.log('state_alert.hidden = true;');
-        }, 5000);
+        }, 6000);
 
         // let remainingTime = 5 * 60; // 5 minutes in seconds
         // timerInterval = setInterval(() => {
@@ -889,7 +896,7 @@
         setTimeout(() => {
         state_alert.hidden = true;
             console.log('state_alert.hidden = true;');
-        }, 5000);
+        }, 6000);
 
         // clearInterval(timerInterval);
         // var remainingTime = 5 * 60; 
@@ -1003,7 +1010,7 @@
         });
     });
 
-    socket.on('countdown', (user_team, remainingTime) => {
+    socket.on('countdown', (user_team, remainingTime, user_db) => {
         if (user_team==my_team) {
             var minutes = Math.floor(remainingTime / 60000).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
@@ -1022,9 +1029,7 @@
                     // socket.emit('submitAnswer', user_id, user_name, user_team, d, team_remaining_time);
                 }
                 else {
-                    setTimeout(() => {
-                        submitAnswer.click();
-                    }, Math.random()*1000);
+                    
                 }
             }
         }
