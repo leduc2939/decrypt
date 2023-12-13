@@ -1029,13 +1029,38 @@
                     // socket.emit('submitAnswer', user_id, user_name, user_team, d, team_remaining_time);
                 }
                 else {
-                    console.log(team_mem);
-                    team_mem.splice(team_mem.indexOf(clue_giver), 1)
-                    console.log(team_mem);
-                    console.log(team_mem[team_seed]);
-                    if (my_user_id == team_mem[team_seed]) {
-                        submitAnswer.click();
+                    if (phase=="1") {
+                        var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+                        draggable_all_clues.forEach(draggable =>{
+                            console.log(draggable);
+                            draggable.classList.add("disabled_clue");
+                        });
+                        socket.emit('time_out', my_team);
+                    } else {
+                        var other_team = '';
+                        if (my_team == '1'){
+                            other_team = '2';
+                        } else {
+                            other_team = '1';
+                        }
+                        var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
+                        draggable_all_clues.forEach(draggable =>{
+                            console.log(draggable);
+                            draggable.classList.add("disabled_clue");
+                        });
+                        socket.emit('time_out', my_team);
                     }
+
+
+
+                    // console.log(team_mem);
+                    // team_mem.splice(team_mem.indexOf(clue_giver), 1)
+                    // console.log(team_mem);
+                    // console.log(team_mem[team_seed]);
+                    // if (my_user_id == team_mem[team_seed]) {
+                    //     submitAnswer.click();
+                    // }
+
                 }
             }
         }

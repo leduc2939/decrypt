@@ -1103,6 +1103,20 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     submitClues.hidden = false;
     submitAnswer.hidden = false;
   }
+
+  console.log(normal_member_obj);
+  if (normal_member_obj['disabled_clue']) {
+    $(`#input${user_team}1`).addClass('disabled_clue');
+    $(`#input${user_team}2`).addClass('disabled_clue');
+    $(`#input${user_team}3`).addClass('disabled_clue');
+  }
+  if (normal_member_obj['disabled_clue_other_team']) {
+    console.log('disable clues other team if already guessed');
+    $(`#input${other_team}1`).addClass('disabled_clue');
+    $(`#input${other_team}2`).addClass('disabled_clue');
+    $(`#input${other_team}3`).addClass('disabled_clue');
+  }
+
 }
 
 function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {

@@ -155,6 +155,11 @@ game_state_full_server[`team_2`]['normal_member']["disabled_clue"] = false;
 game_state_full_server[`team_2`]['clue_giver']["disabled_clue_other_team"] = false;
 game_state_full_server[`team_2`]['normal_member']["disabled_clue_other_team"] = false;
 
+game_state_full_server[`team_1`]['clue_giver']["disabled_clue"] = false;
+game_state_full_server[`team_1`]['normal_member']["disabled_clue"] = false;
+game_state_full_server[`team_1`]['clue_giver']["disabled_clue_other_team"] = false;
+game_state_full_server[`team_1`]['normal_member']["disabled_clue_other_team"] = false;
+
 game_state_full_server[`team_1`]['team_remaining_time'] = 0;
 game_state_full_server[`team_2`]['team_remaining_time'] = 0;
 
@@ -730,6 +735,15 @@ io.on('connection', (socket) => {
           game_state_full_server[`team_2`]['clue_giver']["submitClues"]['hide'] = true;
           game_state_full_server[`team_2`]['clue_giver']["submitAnswer"]['hide'] = false;
 
+          
+          
+          // game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
+          // game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
+        
+          // game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue_other_team"] = true;
+          // game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue_other_team"] = true;
+        
+
           // game_state_full_server[`team_1`]['suggest'] = {};
           // game_state_full_server[`team_2`]['suggest'] = {};
 
@@ -868,6 +882,16 @@ io.on('connection', (socket) => {
 
     game_state_full_server[`team_2`]['normal_member']["submitClues"]['hide'] = false;
     game_state_full_server[`team_2`]['normal_member']["submitAnswer"]['hide'] = true;
+
+    game_state_full_server['team_1']['clue_giver']["box11"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box12"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box13"]['contenteditable'] = "true" ;
+    game_state_full_server['team_1']['clue_giver']["box14"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box21"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box22"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box23"]['contenteditable'] = "true" ;
+    game_state_full_server['team_2']['clue_giver']["box24"]['contenteditable'] = "true" ;
+
     
     clue_giver['team_1'] = "";
     clue_giver['team_2'] = "";
@@ -886,6 +910,16 @@ io.on('connection', (socket) => {
     game_state_full_server[`team_2`]['normal_member']["disabled_clue"] = false;
     game_state_full_server[`team_2`]['clue_giver']["disabled_clue_other_team"] = false;
     game_state_full_server[`team_2`]['normal_member']["disabled_clue_other_team"] = false;
+
+    game_state_full_server['team_1']['clue_giver']["box11"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box12"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box13"]['innerHTML'] = "" ;
+    game_state_full_server['team_1']['clue_giver']["box14"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box21"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box22"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box23"]['innerHTML'] = "" ;
+    game_state_full_server['team_2']['clue_giver']["box24"]['innerHTML'] = "" ;
+
 
     io.emit('startNewRound_JS', user_name);
 
@@ -993,7 +1027,16 @@ io.on('connection', (socket) => {
   });
 
 
-
+  socket.on('time_out', (user_team) => {
+    console.log('time out, log disabled clues ')
+    if (phase=="1"){
+      game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
+    } else {
+      game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue_other_team"] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue_other_team"] = true;
+    }
+  });
 
 
   
