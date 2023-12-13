@@ -1301,3 +1301,9 @@ i.fly-in-out {
     /* background-image: url("bg4.jpg") */
   }
   
+
+.res_image {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}

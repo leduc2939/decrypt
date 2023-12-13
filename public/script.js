@@ -781,7 +781,7 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   $(`#row22`).empty();
   $(`#row23`).empty();
   $(`#row24`).empty();
-  
+
   // in case number of communications > 0, populates rowxx view for my team
 
   console.log(game_state_full_server[`team_${user_team}`][`team_${user_team}_truth`]);
@@ -1118,14 +1118,22 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   }
 
 }
-
 function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
+  var modal_game_result = document.getElementById('modal_game_result-content');
   if (winner=="Tie"){
     game_result_p.textContent = gratz_words;
   } else {
     if (my_team==winner) {
+      const image = document.createElement('img');
+      image.setAttribute('class', 'res_image');
+      image.src = 'bigbrain.png';
+      modal_game_result.appendChild(image);
       game_result_p.textContent = "Team bạn "  + gratz_words;
     } else {
+      const image = document.createElement('img');
+      image.src = 'smallbrain.jpeg';
+      image.setAttribute('class', 'res_image');
+      modal_game_result.appendChild(image);
       game_result_p.textContent = "Team bạn "  + gay_words;
     }
   }
