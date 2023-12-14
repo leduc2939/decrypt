@@ -1105,6 +1105,7 @@
                             draggable.classList.add("disabled_clue");
                         });
                         socket.emit('time_out', my_team);
+                        suggestAnswer.disabled = true;
                     } else {
                         var other_team = '';
                         if (my_team == '1'){
@@ -1118,6 +1119,7 @@
                             draggable.classList.add("disabled_clue");
                         });
                         socket.emit('time_out', my_team);
+                        suggestAnswer.disabled = true;
                     }
 
 

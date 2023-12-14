@@ -227,7 +227,7 @@ fetchLines('https://gist.githubusercontent.com/leduc2939/55614e5aecdcc5dd21f25f4
 
 let env = process.argv[2];
 if (env=='prod') {
-  round_no = 0;
+  round_no = 1;
 }
 
 io.on('connection', (socket) => {
@@ -284,7 +284,7 @@ io.on('connection', (socket) => {
 
   socket.on('newGames', (user_id, user_name) => {
     console.log('user: ' + user_name + ' has started a new game');
-    round_no = 0;
+    round_no = 1;
     phase = "1";
     misconmunication = {'team_1':0, 'team_2':0};
     interception = {'team_1':0,'team_2':0};
@@ -640,6 +640,10 @@ io.on('connection', (socket) => {
       if (team_finish == 2) {
         game_state_full_server[`team_1`]['team_remaining_time'] = 0;
         game_state_full_server[`team_2`]['team_remaining_time'] = 0;
+        game_state_full_server[`team_1`]['normal_member']["startNewRound"]['disabled'] = false;
+        game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
+        game_state_full_server[`team_1`]['clue_giver']["startNewRound"]['disabled'] = false;
+        game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
         if (round_no >= 2) {
           var mixed_position = [1,2,3,4];
           phase = "2";
@@ -1032,9 +1036,13 @@ io.on('connection', (socket) => {
     if (phase=="1"){
       game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
+      game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
     } else {
       game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue_other_team"] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue_other_team"] = true;
+      game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
+      game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
     }
   });
 
