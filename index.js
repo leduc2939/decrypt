@@ -284,7 +284,7 @@ io.on('connection', (socket) => {
 
   socket.on('newGames', (user_id, user_name) => {
     console.log('user: ' + user_name + ' has started a new game');
-    round_no = 1;
+    round_no = 0;
     phase = "1";
     misconmunication = {'team_1':0, 'team_2':0};
     interception = {'team_1':0,'team_2':0};

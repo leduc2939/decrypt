@@ -1,123 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="public/style.css" />   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Falling Circles with Matter.js</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+  integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/matter-js@0.17.0/build/matter.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="public/style.css" />   
 </head>
 <body>
+  <canvas class='faces' id="myCanvas" style="width: 100vw; height: 100vh"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    const world = document.querySelector(".faces");
+const { Engine, Render, Runner, World, Bodies } = Matter;
 
-    <div class="decryptr--row" id="boxrow11">
-        <div class="box1" id="box11" tabindex="1">
-            <div class="draggable_clue_1">A</div>
-        </div>
-    </div>
-    <div class="decryptr--row" id="boxrow12">
-        <div class="box1" id="box12" tabindex="2">
-            <div class="draggable_clue_1">B</div>
-        </div>
-    </div>
-    <div class="decryptr--row" id="boxrow13">
-        <div class="box1" id="box13" tabindex="3">
+let engine = Engine.create();
 
-        </div>
-    </div>
-    <div class="decryptr--row" id="boxrow14">
-        <div class="box1" id="box14" tabindex="4"> 
 
-        </div>
-    </div>
+const textures = [
+    "https://i.ibb.co/z4VSpxG/face-1.png",
+    "https://i.ibb.co/cDXgJ6C/face-2.png",
+    "https://i.ibb.co/NTPjrhs/face-3.png",
+    "https://i.ibb.co/T4rKcVC/face-4.png",
+    "https://i.ibb.co/Dw9049M/face-5.png",
+    "https://i.ibb.co/gt9BYYQ/face-6.png",
+    "https://i.ibb.co/hfys0b2/face-7.png",
+    "https://i.ibb.co/zbDfcrh/face-8.png",
+    "https://i.ibb.co/6RP73dX/face-9.png",
+    "https://i.ibb.co/nns9sKj/face-10.png"];
+function init() {
+    let width = $(window).width();
+    let height = $(window).height();
+    let vmin = Math.min(width, height);
 
-    <script>
+    engine.events = {};
+    World.clear(engine.world);
+    Engine.clear(engine);
+    engine = Engine.create();
 
-    // const box = document.getElementById('box11');
-    // const draggableClue = box.querySelector('.draggable_clue_1');
-    // console.log(draggableClue);
-    // if (draggableClue) {
-    //     box.removeChild(draggableClue);
-    //     console.log('Removed draggable clue from box');
-    // } else {
-    //     console.warn('No draggable clue found in the box.');
-    // }
-        var clue_selected = false;
-        var clicked_on_clue = false;
-        var second_clicked_on_box = false;
+    let render = Render.create({
+        canvas: world,
+        engine: engine,
+        options: {
+            wireframes: false,
+            background: 'transparent',
+            width: width,
+            height: height
+        }
+    });
 
-        const boxes = document.querySelectorAll('box1, box2');
-        const draggable_all_clues_1 = document.querySelectorAll('draggable_clue_1, draggable_clue_2');
-
-        draggable_all_clues_1.forEach(draggable => {
-            draggable.addEventListener('click', function() {
-                if (clue_selected==false) {
-                    clicked_on_clue = draggable;
-                    clue_selected = true;
-                    console.log('clue_selected');
-                    console.log(clicked_on_clue.parentNode.classList);
-                }
-            });
-        });
-
-        boxes.forEach(box => {
-            box.addEventListener('click', function() {
-                if (clue_selected==false){
-                    box.blur();
-                }
-                else {
-                    if (box.children.length == 0) {
-                        box.appendChild(clicked_on_clue);
-                        console.log(box);
-                        clue_selected = false;
-                        box.blur();
-                        }
-                    else {
-                        if (box.id==clicked_on_clue.parentNode.id){
-                            console.log('same box');
-                        } else {
-                            var second_clicked_on_clue = box.firstElementChild;
-                            box.removeChild(box.firstElementChild);
-                            var original_box = clicked_on_clue.parentNode;
-                            clicked_on_clue.parentNode.removeChild(clicked_on_clue);
-                            box.appendChild(clicked_on_clue);
-                            original_box.appendChild(second_clicked_on_clue);
-                            clue_selected = false;
-                            box.blur();
-                            original_box.blur();
-                        }
-                    };
-            
+    World.add(engine.world, [
+        Bodies.rectangle(width / 2, height + 50, width, 100, {
+            isStatic: true,
+            render: {
+                fillStyle: "green"
             }
-            });
+        }),
+
+        Bodies.rectangle(-50, height / 2, 100, height, {
+            isStatic: true
+        }),
+        Bodies.rectangle(width + 50, height / 2, 100, height, {
+            isStatic: true
+        }),
+        Bodies.rectangle(width / 2, height / 2 - 20, vmin * 0.500, .001, {//mid box
+            isStatic: true,
+            render: {
+                fillStyle: "red"
+            }
+        }),
+    ]);
+
+   function createBall() {
+        const ORIGINAL_SIZE = 120;
+        const SIZE = Math.floor(Math.random() * 76) + 30;
+        const ball = Bodies.circle(Math.round(Math.random() * width), -30, 29, {
+            angle: Math.PI * (Math.random() * 2 - 1),
+            friction: 0.001,
+            frictionAir: 0.01,
+            restitution: 0.8,
+            render: {
+                sprite: {
+                    texture: textures[
+
+                        Math.floor(Math.random() * (textures.length))],
+                    xScale: SIZE / ORIGINAL_SIZE,
+                    yScale: SIZE / ORIGINAL_SIZE
+                }
+            }
         });
 
-        
-        // textboxes.forEach(textbox => {
-        //   textbox.addEventListener('click', function() {
-        //     const clickedContainer = textbox.parentElement;
-        //     const emptyContainer = emptyContainers[0]; // Get the first empty container
-        
-        //     if (emptyContainer) {
-        //       emptyContainer.appendChild(textbox); // Move the textbox to the empty container
-        //     } else {
-        //       // No empty container available, swap with another textbox
-        //       const otherTextbox = textboxes.find(tb => tb !== textbox);
-        //       const otherContainer = otherTextbox.parentElement;
-        
-        //       // Swap textboxes and containers
-        //       clickedContainer.appendChild(otherTextbox);
-        //       otherContainer.appendChild(textbox);
-        //     }
-        //   });
-        // });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
+        setTimeout(() => {
+            World.remove(engine.world, ball);
+        }, 6000);
+
+        return ball;
+    }
+
+    Runner.run(engine);
+
+    Render.run(render);
+    const handleClick = () => {
+        const ball2 = createBall();
+        World.add(engine.world, [ball2]);
+    };
+    setInterval(handleClick, 200)
+}
+
+init();
+
+$(window).resize(function () {
+    init();
+});
+  </script>
 </body>
 </html>

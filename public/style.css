@@ -718,10 +718,85 @@ body {
 position: fixed;
 top: 100%;
 left: 0;
-background-color: rgb(163, 163, 163);
+/* background-color: rgb(163, 163, 163); */
 padding: 10px;
 display: none;
+
+animation: slide-colors 5s linear infinite;
+margin-top: 20px;
+background: linear-gradient(var(--gradient-degree), rgb(36, 17, 54) var(--color1-percent), black var(--color2-percent), rgb(53, 3, 104) var(--color3-percent), black var(--color4-percent), rgb(30, 21, 40) var(--color5-percent));
 }
+
+@property --gradient-degree {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --color1-percent {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+@property --color2-percent {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+@property --color3-percent {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+@property --color4-percent {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+@property --color5-percent {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+/* .box {
+  width: 400px;
+  height: 400px;
+  animation: slide-colors 5s linear infinite;
+  background: linear-gradient(60deg, rebeccapurple var(--color1-percent), black var(--color2-percent), rebeccapurple var(--color3-percent), black var(--color4-percent), rebeccapurple var(--color5-percent));
+} */
+/* 
+.box2 {
+  width: 400px;
+  height: 400px;
+  animation: slide-colors 5s linear infinite;
+  margin-top: 20px;
+  background: linear-gradient(var(--gradient-degree), rebeccapurple var(--color1-percent), black var(--color2-percent), rebeccapurple var(--color3-percent), black var(--color4-percent), rebeccapurple var(--color5-percent));
+} */
+
+@keyframes slide-colors {
+  0% {
+    --color1-percent: -200%;
+    --color2-percent: -100%;
+    --color3-percent: 0%;
+    --color4-percent: 100%;
+    --color5-percent: 200%;
+    --gradient-degree: 0deg;
+  }
+  100% {
+    --color1-percent: 0%;
+    --color2-percent: 100%;
+    --color3-percent: 200%;
+    --color4-percent: 300%;
+    --color5-percent: 400%;
+    --gradient-degree: 360deg;
+  }
+}
+
 
 .game-button {
     position: relative;
@@ -981,10 +1056,11 @@ display: none;
 
 .modal_game_result {
     position: absolute;
-    top: 45%;
+    top: 15%;
     left: 5%;
-    width: 100%;
-    height: 100%;
+    width: auto; height: auto;
+    /* width: 100%;
+    height: 100%; */
     /* background-color: rgba(0, 0, 0, 0.7); */
     display: none;
     justify-content: center;
@@ -996,8 +1072,8 @@ display: none;
 .modal_game_result-content {
     background-color: #fff;
     padding: 20px;
-    width: 300px;
-    height: 200px;
+    width: 400px;
+    height: 500px;
     position: relative;
     border-radius: 5px;
     font:15px;
@@ -1005,12 +1081,12 @@ display: none;
 }
 
 .close-modal_game_result {
-    /* position: relative;
-    top: 70%; */
-    position: absolute;
-    bottom: 10%; 
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    /* top: 70%; */
+    /* position: absolute; */
+    /* bottom: 10%;  */
+    /* left: 50%; */
+    /* transform: translateX(-50%); */
     align-items: center;
     cursor: pointer;
 
@@ -1303,7 +1379,73 @@ i.fly-in-out {
   
 
 .res_image {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
+  max-width: 100%;
+  height: auto;
+}
+
+.Team_Thua_Title {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  color:rgb(77, 77, 255);
+  text-shadow:
+      0.07em 0 rgb(216, 218, 244),
+      0 0.07em rgb(150, 255, 255),
+      -0.07em 0 rgb(175, 237, 246),
+      0 -0.07em rgb(163, 153, 255);
+}
+
+.Team_Loser_Title{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  color:rgb(255, 40, 40);
+  text-shadow:
+      0.07em 0 rgb(255, 169, 169),
+      0 0.07em rgb(255, 182, 182),
+      -0.07em 0 rgb(255, 161, 161),
+      0 -0.07em rgb(255, 232, 232);
+}
+
+.team_1_name {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  color:rgb(77, 77, 255);
+  text-shadow:
+      0.07em 0 rgb(216, 218, 244),
+      0 0.07em rgb(150, 255, 255),
+      -0.07em 0 rgb(175, 237, 246),
+      0 -0.07em rgb(163, 153, 255);
+}
+
+.team_2_name {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  color:rgb(255, 40, 40);
+  text-shadow:
+      0.07em 0 rgb(255, 169, 169),
+      0 0.07em rgb(255, 182, 182),
+      -0.07em 0 rgb(255, 161, 161),
+      0 -0.07em rgb(255, 232, 232);
+}
+
+.myCanvas{
+  width: 500px;
+  height: 500px;
+}
+
+.faces {
+  display: block;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  z-index: 999999999;
 }

@@ -10,12 +10,19 @@
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.17.0/build/matter.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css" />   
 
 </head>
 <body class="body_game" id="body">
+    <!-- <canvas class="faces" id="myCanvas"></canvas> -->
     
-    <div class="whole" id = 'whole'>
+
+
+
+
+
+  <div class="whole" id = 'whole'>
       <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -46,12 +53,12 @@
 
             <table>
                 <tr>
-                  <td class="table-cell">miscommunicate</td>
+                  <td class="table-cell" id="miscommunicate">miscommunicate</td>
                   <td class="table-cell-blue" id="miscommunicate_blue">0</td>
                   <td class="table-cell-red" id="miscommunicate_red">0</td>
                 </tr>
                 <tr>
-                  <td class="table-cell">intercept</td>
+                  <td class="table-cell" id="intercept">intercept</td>
                   <td class="table-cell-blue" id="intercept_blue">0</td>
                   <td class="table-cell-red" id="intercept_red">0</td>
                 </tr>
@@ -64,11 +71,11 @@
                     New Game
                 </button>
                 <hr></hr>
-                <div>Team Thua</div>
+                <div class="Team_Thua_Title">Team Thua</div>
                 <ul id="Team_Thua_Members">    
 
                 </ul>      
-                <div>Team Loser</div>
+                <div class="Team_Loser_Title">Team Loser</div>
                 <ul id="Team_Loser_Members">    
 
                 </ul> 
@@ -207,9 +214,17 @@
                 </button>
                 <div class="modal_game_result" id = "modal_game_result" style="display: none">
                     <div class="modal_game_result-content" id="modal_game_result-content">
-                      <h5>Game Result!</h5>
-                      <e id="game_result_p"></e>
-                      <button class="close-modal_game_result" id = "close-modal_game_result">Okay</button>
+                        <div class="modal-header">
+                            <h5>Game Result!</h5>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                            <div>
+                                <e id="game_result_p"></e>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="close-modal_game_result" id = "close-modal_game_result">Okay</button>
+                            </div>
+                        </div>
                     </div>
                   </div>
                    <!-- <div class="modal_game_result" style="display: none">
@@ -310,6 +325,10 @@
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
 <script src="script.js"></script>
+<script src="fallingobj.js"></script>
+<script src="sketch.js"></script>
+<script src="box.js"></script>
+<script src="boundary.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -361,6 +380,9 @@
     const draggable_all_clues = document.querySelectorAll('draggable_clue_1, draggable_clue_2');
 
     var state_alert = document.getElementById('state_alert');
+
+    var miscommunicate_cell = document.getElementById('miscommunicate');
+    var intercept_cell = document.getElementById('intercept');
 
 
     socket.on('connect', function(env) {
@@ -430,15 +452,35 @@
         for (user_id in user_db) {
             if (user_db[user_id]['user_team'] == "1") {
                 if (user_db[user_id]['user_team']){
-                    var member = document.createElement('li');
-                    member.textContent = user_db[user_id]['user_name'];
-                    document.getElementById('Team_Thua_Members').appendChild(member);
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_1_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        document.getElementById('Team_Thua_Members').appendChild(member);
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_1_name');
+                        // member.style.color = '#5E72FF';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('Team_Thua_Members').appendChild(member);
+                    }
                 }
             } else {
                 if (user_db[user_id]['user_team']){
-                    var member = document.createElement('li');
-                    member.textContent = user_db[user_id]['user_name'];
-                    document.getElementById('Team_Loser_Members').appendChild(member);
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_2_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        document.getElementById('Team_Loser_Members').appendChild(member);
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_2_name');
+                        // member.style.color = '#FF3939';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('Team_Loser_Members').appendChild(member);
+                    }
                 }
             }
         }
@@ -453,15 +495,35 @@
         for (user_id in user_db) {
             if (user_db[user_id]['user_team'] == "1") {
                 if (user_db[user_id]['user_team']){
-                    var member = document.createElement('li');
-                    member.textContent = user_db[user_id]['user_name'];
-                    document.getElementById('Team_Thua_Members').appendChild(member);
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_1_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        document.getElementById('Team_Thua_Members').appendChild(member);
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_1_name');
+                        // member.style.color = '#5E72FF';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('Team_Thua_Members').appendChild(member);
+                    }
                 }
             } else {
                 if (user_db[user_id]['user_team']){
-                    var member = document.createElement('li');
-                    member.textContent = user_db[user_id]['user_name'];
-                    document.getElementById('Team_Loser_Members').appendChild(member);
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_2_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        document.getElementById('Team_Loser_Members').appendChild(member);
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_2_name');
+                        // member.style.color = '#FF3939';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('Team_Loser_Members').appendChild(member);
+                    }
                 }
             }
         }
@@ -483,7 +545,7 @@
         } else {
             newGame_JS(team_2_keywords, my_team);
         }
-        phase = 1;
+        phase = "1";
         round = 1;
     });
 
@@ -839,6 +901,7 @@
         submitClues.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
         submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
         startNewRound.disabled = true;
+
     });
     
     
@@ -861,6 +924,9 @@
         state_alert.hidden = true;
             console.log('state_alert.hidden = true;');
         }, 6000);
+
+        miscommunicate_cell.style.backgroundColor = '#ffd700';
+        intercept_cell.style.backgroundColor = '';
 
         // let remainingTime = 5 * 60; // 5 minutes in seconds
         // timerInterval = setInterval(() => {
@@ -897,6 +963,9 @@
         state_alert.hidden = true;
             console.log('state_alert.hidden = true;');
         }, 6000);
+
+        miscommunicate_cell.style.backgroundColor = '';
+        intercept_cell.style.backgroundColor = '#ffd700';
 
         // clearInterval(timerInterval);
         // var remainingTime = 5 * 60; 
@@ -1103,70 +1172,162 @@
     // });
 
 
-const msgerForm = get(".msger-inputarea");
-const msgerInput = get(".msger-input");
-const msgerChat = get(".msger-chat");
-
-const BOT_MSGS = [
-  "Hi, how are you?",
-  "Ohh... I can't understand what you trying to say. Sorry!",
-  "I like to play games... But I don't know how to play!",
-  "Sorry if my answers are not relevant. :))",
-  "I feel sleepy! :("
-];
-
-// Icons made by Freepik from www.flaticon.com
-const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
-const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
-const BOT_NAME = "BOT";
-const PERSON_NAME = "Sajad";
-
-msgerForm.addEventListener("submit", event => {
-  event.preventDefault();
-
-  const msgText = msgerInput.value;
-  if (!msgText) return;
-
-  socket.emit('chat message', msgText, my_name);
-  appendMessage(my_name, "right", msgText);
-  msgerInput.value = "";
-
-});
+    const msgerForm = get(".msger-inputarea");
+    const msgerInput = get(".msger-input");
+    const msgerChat = get(".msger-chat");
 
 
-socket.on('chat message', function(msg, user_name) {    
-        appendMessage(user_name, "left", msg);
-        // window.scrollTo(0, document.body.scrollHeight);
+    msgerForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const msgText = msgerInput.value;
+    if (!msgText) return;
+
+    socket.emit('chat message', msgText, my_name);
+    appendMessage(my_name, "right", msgText);
+    msgerInput.value = "";
+
     });
 
-function appendMessage(name, side, text) {
-  const msgHTML = `
-    <div class="msg ${side}-msg">
-      <div class="msg-bubble">
-        <div class="msg-info">
-          <div class="msg-info-name">${name}</div>
+
+    socket.on('chat message', function(msg, user_name) {    
+            appendMessage(user_name, "left", msg);
+            // window.scrollTo(0, document.body.scrollHeight);
+        });
+
+    function appendMessage(name, side, text) {
+    const msgHTML = `
+        <div class="msg ${side}-msg">
+        <div class="msg-bubble">
+            <div class="msg-info">
+            <div class="msg-info-name">${name}</div>
+            </div>
+            <div class="msg-text">${text}</div>
         </div>
-        <div class="msg-text">${text}</div>
-      </div>
-    </div>
-  `;
-  msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
-//   msgerChat.scrollTop += 500;
-}
+        </div>
+    `;
+    msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
+    //   msgerChat.scrollTop += 500;
+    }
 
-// Utils
-function get(selector, root = document) {
-  return root.querySelector(selector);
-}
+    // Utils
+    function get(selector, root = document) {
+    return root.querySelector(selector);
+    }
 
-function formatDate(date) {
-  const h = "0" + date.getHours();
-  const m = "0" + date.getMinutes();
+    function formatDate(date) {
+    const h = "0" + date.getHours();
+    const m = "0" + date.getMinutes();
 
-  return `${h.slice(-2)}:${m.slice(-2)}`;
-}
+    return `${h.slice(-2)}:${m.slice(-2)}`;
+    }
+
+    // falling obj
+
+    
+
+    // const world = document.querySelector(".faces");
+    // const { Engine, Render, Runner, World, Bodies } = Matter;
+
+    // let engine = Engine.create();
+
+
+    // const textures = [
+    //     "https://i.ibb.co/z4VSpxG/face-1.png",
+    //     "https://i.ibb.co/cDXgJ6C/face-2.png",
+    //     "https://i.ibb.co/NTPjrhs/face-3.png",
+    //     "https://i.ibb.co/T4rKcVC/face-4.png",
+    //     "https://i.ibb.co/Dw9049M/face-5.png",
+    //     "https://i.ibb.co/gt9BYYQ/face-6.png",
+    //     "https://i.ibb.co/hfys0b2/face-7.png",
+    //     "https://i.ibb.co/zbDfcrh/face-8.png",
+    //     "https://i.ibb.co/6RP73dX/face-9.png",
+    //     "https://i.ibb.co/nns9sKj/face-10.png"];
+    // function init() {
+    //     let width = $(window).width();
+    //     let height = $(window).height();
+    //     let vmin = Math.min(width, height);
+
+    //     engine.events = {};
+    //     World.clear(engine.world);
+    //     Engine.clear(engine);
+    //     engine = Engine.create();
+
+    //     let render = Render.create({
+    //         canvas: world,
+    //         engine: engine,
+    //         options: {
+    //             wireframes: false,
+    //             background: 'transparent',
+    //             width: width,
+    //             height: height
+    //         }
+    //     });
+
+    //     World.add(engine.world, [
+    //         Bodies.rectangle(width / 2, height + 50, width, 100, {
+    //             isStatic: true,
+    //             render: {
+    //                 fillStyle: "green"
+    //             }
+    //         }),
+
+    //         Bodies.rectangle(-50, height / 2, 100, height, {
+    //             isStatic: true
+    //         }),
+    //         Bodies.rectangle(width + 50, height / 2, 100, height, {
+    //             isStatic: true
+    //         }),
+    //         Bodies.rectangle(width / 2, height / 2 - 20, vmin * 0.500, .001, {//mid box
+    //             isStatic: true,
+    //             render: {
+    //                 fillStyle: "red"
+    //             }
+    //         }),
+    //     ]);
+
+    // function createBall() {
+    //         const ORIGINAL_SIZE = 120;
+    //         const SIZE = Math.floor(Math.random() * 76) + 30;
+    //         const ball = Bodies.circle(Math.round(Math.random() * width), -30, 29, {
+    //             angle: Math.PI * (Math.random() * 2 - 1),
+    //             friction: 0.001,
+    //             frictionAir: 0.01,
+    //             restitution: 0.8,
+    //             render: {
+    //                 sprite: {
+    //                     texture: textures[
+
+    //                         Math.floor(Math.random() * (textures.length))],
+    //                     xScale: SIZE / ORIGINAL_SIZE,
+    //                     yScale: SIZE / ORIGINAL_SIZE
+    //                 }
+    //             }
+    //         });
+
+    //         setTimeout(() => {
+    //             World.remove(engine.world, ball);
+    //         }, 6000);
+
+    //         return ball;
+    //     }
+
+    //     Runner.run(engine);
+
+    //     Render.run(render);
+    //     const handleClick = () => {
+    //         const ball2 = createBall();
+    //         World.add(engine.world, [ball2]);
+    //     };
+    //     setInterval(handleClick, 200)
+    // }
+
+    // init();
+
+    // $(window).resize(function () {
+    //     init();
+    // });
   
 </script>
-
 </body>
 </html>

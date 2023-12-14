@@ -105,6 +105,10 @@ var clue_selected = false;
 var clicked_on_clue = false;
 var second_clicked_on_box = false;
 
+var miscommunicate_cell = document.getElementById('miscommunicate');
+var intercept_cell = document.getElementById('intercept');
+
+
 
 function newGame_JS(team_keywords, team) {
   console.log('newGame_JS');
@@ -821,6 +825,16 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
       }
     }
   }
+  
+  // phase color
+  if (current_phase=='1') {
+    miscommunicate_cell.style.backgroundColor = '#ffd700';
+    intercept_cell.style.backgroundColor = '';
+  } else {
+    miscommunicate_cell.style.backgroundColor = '';
+    intercept_cell.style.backgroundColor = '#ffd700';
+  };
+
 
   // score sync
   miscommunicate_blue.textContent = misconmunication['team_1'];
@@ -1119,21 +1133,21 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
 
 }
 function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
-  var modal_game_result = document.getElementById('modal_game_result-content');
+  var modal_body = document.getElementById('modal-body');
   if (winner=="Tie"){
     game_result_p.textContent = gratz_words;
   } else {
     if (my_team==winner) {
       const image = document.createElement('img');
-      image.setAttribute('class', 'res_image');
+      image.setAttribute('class', 'img-fluid');
       image.src = 'bigbrain.png';
-      modal_game_result.appendChild(image);
+      modal_body.prepend(image);
       game_result_p.textContent = "Team bạn "  + gratz_words;
     } else {
       const image = document.createElement('img');
       image.src = 'smallbrain.jpeg';
-      image.setAttribute('class', 'res_image');
-      modal_game_result.appendChild(image);
+      image.setAttribute('class', 'img-fluid');
+      modal_body.prepend(image);
       game_result_p.textContent = "Team bạn "  + gay_words;
     }
   }
