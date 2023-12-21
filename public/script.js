@@ -108,7 +108,7 @@ var second_clicked_on_box = false;
 var miscommunicate_cell = document.getElementById('miscommunicate');
 var intercept_cell = document.getElementById('intercept');
 
-
+var timer_input = document.getElementById('timer_input');
 
 function newGame_JS(team_keywords, team) {
   console.log('newGame_JS');
@@ -620,8 +620,36 @@ function rearrangeClues_intercept_JS(round_d, mixed_position, user_team) {
 function pushRight (result, user_name, game_state_correct_answerd, user_team) {
   if (result == 1){
     console.log(user_name + " has nailed the thing");
+    var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has nailed the thing';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
   } else {
     console.log(user_name + " has failed the thing");
+    var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has failed the thing';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
   }
   console.log(game_state_correct_answerd);
   for (key in game_state_correct_answerd){
@@ -701,8 +729,34 @@ function intercept_res_JS (result, user_name, game_state_correct_answer, user_te
 
   if (result == 1){
     console.log(user_name + " has nailed the thing");
+    var alert = document.createElement("div");
+    alert.setAttribute('class',"suggest_alert");
+    alert.setAttribute('id',"suggest_alert");
+    alert.innerHTML  = user_name +  "'s shown people how to read mind! Yall";
+    $('#container').append(alert);
+    setTimeout(function() {
+      $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+        $(this).remove();
+      });
+    });
+    setTimeout(function(){
+      alert.remove();
+    }, 8000);
   } else {
     console.log(user_name + " has failed the thing");
+    var alert = document.createElement("div");
+    alert.setAttribute('class',"suggest_alert");
+    alert.setAttribute('id',"suggest_alert");
+    alert.innerHTML  = user_name + ' has failed the thing';
+    $('#container').append(alert);
+    setTimeout(function() {
+      $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+        $(this).remove();
+      });
+    });
+    setTimeout(function(){
+      alert.remove();
+    }, 8000);
   }
   console.log(game_state_correct_answer);
   for (key in game_state_correct_answer){
@@ -725,20 +779,59 @@ function intercept_res_JS (result, user_name, game_state_correct_answer, user_te
       draggable.classList.add("disabled_clue");
   });
 
-  var alert = document.createElement("div");
-  alert.setAttribute('class',"suggest_alert");
-  alert.setAttribute('id',"suggest_alert");
-  alert.innerHTML  = user_name + ' has tried to intercept';
-  $('#container').append(alert);
-  setTimeout(function() {
-    $(alert).fadeTo(3000, 0).slideUp(3000, function(){
-      $(this).remove();
-    });
-  });
-  setTimeout(function(){
-    alert.remove();
-  }, 8000);
 }
+
+function get(selector, root = document) {
+  return root.querySelector(selector);
+  }
+
+// const msgerForm = get(".msger-inputarea");
+// const msgerInput = get(".msger-input");
+// const msgerChat = get(".msger-chat");
+
+
+function appendMessage(name, side, text, date) {
+  console.log(side);
+  if (side=='log') {
+    var ftext = `Server (${date}): ` + text;
+    const msgHTML = `
+      <div class="msg-text-log">${ftext}</div>
+      `;
+      // msgerChat.append(text);
+      msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
+  } else {
+      const msgHTML = `
+          <div class="msg ${side}-msg">
+          <div class="msg-bubble">
+              <div class="msg-info">
+              <div class="msg-info-name">${name}</div>
+              <div class="msg-info-time">${date}</div>
+              </div>
+              <div class="msg-text">${text}</div>
+          </div>
+          </div>
+      `;
+      msgerChat.insertAdjacentHTML("afterbegin", msgHTML);
+      //   msgerChat.scrollTop += 500;
+  }
+}
+
+function sync_chat_log (user_id, game_state_full_server) {
+  // game_state_full_server['chatlog'].push([user_name, user_id, msg, date]);
+  console.log(game_state_full_server['chatlog']);
+  for (chat of game_state_full_server['chatlog']) {
+    console.log(chat);
+    if (chat[1]==user_id) {
+      appendMessage(chat[0], "right", chat[2], chat[3]);
+    } else if (chat[1]=='log') {
+      console.log('serverlog');
+      appendMessage(chat[0], "log", chat[2], chat[3]);
+    } else {
+      appendMessage(chat[0], "left", chat[2], chat[3]);
+    }
+    
+  }
+};
 
 function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver, user_db, misconmunication, interception){
 
@@ -754,6 +847,17 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
           other_team = '1';
       }
 
+  
+  
+  $(`#team_1_word1 span`).text('?');
+  $(`#team_1_word2 span`).text('?');
+  $(`#team_1_word3 span`).text('?');
+  $(`#team_1_word4 span`).text('?');
+  $(`#team_2_word1 span`).text('?');
+  $(`#team_2_word2 span`).text('?');
+  $(`#team_2_word3 span`).text('?');
+  $(`#team_2_word4 span`).text('?');
+
   // populate keywords on reconnection
   $(`#team_${user_team}_word1 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word1`]);
   $(`#team_${user_team}_word2 span`).text(game_state_full_server[`team_${user_team}`]['normal_member'][`team_${user_team}_word2`]);
@@ -768,6 +872,8 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
   submitAnswer.disabled = normal_member_obj["submitAnswer"]['disabled'];
   submitClues.hidden = normal_member_obj["submitClues"]['hide'];
   submitAnswer.hidden = normal_member_obj["submitAnswer"]['hide'];
+
+  timer_input.value = game_state_full_server['timer'];
   
   $(`#box11`).empty();
   $(`#box12`).empty();
@@ -1205,6 +1311,45 @@ function textEffect(animationName) {
 	  addEffect();
 
 };
+
+var t = 0;
+function myFunction() {
+    var x = document.getElementById("frm1");
+    hr = x.elements[0].value;
+    min = x.elements[1].value
+
+    window.t = hr*3600 + min*60;
+    window.per = window.t;
+    //document.getElementById("demo").innerHTML = hr*3600 + min*60;
+    timer();
+}
+
+function timer(){
+    var temp = window.t;
+    window.t = window.t-1;
+    var h = Math.floor(temp/3600);
+    var m = Math.floor((temp%3600)/60);
+    var s = Math.floor((temp - h*3600 - m*60));
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById("demo").innerHTML = h + "hr:" + m + "min:" + s + "sec";
+    document.getElementById("progress-bar").style.width = (temp*100)/(window.per) + "%";
+
+    var t = setTimeout(timer,1000);
+
+    /*if(temp<900){
+        document.getElementById("progress-bar").style.backgroundColor = "red";
+        document.getElementById("progress").style.borderColor = "red";
+    }*/
+    if (temp < 0) {
+        clearInterval(t);
+        document.getElementById("demo").innerHTML = "EXPIRED";
+    }
+}
+function checkTime(i){
+    if (i<10) { i = "0" + i }
+    return i;
+}
 
 // chat
     // var messages = document.getElementById('messages');

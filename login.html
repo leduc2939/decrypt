@@ -36,10 +36,10 @@
   </div>
   <div class="container d-flex justify-content-center">
     <div class="glow1" tabindex="3" id="teamThua">
-      <span class="text"><a>Team Thua</a></span>
+      <span id="team_1_name" class="text"><a></a></span>
     </div>
     <div class="glow2" tabindex="4" id="teamLoser">
-      <span class="text"><a>Team Loser</a></span>
+      <span id="team_2_name" class="text"><a></a></span>
     </div>
   </div>
 
@@ -63,6 +63,9 @@
   // check which team is chosen and alternate the team variable
   var teamThua = document.getElementById('teamThua');
   var teamLoser = document.getElementById('teamLoser');
+
+  var team_1_name = document.getElementById('team_1_name');
+  var team_2_name = document.getElementById('team_2_name');
 
   teamThua.addEventListener('click', function(e) {
       my_team  = '1';
@@ -148,6 +151,11 @@
     console.log(name);
     userName.value = name;
   });
+
+  socket.on('set_team_name', (server_team_1_name, server_team_2_name) =>{
+        team_1_name.innerHTML = server_team_1_name;
+        team_2_name.innerHTML = server_team_2_name;
+    });
 
     // socket.on('newGame_JS', () => {
     //     console.log('received newGame signal');

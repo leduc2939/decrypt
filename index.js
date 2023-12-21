@@ -165,6 +165,14 @@ game_state_full_server[`team_2`]['team_remaining_time'] = 0;
 
 game_state_full_server['round_finished'] = false;
 
+game_state_full_server['timer'] = 5;
+
+game_state_full_server['chatlog'] = [];
+
+var hasSignalBeenSent = {};
+hasSignalBeenSent['team_1'] = false;
+hasSignalBeenSent['team_2'] = false;
+
 let clue_giver = {}
 clue_giver['team_1'] = "";
 clue_giver['team_2'] = "";
@@ -202,6 +210,9 @@ var interval_2;
 var interval = {};
 interval['team_1'] = interval_1;
 interval['team_2'] = interval_2;
+
+server_team_1_name = 'Kitties', 
+server_team_2_name = 'Puppies'
 
 function fetchLines(url) {
   return fetch(url)
@@ -274,6 +285,18 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.emit('set_timer', game_state_full_server['timer']);
+
+  socket.emit('set_team_name', server_team_1_name, server_team_2_name);
+
+  socket.on('adjust_timer', (user_id, user_name, timer) =>{
+    console.log(user_name + " has changed the timer");
+    game_state_full_server['timer'] = timer;
+    io.emit('adjust_timer_JS', user_name, game_state_full_server['timer']);   
+    io.emit('chat message', user_name + ' has adjusted the timer to ' + timer + ' minutes.' , 'log', formatDate(new Date()));
+    game_state_full_server['chatlog'].push(['log', 'log', ' has adjusted the timer to ' + timer + ' minutes.', formatDate(new Date())]);    
+  });
+
   socket.on('enterGame', (user_id, user_name, user_team) => {
     // user_db[user_id]['user_name'] = user_name;
     // user_db[user_id]['user_team'] = user_team;
@@ -298,7 +321,10 @@ io.on('connection', (socket) => {
       team_1_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
       team_2_keywords.push(wordlist.splice(Math.floor(Math.random()*wordlist.length),1)[0])
     }
-    io.emit('newGame_JS',team_1_keywords,team_2_keywords);
+    io.emit('newGame_JS',team_1_keywords,team_2_keywords, user_name);
+    io.emit('chat message', user_name + ' has started a new game.', 'log', formatDate(new Date()));
+    game_state_full_server['chatlog'].push(['log', 'log', user_name + ' has started a new game.', formatDate(new Date())]);
+
     clearInterval(interval[`team_1`]);
     clearInterval(interval[`team_2`]);
     // io.emit('server_stopClock', "1");
@@ -466,6 +492,8 @@ io.on('connection', (socket) => {
     game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
     game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
     
+    hasSignalBeenSent[`team_1`]=false;
+    hasSignalBeenSent[`team_2`]=false;
 
     console.log(team_1_keywords);
     console.log(team_2_keywords);
@@ -486,6 +514,9 @@ io.on('connection', (socket) => {
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] = '';
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${left_out_position}`] = 'null';
     io.emit('giveClues_JS', user_id, user_name, user_team, position_to_be_encoded[`team_${user_team}`]);
+    io.emit('chat message', user_name + ' has taken charge of encoding the message.', 'log', formatDate(new Date()));
+    game_state_full_server['chatlog'].push(['log', 'log', user_name + ' has taken charge of encoding the message.', formatDate(new Date())]);
+
 
     game_state_full_server[`team_${user_team}`]['clue_giver']['boxes_with_clue'] = position_to_be_encoded[`team_${user_team}`];
     clue_giver[`team_${user_team}`] = user_id
@@ -535,6 +566,10 @@ io.on('connection', (socket) => {
     mixed_position.splice(left_out_position,1);
     shuffle(mixed_position); 
     io.emit('rearrangeClues_JS', user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position);
+    
+    io.emit('chat message', user_name + ' has sent the password for the bomb.', 'log', formatDate(new Date()));
+    game_state_full_server['chatlog'].push(['log', 'log', user_name + ' has sent the password for the bomb.', formatDate(new Date())]);
+
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] = input1_value;
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] = input2_value;
     game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][2]}`] = input3_value;
@@ -610,7 +645,10 @@ io.on('connection', (socket) => {
 
       game_state_full_server[`team_${user_team}`]['normal_member']["submitClues"]['hide'] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["submitAnswer"]['hide'] = false;
+      hasSignalBeenSent[`team_1`]=false;
+      hasSignalBeenSent[`team_2`]=false;
       console.log(user_name + " just submitted communication");
+      
       if (
         d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
         d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][1]}`] &&
@@ -622,6 +660,8 @@ io.on('connection', (socket) => {
         console.log('push right signal sent');
         game_state_full_server[`team_${user_team}`]['suggest'] = d;
         console.log(d);
+        io.emit('chat message', user_name + " is in sync with their comrade.", 'log', formatDate(new Date()));
+        game_state_full_server['chatlog'].push(['log', 'log', user_name + " is in sync with their comrade.", formatDate(new Date())]);
       } 
       else {
         misconmunication[`team_${user_team}`] +=1;
@@ -631,6 +671,8 @@ io.on('connection', (socket) => {
         console.log('push right signal sent');
         game_state_full_server[`team_${user_team}`]['suggest'] = d;
         console.log(d);
+        io.emit('chat message', user_name + "'s just cut the red wire and it exploded...", 'log', formatDate(new Date()));
+        game_state_full_server['chatlog'].push(['log', 'log', user_name + "'s just cut the red wire and it exploded...", formatDate(new Date())]);
       }
 
       game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
@@ -644,17 +686,25 @@ io.on('connection', (socket) => {
         game_state_full_server[`team_2`]['normal_member']["startNewRound"]['disabled'] = false;
         game_state_full_server[`team_1`]['clue_giver']["startNewRound"]['disabled'] = false;
         game_state_full_server[`team_2`]['clue_giver']["startNewRound"]['disabled'] = false;
+        hasSignalBeenSent[`team_1`]=false;
+        hasSignalBeenSent[`team_2`]=false;
         if (round_no >= 2) {
           var mixed_position = [1,2,3,4];
           phase = "2";
           mixed_position.splice(Math.floor(Math.random()*4),1);
+
           io.emit('rearrangeClues_intercept_JS', game_state[`round_${round_no}`], mixed_position);
+
+          io.emit('chat message', 'interception phase begins.', 'log', formatDate(new Date()));
+          game_state_full_server['chatlog'].push(['log', 'log', 'interception phase begins.', formatDate(new Date())]);
+
+
           const startTime = Date.now();
           var duration;
           if (env=='prod') {
-            duration = 5 * 60 * 1000;
+            duration = game_state_full_server['timer'] * 60 * 1000;
           } else {
-            duration = 5 * 7 * 1000;
+            duration = game_state_full_server['timer'] * 7 * 1000;
           }
           // 5 minutes in milliseconds
           var total_time = Math.max(0, duration - (Date.now() - startTime));
@@ -755,6 +805,11 @@ io.on('connection', (socket) => {
 
         } else {
           io.emit('roundCompleted');
+
+          io.emit('chat message', 'Round completed', 'log', formatDate(new Date()));
+          game_state_full_server['chatlog'].push(['log', 'log', 'Round completed.', formatDate(new Date())]);
+
+
         }
       }
     }
@@ -788,6 +843,8 @@ io.on('connection', (socket) => {
       game_state_full_server[`team_${other_team}`]['clue_giver']["disabled_clue_other_team"] = true;
       game_state_full_server[`team_${other_team}`]['normal_member']["disabled_clue_other_team"] = true;
       
+
+
       console.log(game_state_full_server[`team_${other_team}`]);
       if (
         d[`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] == game_state[`round_${round_no}`][`team_${user_team}`][`box${user_team}${position_to_be_encoded[`team_${user_team}`][0]}`] &&
@@ -798,11 +855,15 @@ io.on('connection', (socket) => {
         interception[`team_${other_team}`] +=1;
         game_state_full_server[`team_${other_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
         console.log('correct interception: intercept_res + push right sent');
+        io.emit('chat message', user_name + "'s shown people how to read mind! Yall.", 'log', formatDate(new Date()));
+        game_state_full_server['chatlog'].push(['log', 'log', user_name + "'s shown people how to read mind! Yall.", formatDate(new Date())]);
       } 
       else {
         io.emit('intercept_res', 0, user_name, game_state[`round_${round_no}`][`team_${user_team}`], user_team);
         game_state_full_server[`team_${other_team}`][`team_${user_team}_truth`].push(game_state[`round_${round_no}`][`team_${user_team}`]);
         console.log('incorrect interception: intercept_res + push right sent');
+        io.emit('chat message', "who the hell put " + user_name + " in charge? His mind is feeble and not fit for the job!", 'log', formatDate(new Date()));
+        game_state_full_server['chatlog'].push(['log', 'log', "who the hell put " + user_name + " in charge? His mind is feeble and not fit for the job!", formatDate(new Date())]);
       }
       
       
@@ -811,6 +872,7 @@ io.on('connection', (socket) => {
       team_finish_interception += 1;
       if (team_finish_interception == 2) {
         console.log('send roundComplete');
+        game_state_full_server['chatlog'].push(['log', 'log', "Round completed.", formatDate(new Date())]);
         if (parseInt(misconmunication["team_1"])==2 || parseInt(misconmunication["team_2"])==2 || parseInt(interception["team_2"])==2 || parseInt(interception["team_1"])==2) {
           console.log("there's a winner");
           console.log(parseFloat(interception["team_1"]));
@@ -849,8 +911,13 @@ io.on('connection', (socket) => {
         } else {
           io.emit('roundCompleted');
         }
-        
+      
+        // to lock buttons when round completed
         game_state_full_server['round_finished'] = true;
+
+        io.emit('chat message', 'Round completed!', 'log', formatDate(new Date()));
+        game_state_full_server['chatlog'].push(['log', 'log', 'Round completed!', formatDate(new Date())]);
+
       }
     }
     
@@ -924,15 +991,20 @@ io.on('connection', (socket) => {
     game_state_full_server['team_2']['clue_giver']["box23"]['innerHTML'] = "" ;
     game_state_full_server['team_2']['clue_giver']["box24"]['innerHTML'] = "" ;
 
+    hasSignalBeenSent[`team_1`]=false;
+    hasSignalBeenSent[`team_2`]=false;
 
     io.emit('startNewRound_JS', user_name);
+
+    io.emit('chat message', user_name + ' has started a new round.', 'log', formatDate(new Date()));
+    game_state_full_server['chatlog'].push(['log', 'log', user_name + ' has started a new round.', formatDate(new Date())]);
 
     const startTime = Date.now();
     var duration;
     if (env=='prod') {
-      duration = 5 * 60 * 1000;
+      duration = game_state_full_server['timer'] * 60 * 1000;
     } else {
-      duration = 5 * 7 * 1000;
+      duration = game_state_full_server['timer'] * 7 * 1000;
     }
      // 5 minutes in milliseconds
 
@@ -1022,6 +1094,7 @@ io.on('connection', (socket) => {
         socket.emit('team_member_update',user_db);
         console.log('team_member_update sent');
       }
+    socket.emit('sync_chat_log', game_state_full_server);
   });
 
   socket.on('generate_random_name', () =>{
@@ -1033,6 +1106,12 @@ io.on('connection', (socket) => {
 
   socket.on('time_out', (user_team) => {
     console.log('time out, log disabled clues ')
+    var team_name = "";
+    if (user_team=='1') {
+      team_name = server_team_1_name;
+    } else {
+      team_name = server_team_2_name;
+    }
     if (phase=="1"){
       game_state_full_server[`team_${user_team}`]['clue_giver']["disabled_clue"] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["disabled_clue"] = true;
@@ -1044,8 +1123,63 @@ io.on('connection', (socket) => {
       game_state_full_server[`team_${user_team}`]['clue_giver']["suggestAnswer"]['disabled'] = true;
       game_state_full_server[`team_${user_team}`]['normal_member']["suggestAnswer"]['disabled'] = true;
     }
+
+    if (hasSignalBeenSent[`team_${user_team}`]==false){
+      io.emit('chat message',`time's up, freezeee~ ${team_name}!`, 'log', formatDate(new Date()));
+      game_state_full_server['chatlog'].push(['log', 'log',`time's up, freezeee~ ${team_name}!`, formatDate(new Date())]);
+      hasSignalBeenSent[`team_${user_team}`]=true;
+    }
+
   });
 
+  socket.on('team_2_button', (user_id, user_name) =>{
+    var defect = 0;
+    if (user_db[user_id]['user_team'] == '1') {
+      defect = 1
+      io.emit('chat message', "scumbag " + user_name + " has defected to " + server_team_2_name, 'log', formatDate(new Date()));
+      game_state_full_server['chatlog'].push(['log', 'log', "scumbag " + user_name + " has defected to " + server_team_2_name + '.', formatDate(new Date())]);
+    } else {
+      io.emit('chat message', user_name + " has sworn allegiance to " + server_team_2_name, 'log', formatDate(new Date()));
+      game_state_full_server['chatlog'].push(['log', 'log', user_name + " has sworn allegiance to " + server_team_2_name + '.', formatDate(new Date())])
+    }
+    user_db[user_id]['user_team'] = '2'
+    console.log(user_db[user_id]);
+    io.emit('user_join_team', user_name, user_id, user_db[user_id]['user_team'], defect, game_state_full_server, phase, clue_giver,user_db, misconmunication, interception);
+  });
+
+  socket.on('team_1_button', (user_id, user_name) =>{
+    var defect = 0;
+    if (user_db[user_id]['user_team'] == '2') {
+      defect = 1
+      io.emit('chat message', "scumbag " + user_name + " has defected to " + server_team_1_name, 'log', formatDate(new Date()));
+      game_state_full_server['chatlog'].push(['log', 'log', "scumbag " + user_name + " has defected to " + server_team_1_name + '.'], formatDate(new Date()));
+    } else {
+      user_db[user_id]['user_team'] = '1'
+      io.emit('chat message', user_name + " has sworn allegiance to " + server_team_1_name, 'log', formatDate(new Date()));
+      game_state_full_server['chatlog'].push(['log', 'log', user_name + " has sworn allegiance to " + server_team_1_name + '.', formatDate(new Date())])
+    }
+    console.log(user_db[user_id])
+    io.emit('user_join_team', user_name, user_id, user_db[user_id]['user_team'], defect, game_state_full_server, phase, clue_giver,user_db, misconmunication, interception);
+  });
+
+  function formatDate(date) {
+    const h = "0" + date.getHours();
+    const m = "0" + date.getMinutes();
+
+    return `${h.slice(-2)}:${m.slice(-2)}`;
+  }
+
+  // socket.on('disconnect', (user_id) => {
+  //   console.log('user ' + socket.id + ' disconnected');
+  //   for (user_id in user_db) {
+  //     if (user_db[user_id]['user_socket_id'] == socket.id){
+  //       console.log('disconneceted');
+  //       console.log(user_db[user_id]);
+  //       delete user_db[user_id];
+  //       console.log(user_db);
+  //     }
+  //   }
+
 
   
 
@@ -1060,9 +1194,10 @@ io.on('connection', (socket) => {
 
 
 
-  socket.on('chat message', (msg, user_name) => {
-    console.log(user_name + " " + msg);
-    socket.broadcast.emit('chat message', msg, user_name);
+  socket.on('chat message', (msg, user_id, user_name, date) => {
+    // console.log(user_name + " " + msg);
+    game_state_full_server['chatlog'].push([user_name, user_id, msg, date]);
+    socket.broadcast.emit('chat message', msg, user_name, date);
   });
 
 });
