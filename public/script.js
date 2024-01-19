@@ -816,8 +816,11 @@ function appendMessage(name, side, text, date) {
   }
 }
 
-function sync_chat_log (user_id, game_state_full_server) {
+function sync_chat_log (user_id, game_state_full_server_str) {
+  // console.log(game_state_full_server_str);
+  // console.log(game_state_full_server['chat_log'])
   // game_state_full_server['chatlog'].push([user_name, user_id, msg, date]);
+  let game_state_full_server = JSON.parse(game_state_full_server_str);
   console.log(game_state_full_server['chatlog']);
   for (chat of game_state_full_server['chatlog']) {
     console.log(chat);
@@ -833,7 +836,12 @@ function sync_chat_log (user_id, game_state_full_server) {
   }
 };
 
-function reconnect_sync_up_js (user_id, user_team, game_state_full_server, current_phase, clue_giver, user_db, misconmunication, interception){
+function reconnect_sync_up_js (user_id, user_team, game_state_full_server_str){
+  var game_state_full_server = JSON.parse(game_state_full_server_str);
+  let clue_giver = game_state_full_server['clue_giver'];
+  let current_phase = game_state_full_server['current_phase'];
+  let misconmunication = game_state_full_server['misconmunication'];
+  let interception = game_state_full_server['interception'];
 
   console.log('syncing');
   console.log(game_state_full_server);
@@ -1094,7 +1102,8 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
         }
         });
         });
-   
+
+    
       }
 
       // disable and enable buttons for normal member
@@ -1237,6 +1246,17 @@ function reconnect_sync_up_js (user_id, user_team, game_state_full_server, curre
     $(`#input${other_team}3`).addClass('disabled_clue');
   }
 
+  if (user_team!='0') {
+    // startNewRound.disabled = false;
+    // giveClues.disabled = false;
+    // suggestAnswer.disabled = false;
+    // submitClues.disabled = false;
+    // submitAnswer.disabled = false;
+    newGame.disabled = false;
+    green_set_timer.disabled = false;
+  }
+
+
 }
 function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
   var modal_body = document.getElementById('modal-body');
@@ -1246,12 +1266,12 @@ function game_result_JS(my_team, winner, loser, gratz_words, gay_words) {
     if (my_team==winner) {
       const image = document.createElement('img');
       image.setAttribute('class', 'img-fluid');
-      image.src = 'bigbrain.png';
+      image.src = '/bigbrain.png';
       modal_body.prepend(image);
       game_result_p.textContent = "Team bạn "  + gratz_words;
     } else {
       const image = document.createElement('img');
-      image.src = 'smallbrain.jpeg';
+      image.src = '/smallbrain.jpeg';
       image.setAttribute('class', 'img-fluid');
       modal_body.prepend(image);
       game_result_p.textContent = "Team bạn "  + gay_words;
@@ -1350,6 +1370,10 @@ function checkTime(i){
     if (i<10) { i = "0" + i }
     return i;
 }
+
+// Function to create a new room
+
+
 
 // chat
     // var messages = document.getElementById('messages');

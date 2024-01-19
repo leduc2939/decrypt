@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=480"/>
+    <title>Decrypto Room</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.17.0/build/matter.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/style.css" />   
+
+</head>
+<body class="body_game" id="body">
+    <!-- <canvas class="faces" id="myCanvas"></canvas> -->
+    
+
+
+
+
+
+  <div class="whole" id = 'whole'>
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Đúng nhận?</h5>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sai cãi</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Nhận</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    <div id = container>
+
+
+    
+
+    <div class="decryptr--head--row">
+        
+            <button id="startNewRound" class="game-button blue_new_round" disabled >
+                New Round
+            </button>
+            <div class="countdown-container" id="countdown-container">
+                <div id="countdown"></div>
+            </div>
+
+            <table>
+                <tr>
+                  <td class="table-cell" id="miscommunicate">miscommunicate</td>
+                  <td class="table-cell-blue" id="miscommunicate_blue">0</td>
+                  <td class="table-cell-red" id="miscommunicate_red">0</td>
+                </tr>
+                <tr>
+                  <td class="table-cell" id="intercept">intercept</td>
+                  <td class="table-cell-blue" id="intercept_blue">0</td>
+                  <td class="table-cell-red" id="intercept_red">0</td>
+                </tr>
+            </table>
+
+            <button class="game-button blue_menu" id="menu-button">Menu</button>
+            <div class="menu" id="menu">
+                <div style="display:flex;">
+                    <button id="newGame" class="game-button red" >
+                        New Game
+                    </button>
+                        <form style="display:flex;margin-left: auto;" id="timer_form" class="timer_form" >
+                            <input id='timer_input' class="timer_input" type="number" name="lname" value="" required></input> 
+                        </form>
+                        <button id="green_set_timer" class="game-button green_set_timer">Set timer (min)</button>
+                </div>
+            <!-- </div> -->
+                
+                <div style="display:flex;justify-content:center;margin-top: 24px;">
+                    <input type="text" id="menu_user_name_input" class='menu_user_name_input' required="true" />
+                </div>
+                <div style="display:flex;justify-content:center;margin-top: 10px;">
+                    <button id = 'update_name' class = "game-button orange_update_name">Update Your Name</button>
+                </div>
+
+                <hr></hr>
+                <div>
+                    <ul id="no_team"> 
+                </div>
+                  
+                <div>
+                    <div style="display: inline-block;" id="team_1_name" class="Team_Thua_Title"></div>
+                    <button id="team_1_button" class="game-button team_1" >Join</button>
+                </div>
+                <ul id="Team_Thua_Members">    
+
+                </ul>
+                <div>
+                    <div style="display: inline-block;" id='team_2_name' class="Team_Loser_Title"></div>
+                    <button id="team_2_button" class="game-button team_2" >Join</button>      
+                </div>
+                <ul id="Team_Loser_Members">    
+
+                </ul> 
+            </div>
+
+            <!-- <a href="javascript:;" class="arrow">◄</a>
+                <ul class="menu">
+                <li class="menu__item">
+                    <button id="newGame">
+                        New Game
+                    </button>
+                    </li>
+                </ul> -->
+    </div>
+
+
+
+         
+    
+    
+    <div class="decryptr d-flex">
+        <div class="decryptr--left ">
+<!-- team 1 keywords -->
+            <div class="decryptr--row">
+                <div id="team_1_word1" class="keyword1">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_1_word2" class="keyword1">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_1_word3" class="keyword1">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_1_word4" class="keyword1">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+            <div class="middlerow">
+            <button class='game-button purple' id="giveClues" disabled>
+                Give Clues
+            </button>
+            </div>
+
+<!-- team 2 keywords -->
+            <div class="decryptr--row">
+                <div id="team_2_word1" class="decryptr--item2">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_2_word2" class="decryptr--item2">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_2_word3" class="decryptr--item2">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+
+            <div class="decryptr--row">
+                <div id="team_2_word4" class="decryptr--item2">
+                    <span class="m-auto">?</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="decryptr--box">
+            <div class="decryptr--row" id="boxrow11">
+                <div class="box1" id="box11" tabindex="1"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow12">
+                <div class="box1" id="box12" tabindex="2"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow13">
+                <div class="box1" id="box13" tabindex="3"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow14">
+                <div class="box1" id="box14" tabindex="4"> </div>
+            </div>
+
+            <div class="middlerow">
+                <button class="game-button orange" id="suggestAnswer" disabled>
+                    Suggest
+                </button>
+                <p id="state_alert"></p>
+            </div>
+
+            <div class="decryptr--row" id="boxrow21">
+                <div class="box2" id="box21" tabindex="5"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow22">
+                <div class="box2" id="box22" tabindex="6"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow23">
+                <div class="box2" id="box23" tabindex="7"></div>
+            </div>
+            <div class="decryptr--row" id="boxrow24">
+                <div class="box2" id="box24" tabindex="8"> </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="decryptr--right">
+            <div class="decryptr--row" id="row11">
+            </div>
+            <div class="decryptr--row" id="row12">
+            </div>
+            <div class="decryptr--row" id="row13">
+            </div>
+            <div class="decryptr--row" id="row14">
+            </div>
+
+            
+            
+
+            <div class="middlerow">
+                <!-- <button disabled class="game-button green" id="submitClues" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Submit
+                </button> -->
+                <button disabled class="game-button green" id="submitClues"> 
+                    Submit
+                </button>
+                <div class="modal_game_result" id = "modal_game_result" style="display: none">
+                    <div class="modal_game_result-content" id="modal_game_result-content">
+                        <div class="modal-header">
+                            <h5>Game Result!</h5>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                            <div>
+                                <e id="game_result_p"></e>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="close-modal_game_result" id = "close-modal_game_result">Okay</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                   <!-- <div class="modal_game_result" style="display: none">
+                    <div class="modal_game_result-content">
+                      <h5>Game Result!</h5>
+                      <e></e>
+                      <button class="close-modal_game_result"  id = "close-modal_game_result" >Okay</button>
+                    </div>
+                  </div> -->
+                  <!-- <div class="modal fade" id="modal_game_result" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h6 class="modal-title" id="exampleModalLabel">Result</h6>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <e id="game_result_p"></e>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div> -->
+                <button disabled class="game-button green" id="submitAnswer">
+                    Submit
+                </button>
+            </div>
+
+            <div class="decryptr--row" id="row21">
+            </div>
+            <div class="decryptr--row" id="row22">
+            </div>
+            <div class="decryptr--row" id="row23">
+            </div>
+            <div class="decryptr--row" id="row24">
+            </div>
+
+
+            
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- //chat -->
+    <!-- <form id="form" action="">
+      <input id="input" autocomplete="off" /><button class="game-button">Send</button>
+    </form>
+    <ul id="messages" class="messages"></ul> -->
+
+
+        <form class="msger-inputarea">
+            <input type="text" class="msger-input" placeholder="Enter your message...">
+            <button type="submit" class="msger-send-btn">Send</button>
+          </form>
+   <main class="msger-chat">
+          <!-- <div class="msg left-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name"></div>
+                <div class="msg-info-time"></div>
+              </div>
+      
+              <div class="msg-text">
+              </div>
+            </div>
+          </div> -->
+      
+          <!-- <div class="msg right-msg">
+            <div class="msg-bubble">
+              <div class="msg-info">
+                <div class="msg-info-name"></div>
+                <div class="msg-info-time"></div>
+              </div>
+      
+              <div class="msg-text">
+              </div>
+            </div>
+          </div> -->
+        </main>
+      
+        
+
+</div>
+
+</div>
+
+   
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+<script src="/script.js"></script>
+<script src="/fallingobj.js"></script>
+<script src="/sketch.js"></script>
+<script src="/box.js"></script>
+<script src="/boundary.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uuid@latest/dist/umd/uuidv4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // var scale = 'scale(1.5)';
+    // document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
+    // document.body.style.msTransform =   scale;       // IE 9
+    // document.body.style.transform = scale;     // General
+
+    var socket = io();
+    
+    let my_room = "";
+    let my_user_id = "";
+    let my_name = "";
+    let my_team = "";
+    let my_socket_id = "";
+    let phase = "1";
+    let clue_giver = "";
+    let game_state_full = {};
+    game_state_full['team_1'] = {};
+    game_state_full['team_2'] = {};
+    var round = 1;
+
+    let position_to_be_encoded = [];
+    
+
+    var body = document.getElementById('body');
+    var whole = document.getElementById('whole');
+
+    var thua_word1 = document.getElementById('thua_word1');
+    
+    var newGames = document.getElementById('newGame');
+    var green_set_timer = document.getElementById('green_set_timer');
+    var startNewRound = document.getElementById('startNewRound');
+    var giveClues = document.getElementById('giveClues');
+    var submitAnswer = document.getElementById('submitAnswer');
+    var submitClues = document.getElementById('submitClues');
+    var suggestAnswer = document.getElementById('suggestAnswer');
+    var timerInterval;
+    var menu_user_name_input = document.getElementById('menu_user_name_input');
+
+    var miscommunicate_blue = document.getElementById('miscommunicate_blue');
+    var miscommunicate_red = document.getElementById('miscommunicate_red');
+    var intercept_blue = document.getElementById('intercept_blue'); 
+    var intercept_red = document.getElementById('intercept_red');
+
+    const menuButton = document.getElementById('menu-button');
+    const menuElement = document.getElementById('menu');
+
+    var clue_selected = false;
+    var clicked_on_clue = false;
+    var second_clicked_on_box = false;
+
+    const boxes = document.querySelectorAll('box1, box2');
+    const draggable_all_clues = document.querySelectorAll('draggable_clue_1, draggable_clue_2');
+
+    var state_alert = document.getElementById('state_alert');
+
+    var miscommunicate_cell = document.getElementById('miscommunicate');
+    var intercept_cell = document.getElementById('intercept');
+
+    var update_name = document.getElementById('update_name');
+    var timer_input = document.getElementById('timer_input');
+    var team_1_name = document.getElementById('team_1_name');
+    var team_2_name = document.getElementById('team_2_name');
+    var menu_user_name_input = document.getElementById('menu_user_name_input');
+
+    let room_id = window.location.href.substring(window.location.href.lastIndexOf("/") + 1)
+    socket.on('connect', function(env) {
+        console.log('connected');
+        // socket.emit('log_user_socket', socket.id, my_user_id, my_name, my_team);
+        // socket.emit('my_identity', my_user_id, my_name, my_team);
+        console.log(socket.id);
+        my_socket_id = socket.id
+    });
+
+
+    socket.on("gen_uuid", (env, user_db) => {
+        let room_id = window.location.href.substring(window.location.href.lastIndexOf("/") + 1)
+        console.log(user_db);
+        console.log(env);
+        if (env == 'prod') {
+            console.log(env);
+            if (localStorage.getItem('user_id')){
+                my_user_id = localStorage.getItem('user_id');
+                my_name = localStorage.getItem('user_name');
+                console.log('user_id: ' + my_user_id);
+                console.log('socket_id: ' + socket.id);
+                console.log('name: ' + my_name);
+                console.log('room_id: ' + room_id);
+                if (user_db[my_user_id]) {
+                    if (user_db[my_user_id]['user_team'] && user_db[my_user_id]['user_room']==room_id) {
+                        my_team = user_db[my_user_id]['user_team']
+                    }
+                } else {
+                    my_team = "0"
+                }
+                socket.emit('iden_user_id', my_user_id, my_name, my_team, room_id);
+                socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, room_id);
+            } else {
+                my_user_id = uuidv4();
+                localStorage.setItem('user_id',my_user_id);
+                my_team = "0"
+                socket.emit('generate_random_name');
+                // location.reload();
+            } 
+        }   
+        else {
+            console.log('sstorage uuid ' + sessionStorage.getItem('user_id'))
+            if (sessionStorage.getItem('user_id')){
+                my_user_id = sessionStorage.getItem('user_id');
+                my_name = sessionStorage.getItem('user_name');
+                console.log('user_id: ' + my_user_id);
+                console.log('socket_id: ' + socket.id);
+                console.log('name: ' + my_name);
+                console.log('room_id: ' + room_id);
+                if (my_user_id in user_db) {
+                    if (user_db[my_user_id]['user_team'] && user_db[my_user_id]['user_room']==room_id) {
+                        my_team = user_db[my_user_id]['user_team']
+                    }
+                } else {
+                    my_team = "0"
+                }
+                console.log(my_team);
+                socket.emit('iden_user_id', my_user_id, my_name, my_team, room_id);
+                socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, room_id);
+            } else {
+                console.log('uuid not found, generate new one')
+                my_user_id = uuidv4();
+                sessionStorage.setItem('user_id',my_user_id);
+                my_team = "0"
+                socket.emit('generate_random_name');
+            } 
+        }
+        if (my_team == '0') {
+            startNewRound.disabled = true;
+            giveClues.disabled = true;
+            suggestAnswer.disabled = true;
+            submitClues.disabled = true;
+            submitAnswer.disabled = true;
+            newGames.disabled = true;
+            green_set_timer.disabled = true;
+
+            var alert = document.createElement("div");
+            alert.setAttribute('class',"suggest_alert");
+            alert.setAttribute('id',"suggest_alert");
+            alert.innerHTML  = 'Welcome, please join a team';
+            console.log(alert);
+            $('#container').append(alert);
+            setTimeout(function() {
+                $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+                $(this).remove();
+                });
+            });
+            setTimeout(function(){
+                alert.remove();
+            }, 8000);
+        }
+    });
+
+    socket.on('generated_name', (name, env) =>{
+        if (env=='prod') {
+            console.log('generated_name received ' + name);
+            localStorage.setItem('user_name', name);
+            my_user_id = localStorage.getItem('user_id');
+            my_name = localStorage.getItem('user_name');
+            console.log(my_user_id);
+            console.log(socket.id);
+            console.log(my_name);
+            console.log('room_id: ' + room_id);
+        } else {
+            console.log('generated_name received ' + name);
+            sessionStorage.setItem('user_name', name);
+            my_user_id = sessionStorage.getItem('user_id');
+            my_name = sessionStorage.getItem('user_name');
+            console.log(my_user_id);
+            console.log(socket.id);
+            console.log(my_name);
+            console.log('room_id: ' + room_id);
+        }
+        socket.emit('iden_user_id', my_user_id, my_name, my_team, room_id);
+        // socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, my_team, my_room);
+        socket.emit('reconnect_sync_up', my_socket_id, my_user_id, my_name, room_id);
+    });
+
+
+    socket.on('reconnect_sync_up_js', (game_state_full_server, current_phase, current_clue_giver, user_db, misconmunication, interception) => {
+        console.log('received reconnect_sync_up_js');
+        my_team = user_db[my_user_id]['user_team'];
+        // teamless user
+        if (my_team == '0') {
+            startNewRound.disabled = true;
+            giveClues.disabled = true;
+            suggestAnswer.disabled = true;
+            submitClues.disabled = true;
+            submitAnswer.disabled = true;
+            newGames.disabled = true;
+            green_set_timer.disabled = true;
+
+            var alert = document.createElement("div");
+            alert.setAttribute('class',"suggest_alert");
+            alert.setAttribute('id',"suggest_alert");
+            alert.innerHTML  = 'Welcome, please join a team';
+            console.log(alert);
+            $('#container').append(alert);
+            setTimeout(function() {
+                $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+                $(this).remove();
+                });
+            });
+            setTimeout(function(){
+                alert.remove();
+            }, 8000);
+
+        } else {
+            phase = current_phase;
+            clue_giver = current_clue_giver[`team_${my_team}`];
+            console.log(my_team);
+            console.log(clue_giver);
+            console.log(my_user_id);
+            startNewRound.disabled = false;
+            giveClues.disabled = false;
+            suggestAnswer.disabled = false;
+            submitClues.disabled = false;
+            submitAnswer.disabled = false;
+            newGames.disabled = false;
+            green_set_timer.disabled = false;
+            // console.log(game_state_full_server);
+            reconnect_sync_up_js(my_user_id, my_team, game_state_full_server, current_phase, clue_giver,user_db, misconmunication, interception);
+            
+        }
+        // console.log(user_db);
+        // menu team members update
+        $(`#Team_Loser_Members`).empty();
+        $(`#Team_Thua_Members`).empty();
+        $(`#no_team`).empty();
+        for (user_id in user_db) {
+            if (user_db[user_id]['user_room']==room_id) {
+                if (user_db[user_id]['user_team'] == "0") {
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_0_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        member.style.textDecoration = "underline";
+                        document.getElementById('no_team').appendChild(member);
+                        menu_user_name_input.value = user_db[user_id]['user_name'];
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_0_name');
+                        // member.style.color = '#5E72FF';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('no_team').appendChild(member);
+                    }
+                } 
+                else {
+                    if (user_db[user_id]['user_team'] == "1") {
+                        if (user_id == my_user_id){
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_1_name');
+                            // member.style.color = '#000000';
+                            member.textContent = user_db[user_id]['user_name'] + " (You)";
+                            member.style.textDecoration = "underline";
+                            document.getElementById('Team_Thua_Members').appendChild(member);
+                            menu_user_name_input.value = user_db[user_id]['user_name'];
+                        } else {
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_1_name');
+                            // member.style.color = '#5E72FF';
+                            member.textContent = user_db[user_id]['user_name'];
+                            document.getElementById('Team_Thua_Members').appendChild(member);
+                        }
+                
+                    } else {  
+                        if (user_id == my_user_id){
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_2_name');
+                            // member.style.color = '#000000';
+                            member.textContent = user_db[user_id]['user_name'] + " (You)";
+                            member.style.textDecoration = "underline";
+                            document.getElementById('Team_Loser_Members').appendChild(member);
+                            menu_user_name_input.value = user_db[user_id]['user_name'];
+                        } else {
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_2_name');
+                            // member.style.color = '#FF3939';
+                            member.textContent = user_db[user_id]['user_name'];
+                            document.getElementById('Team_Loser_Members').appendChild(member);
+                        }
+                    }
+                }
+            }
+        }
+        
+    }); 
+
+    
+    socket.on('team_member_update', (user_db) => {
+        console.log('received update_team_member');
+        console.log(user_db);
+        $(`#Team_Loser_Members`).empty();
+        $(`#Team_Thua_Members`).empty();
+        $(`#no_team`).empty();
+        for (user_id in user_db) {
+            if (user_db[user_id]['user_room']==room_id & user_db[user_id]['isOnline']==true) {
+                if (user_db[user_id]['user_team'] == "0") {
+                    if (user_id == my_user_id){
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_0_name');
+                        // member.style.color = '#000000';
+                        member.textContent = user_db[user_id]['user_name'] + " (You)";
+                        member.style.textDecoration = "underline";
+                        document.getElementById('no_team').appendChild(member);
+                        // fill name input
+                        menu_user_name_input.value = user_db[user_id]['user_name'];
+                    } else {
+                        var member = document.createElement('li');
+                        member.setAttribute('class', 'team_0_name');
+                        // member.style.color = '#5E72FF';
+                        member.textContent = user_db[user_id]['user_name'];
+                        document.getElementById('no_team').appendChild(member);
+                    }
+                } 
+                else {
+                    if (user_db[user_id]['user_team'] == "1") {
+                        if (user_id == my_user_id){
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_1_name');
+                            // member.style.color = '#000000';
+                            member.textContent = user_db[user_id]['user_name'] + " (You)";
+                            member.style.textDecoration = "underline";
+                            document.getElementById('Team_Thua_Members').appendChild(member);
+                            menu_user_name_input.value = user_db[user_id]['user_name'];
+                        } else {
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_1_name');
+                            // member.style.color = '#5E72FF';
+                            member.textContent = user_db[user_id]['user_name'];
+                            document.getElementById('Team_Thua_Members').appendChild(member);
+                        }
+                
+                    } else {  
+                        if (user_id == my_user_id){
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_2_name');
+                            // member.style.color = '#000000';
+                            member.textContent = user_db[user_id]['user_name'] + " (You)";
+                            member.style.textDecoration = "underline";
+                            document.getElementById('Team_Loser_Members').appendChild(member);
+                            menu_user_name_input.value = user_db[user_id]['user_name'];
+                        } else {
+                            var member = document.createElement('li');
+                            member.setAttribute('class', 'team_2_name');
+                            // member.style.color = '#FF3939';
+                            member.textContent = user_db[user_id]['user_name'];
+                            document.getElementById('Team_Loser_Members').appendChild(member);
+                        }
+                    }
+                }
+            }
+        }
+        
+    });
+
+    // new games: give new html to all users
+    
+    newGames.addEventListener('click', function(e) {
+        socket.emit('newGames', my_user_id, my_name, room_id);
+        menuElement.style.display = 'none';
+    });
+
+    // receive keywords from server
+    socket.on('newGame_JS', (team_1_keywords,team_2_keywords, user_name) => {
+        console.log('received newGame signal');
+        if (my_team=="1") {
+            newGame_JS(team_1_keywords, my_team);
+        } else {
+            newGame_JS(team_2_keywords, my_team);
+        }
+        phase = "1";
+        round = 1;
+
+        var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has started a new game';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
+
+    });
+
+    // function isScriptLoaded(url) {
+    //     const scripts = document.querySelectorAll('script');
+    //     for (const script of scripts) {
+    //         if (script.src === url) {
+    //         return script.readyState === 'loaded' || script.readyState === 'complete';
+    //         }
+    //     }
+    //     return false;
+    // }
+
+
+    // button for sending giving-clues signal: client that clicked the button is given
+    // the html-change while others have the button greyed out
+    
+    giveClues.addEventListener('click', function(e) {
+        console.log(my_user_id);
+        socket.emit('giveClues',my_user_id, my_name , my_team, room_id);
+    });
+
+    // received give-clues signal: changes HTML accordingly 
+    socket.on('giveClues_JS', (user_id, user_name, user_team, position_to_be_encoded) => {
+        console.log('received giveClues_JS signal');
+        if (my_user_id == user_id){
+            console.log(my_name + ' is giving clues');
+            giveClues.disabled = true;
+            giveClues_JS(user_team, position_to_be_encoded);
+            submitClues.disabled = false;
+            position_to_be_encoded = position_to_be_encoded;
+        } else if (my_team == user_team) {
+            console.log('give clues button is greyed out for ' + my_name);
+            giveClues.disabled = true;
+        }
+        clue_giver = user_id;
+        var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has taken charge of encoding the message';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
+    });
+
+    // button for sending submit-clues signal
+    
+    submitClues.addEventListener('click', function(e) {
+        submitClues.setAttribute('disabled', true);
+        socket.emit('submitClues', my_user_id, my_name, my_team, $(`#input${my_team}1`).html(), $(`#input${my_team}2`).html(), $(`#input${my_team}3`).html(), room_id);
+        $(`#input${my_team}1`).addClass('disabled_clue');
+        $(`#input${my_team}2`).addClass('disabled_clue');
+        $(`#input${my_team}3`).addClass('disabled_clue');
+        $(`#input${my_team}1`).attr('contenteditable','false');
+        $(`#input${my_team}2`).attr('contenteditable','false');
+        $(`#input${my_team}3`).attr('contenteditable','false');
+    });
+
+    // received rearrangement singal: clues are now rearranged randomly
+    socket.on('rearrangeClues_JS', ( user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position) => {
+        if (my_user_id != user_id && my_team == user_team){
+            rearrangeClues_JS( user_id, user_name, user_team, input1_value, input2_value, input3_value, mixed_position);
+            submitAnswer.disabled = false;
+            suggestAnswer.disabled = false;
+        }
+        if (my_team == user_team){
+            var alert = document.createElement("div");
+            alert.setAttribute('class',"suggest_alert");
+            alert.setAttribute('id',"suggest_alert");
+            alert.innerHTML  = user_name + ' has sent an encoded message';
+            console.log(alert);
+            $('#container').append(alert);
+            setTimeout(function() {
+                $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+                $(this).remove();
+                });
+            });
+            setTimeout(function(){
+                alert.remove();
+            }, 8000);   
+        }
+    });
+
+    // button to send suggest-arrangement signal to server
+    
+    suggestAnswer.addEventListener('click', function(e) {
+        console.log('suggested');
+        if (phase =="2") {
+            var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
+
+            let box1Children = document.getElementById(`box${other_team}1`).children;
+            let box2Children = document.getElementById(`box${other_team}2`).children;
+            let box3Children = document.getElementById(`box${other_team}3`).children;
+            let box4Children = document.getElementById(`box${other_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+            
+            let d = {};
+            d[`box${other_team}1`] = box1word;
+            d[`box${other_team}2`] = box2word;
+            d[`box${other_team}3`] = box3word;
+            d[`box${other_team}4`] = box4word;
+            
+            console.log(d);
+            socket.emit('suggestAnswer', my_user_id, my_name, my_team, d, room_id);
+
+        } else {
+            let box1Children = document.getElementById(`box${my_team}1`).children;
+            let box2Children = document.getElementById(`box${my_team}2`).children;
+            let box3Children = document.getElementById(`box${my_team}3`).children;
+            let box4Children = document.getElementById(`box${my_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            let d = {};
+            d[`box${my_team}1`] = box1word;
+            d[`box${my_team}2`] = box2word;
+            d[`box${my_team}3`] = box3word;
+            d[`box${my_team}4`] = box4word;
+
+            console.log(d);
+            socket.emit('suggestAnswer', my_user_id, my_name, my_team, d, room_id);
+        }
+    });
+
+    // receive suggest-rearrangement signal, displays for everyone to see
+    socket.on('rearrangeSuggest_JS', ( user_name, user_team, d, phase) => {
+        console.log('received rearrangeSuggest_JS ');
+        if (phase=="1") {
+            if (user_team == my_team && my_user_id != clue_giver) {           
+                rearrangeSuggest_JS( user_name, user_team, d, phase);
+            }
+        }
+        else {
+            if (user_team==my_team){
+                rearrangeSuggest_JS( user_name, user_team, d, phase);
+            }
+        }
+    });
+
+    // button for sending submit-answers signal
+    
+    submitAnswer.addEventListener('click', function(e) {
+        socket.emit('stopClock', my_team, room_id);
+        console.log('phase is: ' +phase);
+        submitAnswer.disabled = true;
+        suggestAnswer.disabled = true;
+        if (phase=="2") {
+            var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
+            let box1Children = document.getElementById(`box${other_team}1`).children;
+            let box2Children = document.getElementById(`box${other_team}2`).children;
+            let box3Children = document.getElementById(`box${other_team}3`).children;
+            let box4Children = document.getElementById(`box${other_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            let wl = [box1word, box2word, box3word, box4word];
+            let d = {};
+            for (let i = 0; i < 4; i++) {
+                d[`box${other_team}${i+1}`] = wl[i];
+            }
+                // `box${other_team}1`: box1word,
+                // `box${user_team}2`: box2word,
+                // `box${user_team}3`: box3word,
+                // `box${user_team}4`: box4word
+                // };
+            console.log(d);
+            var team_remaining_time = countdownDisplay.textContent;
+            socket.emit('submitAnswer', my_user_id, my_name, other_team, d, team_remaining_time, room_id);
+            console.log('submitted interception answer');
+            var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
+            draggable_all_clues.forEach(draggable =>{
+                console.log(draggable);
+                draggable.classList.add("disabled_clue");
+            });
+        } 
+        else {
+            let box1Children = document.getElementById(`box${my_team}1`).children;
+            let box2Children = document.getElementById(`box${my_team}2`).children;
+            let box3Children = document.getElementById(`box${my_team}3`).children;
+            let box4Children = document.getElementById(`box${my_team}4`).children;
+
+            let box1word;
+            let box2word;
+            let box3word;
+            let box4word;
+
+            if (box1Children.length > 0) {
+                box1word = box1Children.item(0).innerHTML;} 
+            else {
+                box1word = 'null';}
+            if (box2Children.length > 0) {
+                box2word = box2Children.item(0).innerHTML;} 
+            else {
+                box2word = 'null';}
+            if (box3Children.length > 0) {
+                box3word = box3Children.item(0).innerHTML;} 
+            else {
+                box3word = 'null';}
+            if (box4Children.length > 0) {
+                box4word = box4Children.item(0).innerHTML;} 
+            else {
+                box4word = 'null';}
+
+            // let d = {
+            //     'box1': box1word,
+            //     'box2': box2word,
+            //     'box3': box3word,
+            //     'box4': box4word
+            //     };
+            let wl = [box1word, box2word, box3word, box4word];
+            let d = {};
+            for (let i = 0; i < 4; i++) {
+                d[`box${my_team}${i+1}`] = wl[i];
+            }
+            console.log(d);
+            var team_remaining_time = countdownDisplay.textContent;
+            socket.emit('submitAnswer', my_user_id, my_name, my_team, d, team_remaining_time, room_id);
+            console.log('submitted communication answer');
+            var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+            draggable_all_clues.forEach(draggable =>{
+                console.log(draggable);
+                draggable.classList.add("disabled_clue");
+            });
+        }
+        
+    });
+
+
+    // received communication result, push correct answers to the right
+    socket.on('pushRight', (result, user_id, game_state_correct_answer, team) => {
+        console.log('received pushRight for my team');  
+        var other_team = '';
+            if (my_team == '1'){
+                other_team = '2';
+            } else {
+                other_team = '1';
+            }
+        if (my_team == team) {     
+            if (phase=="2") {
+                submitAnswer.disabled = true;
+                suggestAnswer.disabled = true;
+                pushRight(result, user_id, game_state_correct_answer, other_team);
+                
+            }
+            else {
+                submitAnswer.disabled = true;
+                suggestAnswer.disabled = true;
+                var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+                draggable_all_clues.forEach(draggable =>{
+                    console.log(draggable);
+                    draggable.classList.add("disabled_clue");
+                });
+                pushRight(result, user_id, game_state_correct_answer, my_team);
+            }
+            
+        }
+        if (result==0) {
+            if (team=="1"){
+                var newvalue = parseInt(miscommunicate_blue.textContent) + 1;
+                miscommunicate_blue.textContent = newvalue;
+                console.log("blue miss: " + miscommunicate_blue.textContent);
+            } else{
+                var newvalue = parseInt(miscommunicate_red.textContent) + 1;
+                miscommunicate_red.textContent = newvalue;
+                console.log("red miss: " + miscommunicate_red.textContent);
+            }
+        }
+    });
+
+    // received roundComplete signal, reset boxes and enable giveClues; 
+    socket.on('roundCompleted', () => {
+        console.log('received roundCompleted');
+        startNewRound.disabled = false; 
+        countdownDisplay.textContent = "";
+        round += 1;
+        state_alert.innerHTML = "Round\nCompleted";
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 6000);
+
+    });
+
+    // when click on start new round, send signal to clear everything from boxes, reset the clock, update var round, enable giveClues
+    startNewRound.addEventListener('click', function(e) {
+        console.log('start new round clicked');
+        socket.emit('startNewRound', my_name, room_id);
+        giveClues.disabled = false;
+        submitClues.hidden = false; console.log("startNewRound: submitAnswer.hidden = false");
+        submitAnswer.hidden = true; console.log("startNewRound: submitAnswer.hidden = true");
+        startNewRound.disabled = true;
+
+    });
+    
+    
+    
+    // receive startNewRound_JS from server and update site
+    socket.on('startNewRound_JS', (user_name) => {
+        console.log('received startNewRound_JS');
+        startNewRound_JS(user_name);
+        phase = '1';
+        clue_giver = "";
+        giveClues.disabled = false;
+        submitClues.hidden = false; console.log("startNewRound_JS: submitAnswer.hidden = false");
+        submitAnswer.hidden = true; console.log("startNewRound_JS: submitAnswer.hidden = true");
+        startNewRound.disabled = true;
+
+        state_alert.innerHTML = `Round ${round}`;
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 6000);
+
+        miscommunicate_cell.style.backgroundColor = '#ffd700';
+        intercept_cell.style.backgroundColor = '';
+
+        // let remainingTime = 5 * 60; // 5 minutes in seconds
+        // timerInterval = setInterval(() => {
+        //     if (remainingTime <= 0) {
+        //         clearInterval(timerInterval);
+        //         countdownDisplay.textContent = "Time's up";
+        //         return;
+        //     }
+
+        //     const minutes = Math.floor(remainingTime / 60);
+        //     const seconds = remainingTime % 60;
+
+        //     countdownDisplay.textContent = `${minutes}:${seconds}`;
+
+        //     remainingTime--;
+        // }, 1000); // Update the countdown every second
+        
+    });
+
+    // make it draggable swappable for opponents
+    socket.on('rearrangeClues_intercept_JS', (round_d, mixed_position) => {
+        console.log('received rearrangeClues_intercept_JS');
+        phase = "2";
+        rearrangeClues_intercept_JS(round_d, mixed_position, my_team);
+        submitAnswer.hidden = false; console.log("rearrangeClues_intercept_JS: submitAnswer.hidden = false");
+        submitClues.hidden = true; console.log("rearrangeClues_intercept_JS: submitAnswer.hidden = true");
+        submitAnswer.disabled = false;
+        suggestAnswer.disabled = false;
+
+        state_alert.innerHTML = `Intercept!`;
+        state_alert.hidden = false;
+        textEffect('fly-in-out');
+        setTimeout(() => {
+        state_alert.hidden = true;
+            console.log('state_alert.hidden = true;');
+        }, 6000);
+
+        miscommunicate_cell.style.backgroundColor = '';
+        intercept_cell.style.backgroundColor = '#ffd700';
+
+        // clearInterval(timerInterval);
+        // var remainingTime = 5 * 60; 
+        // timerInterval = setInterval(() => {
+        //     if (remainingTime <= 0) {
+        //         clearInterval(timerInterval);
+        //         countdownDisplay.textContent = "Time's up";
+        //         return;
+        //     }
+
+        //     var minutes = Math.floor(remainingTime / 60);
+        //     var seconds = remainingTime % 60;
+
+        //     countdownDisplay.textContent = `${minutes}:${seconds}`;
+
+        //     remainingTime--;
+        // }, 1000); 
+    });
+
+    // receive intercept_res, lock submit button
+    socket.on('intercept_res', (result, user_name, game_state_correct_answer, user_team) => {
+        console.log(user_team);
+        console.log('intercept_res received');
+        if (my_team!=user_team) {
+            console.log('its my team');
+            intercept_res_JS(result, user_name, game_state_correct_answer, user_team);
+        }
+        if (result==1) {
+            if (user_team=="2"){
+                var newvalue = parseInt(intercept_blue.textContent) + 1;
+                intercept_blue.textContent = newvalue;
+            } else{
+                var newvalue = parseInt(intercept_red.textContent) + 1;
+                intercept_red.textContent = newvalue;
+            }
+    }
+    
+    });
+
+
+    
+    
+
+    menuButton.addEventListener('click', () => {
+        const menuButtonPosition = menuButton.getBoundingClientRect();
+        const menuElementWidth = menuElement.offsetWidth;
+
+        menuElement.style.right = `${window.innerWidth - menuButtonPosition.right}px`;
+        menuElement.style.top = `${menuButtonPosition.top + menuButton.offsetHeight}px`;
+        menuElement.style.display = menuElement.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // socket.on('server_stopClock', (user_team)=>{
+    //     console.log('stopClock received');
+    //     if (my_team==user_team){
+    //         clearInterval(timerInterval);
+    //     }
+        
+    // });
+
+    // socket.on('server_clearClock', ()=>{
+    //     console.log('clearClock received');
+    //     countdownDisplay.textContent = "";
+        
+    // });
+    
+    socket.on('game_result', (winner, loser, gratz_words, gay_words) =>{
+        game_result_JS(my_team, winner, loser, gratz_words, gay_words);
+    });
+
+    draggable_all_clues.forEach(draggable => {
+            draggable.addEventListener('click', function() {
+                if (clue_selected==false) {
+                    clicked_on_clue = draggable;
+                    clue_selected = true;
+                    console.log('clue_selected');
+                    console.log(clicked_on_clue.parentNode.classList);
+                }
+            });
+        });
+
+    boxes.forEach(box => {
+        box.addEventListener('click', function() {
+            if (clue_selected==false){
+                box.blur();
+            }
+            else {
+                if (box.children.length == 0) {
+                    box.appendChild(clicked_on_clue);
+                    console.log(box);
+                    clue_selected = false;
+                    box.blur();
+                    }
+                else {
+                    if (box.id==clicked_on_clue.parentNode.id){
+                        console.log('same box');
+                    } else {
+                        var second_clicked_on_clue = box.firstElementChild;
+                        box.removeChild(box.firstElementChild);
+                        var original_box = clicked_on_clue.parentNode;
+                        clicked_on_clue.parentNode.removeChild(clicked_on_clue);
+                        box.appendChild(clicked_on_clue);
+                        original_box.appendChild(second_clicked_on_clue);
+                        clue_selected = false;
+                        box.blur();
+                        original_box.blur();
+                    }
+                };
+        
+        }
+        });
+    });
+
+    socket.on('countdown', (user_team, remainingTime) => {
+        if (user_team==my_team) {
+            var minutes = Math.floor(remainingTime / 60000).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                maximumSignificantDigits: 2,
+                useGrouping: false
+            });
+            var seconds = ((remainingTime % 60000)/1000).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                maximumSignificantDigits: 2,
+                useGrouping: false
+            });;
+
+            countdownDisplay.textContent = `${minutes}:${seconds}`;
+            if (remainingTime<=0) {
+                if (clue_giver=="") {
+                    // socket.emit('submitAnswer', user_id, user_name, user_team, d, team_remaining_time);
+                }
+                else {
+                    if (phase=="1") {
+                        var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${my_team}`);
+                        draggable_all_clues.forEach(draggable =>{
+                            console.log(draggable);
+                            draggable.classList.add("disabled_clue");
+                        });
+                        socket.emit('time_out', my_team, room_id);
+                        suggestAnswer.disabled = true;
+
+                        var alert = document.createElement("div");
+                        alert.setAttribute('class',"suggest_alert");
+                        alert.setAttribute('id',"suggest_alert");
+                        alert.innerHTML  = `times's up, freezeee~`;
+                        console.log(alert);
+                        $('#container').append(alert);
+                        setTimeout(function() {
+                            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+                            $(this).remove();
+                            });
+                        });
+                        setTimeout(function(){
+                            alert.remove();
+                        }, 8000);
+                    } else {
+                        var other_team = '';
+                        if (my_team == '1'){
+                            other_team = '2';
+                        } else {
+                            other_team = '1';
+                        }
+                        var draggable_all_clues = document.querySelectorAll(`.draggable_clue_${other_team}`);
+                        draggable_all_clues.forEach(draggable =>{
+                            console.log(draggable);
+                            draggable.classList.add("disabled_clue");
+                        });
+                        socket.emit('time_out', my_team, room_id);
+                        suggestAnswer.disabled = true;
+
+                        var alert = document.createElement("div");
+                        alert.setAttribute('class',"suggest_alert");
+                        alert.setAttribute('id',"suggest_alert");
+                        alert.innerHTML  = `times's up, freezeee~`;
+                        console.log(alert);
+                        $('#container').append(alert);
+                        setTimeout(function() {
+                            $(alert).fadeTo(5000, 0).slideUp(5000, function(){
+                            $(this).remove();
+                            });
+                        });
+                        setTimeout(function(){
+                            alert.remove();
+                        }, 8000);
+                    }
+
+
+
+                    // console.log(team_mem);
+                    // team_mem.splice(team_mem.indexOf(clue_giver), 1)
+                    // console.log(team_mem);
+                    // console.log(team_mem[team_seed]);
+                    // if (my_user_id == team_mem[team_seed]) {
+                    //     submitAnswer.click();
+                    // }
+
+                }
+            }
+        }
+           
+    });
+
+    socket.on('stop_countdown', (remainingTime, user_team) =>{
+        if (my_team==user_team) {
+            countdownDisplay.textContent = remainingTime;
+        }
+    });
+
+
+    const msgerForm = get(".msger-inputarea");
+    const msgerInput = get(".msger-input");
+    const msgerChat = get(".msger-chat");
+
+
+    msgerForm.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const msgText = msgerInput.value;
+        if (!msgText) return;
+
+        socket.emit('chat message', msgText, my_user_id, my_name, formatDate(new Date()), room_id);
+        appendMessage(my_name, "right", msgText, formatDate(new Date()));
+        msgerInput.value = "";
+
+    });
+
+    socket.on('sync_chat_log', (game_state_full_server) => {
+        sync_chat_log(my_user_id, game_state_full_server);
+    });
+
+    socket.on('chat message', function(msg, user_name, date, room) {   
+        if (user_name=='log') {
+            appendMessage(user_name, "log", msg, date);
+        } else {
+            appendMessage(user_name, "left", msg, date);
+        }
+            // window.scrollTo(0, document.body.scrollHeight);
+        });
+
+
+    // Utils
+    function get(selector, root = document) {
+    return root.querySelector(selector);
+    }
+
+    function formatDate(date) {
+    const h = "0" + date.getHours();
+    const m = "0" + date.getMinutes();
+
+    return `${h.slice(-2)}:${m.slice(-2)}`;
+    }
+
+    socket.on('set_timer', (timer) =>{
+        timer_input.value = timer;
+    });
+
+    green_set_timer.addEventListener('click', function(e) {
+        socket.emit('adjust_timer', my_user_id, my_name, timer_input.value, room_id);
+    });
+
+    socket.on('adjust_timer_JS', (user_name, timer) =>{
+        timer_input.value = timer;
+
+        var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        alert.innerHTML  = user_name + ' has adjusted the timer to ' + timer + ' minute(s)';
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
+    });
+
+    socket.on('set_team_name', (server_team_1_name, server_team_2_name) =>{
+        team_1_name.innerHTML = server_team_1_name;
+        team_2_name.innerHTML = server_team_2_name;
+    });
+
+    var team_1_button = document.getElementById('team_1_button');
+    team_1_button.addEventListener('click', function(e) {
+        socket.emit('team_1_button', my_user_id, my_name, room_id);
+        // menuElement.style.display = 'none';
+    });
+
+    var team_2_button = document.getElementById('team_2_button');
+    team_2_button.addEventListener('click', function(e) {
+        socket.emit('team_2_button', my_user_id, my_name, room_id);
+        // menuElement.style.display = 'none';
+    });
+
+    socket.on('user_join_team', (user_name, user_id, user_team, defect, game_state_full_server)=>{
+        team_name = '';
+        if (user_team=='1'){
+            team_name = team_1_name.innerHTML;
+        } else {
+            team_name = team_2_name.innerHTML;
+        }
+        
+        if (my_user_id==user_id) {
+            my_team=user_team;
+            reconnect_sync_up_js(my_user_id, my_team, game_state_full_server);
+        }
+        var alert = document.createElement("div");
+        alert.setAttribute('class',"suggest_alert");
+        alert.setAttribute('id',"suggest_alert");
+        console.log(defect);
+        if (defect==0) {
+            alert.innerHTML  = user_name + ' has sworn allegiance to ' + team_name;
+        } else {
+            alert.innerHTML  = 'scumbag ' + user_name + ' has defected to ' + team_name;
+        }
+        console.log(alert);
+        $('#container').append(alert);
+        setTimeout(function() {
+            $(alert).fadeTo(3000, 0).slideUp(3000, function(){
+            $(this).remove();
+            });
+        });
+        setTimeout(function(){
+            alert.remove();
+        }, 8000);
+
+    });
+
+    update_name.addEventListener('click', function(e) {
+        var new_name = menu_user_name_input.value;
+        socket.emit('update_name', my_user_id, my_name, new_name, room_id);
+        my_name = new_name;
+        // menuElement.style.display = 'none';
+    });
+
+    document.addEventListener('click', function handleClickOutsideBox(event) {
+
+        if (!menuElement.contains(event.target) && !menuButton.contains(event.target)) {
+            menu.style.display = 'none';
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // falling obj
+
+    
+
+    // const world = document.querySelector(".faces");
+    // const { Engine, Render, Runner, World, Bodies } = Matter;
+
+    // let engine = Engine.create();
+
+
+    // const textures = [
+    //     "https://i.ibb.co/z4VSpxG/face-1.png",
+    //     "https://i.ibb.co/cDXgJ6C/face-2.png",
+    //     "https://i.ibb.co/NTPjrhs/face-3.png",
+    //     "https://i.ibb.co/T4rKcVC/face-4.png",
+    //     "https://i.ibb.co/Dw9049M/face-5.png",
+    //     "https://i.ibb.co/gt9BYYQ/face-6.png",
+    //     "https://i.ibb.co/hfys0b2/face-7.png",
+    //     "https://i.ibb.co/zbDfcrh/face-8.png",
+    //     "https://i.ibb.co/6RP73dX/face-9.png",
+    //     "https://i.ibb.co/nns9sKj/face-10.png"];
+    // function init() {
+    //     let width = $(window).width();
+    //     let height = $(window).height();
+    //     let vmin = Math.min(width, height);
+
+    //     engine.events = {};
+    //     World.clear(engine.world);
+    //     Engine.clear(engine);
+    //     engine = Engine.create();
+
+    //     let render = Render.create({
+    //         canvas: world,
+    //         engine: engine,
+    //         options: {
+    //             wireframes: false,
+    //             background: 'transparent',
+    //             width: width,
+    //             height: height
+    //         }
+    //     });
+
+    //     World.add(engine.world, [
+    //         Bodies.rectangle(width / 2, height + 50, width, 100, {
+    //             isStatic: true,
+    //             render: {
+    //                 fillStyle: "green"
+    //             }
+    //         }),
+
+    //         Bodies.rectangle(-50, height / 2, 100, height, {
+    //             isStatic: true
+    //         }),
+    //         Bodies.rectangle(width + 50, height / 2, 100, height, {
+    //             isStatic: true
+    //         }),
+    //         Bodies.rectangle(width / 2, height / 2 - 20, vmin * 0.500, .001, {//mid box
+    //             isStatic: true,
+    //             render: {
+    //                 fillStyle: "red"
+    //             }
+    //         }),
+    //     ]);
+
+    // function createBall() {
+    //         const ORIGINAL_SIZE = 120;
+    //         const SIZE = Math.floor(Math.random() * 76) + 30;
+    //         const ball = Bodies.circle(Math.round(Math.random() * width), -30, 29, {
+    //             angle: Math.PI * (Math.random() * 2 - 1),
+    //             friction: 0.001,
+    //             frictionAir: 0.01,
+    //             restitution: 0.8,
+    //             render: {
+    //                 sprite: {
+    //                     texture: textures[
+
+    //                         Math.floor(Math.random() * (textures.length))],
+    //                     xScale: SIZE / ORIGINAL_SIZE,
+    //                     yScale: SIZE / ORIGINAL_SIZE
+    //                 }
+    //             }
+    //         });
+
+    //         setTimeout(() => {
+    //             World.remove(engine.world, ball);
+    //         }, 6000);
+
+    //         return ball;
+    //     }
+
+    //     Runner.run(engine);
+
+    //     Render.run(render);
+    //     const handleClick = () => {
+    //         const ball2 = createBall();
+    //         World.add(engine.world, [ball2]);
+    //     };
+    //     setInterval(handleClick, 200)
+    // }
+
+    // init();
+
+    // $(window).resize(function () {
+    //     init();
+    // });
+
+//     const msgerForm = get(".msger-inputarea");
+// const msgerInput = get(".msger-input");
+// const msgerChat = get(".msger-chat");
+
+// const BOT_MSGS = [
+//   "Hi, how are you?",
+//   "Ohh... I can't understand what you trying to say. Sorry!",
+//   "I like to play games... But I don't know how to play!",
+//   "Sorry if my answers are not relevant. :))",
+//   "I feel sleepy! :("
+// ];
+
+// const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
+// const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+// const BOT_NAME = "BOT";
+// const PERSON_NAME = "Sajad";
+
+// msgerForm.addEventListener("submit", event => {
+//   event.preventDefault();
+
+//   const msgText = msgerInput.value;
+//   if (!msgText) return;
+
+//   appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+//   msgerInput.value = "";
+
+//   botResponse();
+// });
+
+// function appendMessage(name, img, side, text) {
+//   //   Simple solution for small apps
+//   const msgHTML = `
+//     <div class="msg ${side}-msg">
+//       <div class="msg-img" style="background-image: url(${img})"></div>
+
+//       <div class="msg-bubble">
+//         <div class="msg-info">
+//           <div class="msg-info-name">${name}</div>
+//           <div class="msg-info-time">${formatDate(new Date())}</div>
+//         </div>
+
+//         <div class="msg-text">${text}</div>
+//       </div>
+//     </div>
+//   `;
+
+//   msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+//   msgerChat.scrollTop += 500;
+// }
+
+// function botResponse() {
+//   const r = random(0, BOT_MSGS.length - 1);
+//   const msgText = BOT_MSGS[r];
+//   const delay = msgText.split(" ").length * 100;
+
+//   setTimeout(() => {
+//     appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
+//   }, delay);
+// }
+
+// // Utils
+// function get(selector, root = document) {
+//   return root.querySelector(selector);
+// }
+
+// function formatDate(date) {
+//   const h = "0" + date.getHours();
+//   const m = "0" + date.getMinutes();
+
+//   return `${h.slice(-2)}:${m.slice(-2)}`;
+// }
+
+// function random(min, max) {
+//   return Math.floor(Math.random() * (max - min) + min);
+// }
+
+  
+</script>
+</body>
+</html>

@@ -95,8 +95,8 @@ html {
 }
 
 .user_name_input {
-    position: absolute;
-    top: 30%;
+    /* position: absolute; */
+    /* top: 30%; */
     /* left: 20%; */
     /* right: 20%;  */
     /* left: 42%; */
@@ -104,9 +104,10 @@ html {
     align-self: center;
     align-items: center;
     justify-content: center; */
-    transform: translateX(-50%);
+    /* transform: translateX(-50%); */
     border-width: 5px;
     background-color: #adadadc4;
+    margin-top: 200px;
     /* left:20%; */
 
 }
@@ -117,9 +118,26 @@ html {
     box-shadow:0 0 10px #9ecaed;
 }
 
+.room_input {
+  position: absolute;
+  top: 50%;
+  /* left: 20%; */
+  /* right: 20%;  */
+  /* left: 42%; */
+  /* display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center; */
+  /* transform: translateX(-50%); */
+  border-width: 5px;
+  background-color: #adadadc4;
+  /* left:20%; */
+
+}
+
 .enter_button {
     position: absolute;
-    top: 50%;
+    top: 60%;
     /* left: 35%;
     right: 35%; */
     /* transform: translateX(35%); */
@@ -132,11 +150,12 @@ html {
 .glow1 {
     text-align: center;
     display: block;
-    position: absolute;
-    top: 40%;
+    /* position: absolute; */
+    /* top: 40%; */
     /* left: 20%;
     right: 55%; */
-    transform: translateX(-55%);
+    /* transform: translateX(-55%); */
+    margin-top: 50px;
     border-width: 5px;
     border: 1px solid rgb(55, 55, 204);
     border-radius: 25px;
@@ -160,17 +179,31 @@ justify-content:center;
 }
 
 .glow2 {
-    text-align: center;
+   text-align: center;
     display: block;
-    position: absolute;
-    top: 40%;
-    /* left: 55%;
-    right: 20%; */
-    transform: translateX(55%);
+    /* position: absolute; */
+    /* top: 40%; */
+    /* left: 20%;
+    right: 55%; */
+    /* transform: translateX(-55%); */
+    margin-top: 50px;
     border-width: 5px;
-    border: 1px solid rgb(204, 55, 55);
+    /* border: 1px solid rgb(55, 55, 204); */
     border-radius: 25px;
     color: #000000;
+    /* background-color: rgba(130, 152, 226, 0.525); */
+    text-align: center;
+    display: block;
+    /* position: absolute; */
+    /* top: 40%; */
+    /* left: 55%;
+    right: 20%; */
+    /* transform: translateX(55%); */
+    /* border-width: 5px; */
+    /* margin-top: 200px; */
+    border: 1px solid rgb(204, 55, 55);
+    /* border-radius: 25px; */
+    /* color: #000000; */
     background-color: #d39c9c84;
     /* left:55%; */
   }
@@ -222,10 +255,10 @@ background: transparent !important;
 }
   
   
-.glow1, .glow2, .user_name_input {
+.glow1, .glow2, .user_name_input, .room_input {
     /* margin-left: auto;
     margin-right: auto; */
-    margin: 0 auto;  
+    /* margin: 0 auto;   */
     flex-grow: 1;
 }
 
@@ -900,6 +933,15 @@ background: linear-gradient(var(--gradient-degree), rgb(36, 17, 54) var(--color1
     /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
   /* }  */
 
+  .game-button.orange_update_name {
+    background: repeating-linear-gradient( 45deg, #ffc800, #ffc800 5px, #ffc200 5px, #ffc200 10px);
+   /* box-shadow: 0 6px 0 #b76113, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #75421f, 0 12px 0 5px #8a542b, 0 15px 0 5px #593116, 0 15px 1px 6px rgba(0,0,0,.3); */
+   border-bottom: 3px solid rgba(205, 102, 0, 0.5);
+   text-shadow: 2px 2px 1px #e78700, -2px 2px 1px #e78700, 2px -2px 1px #e78700, -2px -2px 1px #e78700, 0px 2px 1px #e78700, 0px -2px 1px #e78700, 0px 4px 1px #c96100, 2px 4px 1px #c96100, -2px 4px 1px  #c96100;
+   height: 30px;
+   width: 150px;
+}
+
   .game-button.blue_new_round {
     height: 50px;
     width: 100px;
@@ -949,22 +991,45 @@ background: linear-gradient(var(--gradient-degree), rgb(36, 17, 54) var(--color1
    top:2px;
    /* box-shadow: 0 4px 0 #348628, 0 6px 1px 1px rgba(0,0,0,.3), 0 8px 0 5px #2a6d20, 0 10px 0 5px #39822e, 0 13px 0 5px #1d4c16, 0 13px 1px 6px rgba(0,0,0,.3); */
  /* } */ 
- .game-button.enter_game {
-    background: repeating-linear-gradient( 45deg, #ff4f4c, #ff4f4c 5px, #ff4643 5px, #ff4643 10px);
-    /* box-shadow: 0 6px 0 #ae2725, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #831614, 0 12px 0 5px #a33634, 0 15px 0 5px #631716, 0 15px 1px 6px rgba(0,0,0,.3); */
-    border-bottom: 3px solid rgba(160, 25, 23, 0.5);
-    text-shadow: 2px 2px 1px #d72d21, -2px 2px 1px #d72d21, 2px -2px 1px #d72d21, -2px -2px 1px #d72d21, 0px 2px 1px #d72d21, 0px -2px 1px #d72d21, 0px 4px 1px #930704, 2px 4px 1px #930704, -2px 4px 1px  #930704;
-     height: 50px;
+ .game-button.join_room {
+  text-shadow: 2px 2px 1px #0066a2, -2px 2px 1px #0066a2, 2px -2px 1px #0066a2, -2px -2px 1px #0066a2, 0px 2px 1px #0066a2, 0px -2px 1px #0066a2, 0px 4px 1px #004a87, 2px 4px 1px #004a87, -2px 4px 1px  #004a87;
+  border: none;
+  /* margin: 15px 15px 30px; */
+  background: repeating-linear-gradient( 45deg, #3ebbf7, #3ebbf7 5px, #45b1f4 5px, #45b1f4 10px);
+  border-bottom: 3px solid rgba(16, 91, 146, 0.5);
+  border-top: 3px solid rgba(255,255,255,.3);
+  color: #fff !important;
+  height: 50px;
      width: 100px;
      /* text-align: center; */
      /* align-items: right; */
-     position: absolute;
-    top: 50%;
-    font-size: 20px;
+     /* position: absolute; */
+    /* top: 60%; */
+    margin-top: 50px;
+    font-size: 15px;
+    margin-left: 50px;
     /* left: 45%;
     right: 40%;  */
-    transform:translate(-45%);
+    /* transform:translate(-105%); */
      }
+
+  .game-button.create_room {
+  background: repeating-linear-gradient( 45deg, #ff4f4c, #ff4f4c 5px, #ff4643 5px, #ff4643 10px);
+  /* box-shadow: 0 6px 0 #ae2725, 0 8px 1px 1px rgba(0,0,0,.3), 0 10px 0 5px #831614, 0 12px 0 5px #a33634, 0 15px 0 5px #631716, 0 15px 1px 6px rgba(0,0,0,.3); */
+  border-bottom: 3px solid rgba(160, 25, 23, 0.5);
+  text-shadow: 2px 2px 1px #d72d21, -2px 2px 1px #d72d21, 2px -2px 1px #d72d21, -2px -2px 1px #d72d21, 0px 2px 1px #d72d21, 0px -2px 1px #d72d21, 0px 4px 1px #930704, 2px 4px 1px #930704, -2px 4px 1px  #930704;
+    height: 50px;
+    width: 100px;
+    /* text-align: center; */
+    /* align-items: right; */
+    /* position: absolute; */
+  top: 60%;
+  font-size: 15px;
+  margin-top: 50px;
+  /* left: 45%;
+  right: 40%;  */
+  /* transform:translate(-5%); */
+    }
 
   .game-button.green_set_timer {
   background: repeating-linear-gradient( 45deg, #54d440, #54d440 5px, #52cc3f 5px, #52cc3f 10px);
@@ -1456,6 +1521,19 @@ i.fly-in-out {
   height: auto;
 }
 
+.menu_user_name_input {
+  display: flex;
+  align-items: center;
+  border-width: 5px;
+  /* background-color: #adadadc4; */
+}
+
+.menu_user_name_input:focus { 
+  /* outline:none; */
+  border-color:#9ecaed;
+  box-shadow:0 0 10px #9ecaed;
+}
+
 .Team_Thua_Title {
   display: flex;
   align-items: center;
@@ -1482,17 +1560,30 @@ i.fly-in-out {
       0 -0.07em rgb(255, 232, 232);
 }
 
+.team_0_name {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  color:rgb(255, 255, 255);
+  text-shadow:
+      0.07em 0 rgb(83, 83, 83),
+      0 0.07em rgb(142, 142, 142),
+      -0.07em 0 rgb(89, 89, 89),
+      0 -0.07em rgb(40, 40, 40);
+}
+
 .team_1_name {
   display: flex;
   align-items: center;
   text-align: center;
   font-size: 15px;
-  color:rgb(77, 77, 255);
+  color:rgb(255, 255, 255);
   text-shadow:
-      0.07em 0 rgb(216, 218, 244),
-      0 0.07em rgb(150, 255, 255),
-      -0.07em 0 rgb(175, 237, 246),
-      0 -0.07em rgb(163, 153, 255);
+      0.07em 0 rgb(129, 137, 255),
+      0 0.07em rgb(84, 255, 255),
+      -0.07em 0 rgb(40, 132, 253),
+      0 -0.07em rgb(25, 0, 255);
 }
 
 .team_2_name {
@@ -1500,12 +1591,12 @@ i.fly-in-out {
   align-items: center;
   text-align: center;
   font-size: 15px;
-  color:rgb(255, 40, 40);
+  color:rgb(255, 255, 255);
   text-shadow:
-      0.07em 0 rgb(255, 169, 169),
-      0 0.07em rgb(255, 182, 182),
-      -0.07em 0 rgb(255, 161, 161),
-      0 -0.07em rgb(255, 232, 232);
+      0.07em 0 rgb(255, 21, 21),
+      0 0.07em rgb(255, 109, 109),
+      -0.07em 0 rgb(255, 38, 0),
+      0 -0.07em rgb(255, 61, 61)
 }
 
 .myCanvas{
@@ -1554,4 +1645,17 @@ i.fly-in-out {
   /* align-self:flex-end; */
   justify-content: flex-end !important;
   align-items: flex-end !important;
+}
+
+.room_id_input{
+  margin-top: 70px;
+  border-width: 5px;
+  background-color: #adadadc4;
+
+}
+
+.room_id_input:focus { 
+  /* outline:none; */
+  border-color:#9ecaed;
+  box-shadow:0 0 10px #9ecaed;
 }
