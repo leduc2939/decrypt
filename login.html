@@ -27,7 +27,9 @@
   <div class="glow2" tabindex="4" id="teamLoser">
     <span class="text"><a>Team Loser</a></span>
   </div> -->
-  
+  <div class="form d-flex justify-content-center align-items-center enter_your_name_title">
+    Enter Your Name
+  </div>
   <div class="form d-flex justify-content-center align-items-center" tabindex="1">
     <form action="/room" method="get">
       <input type="text" placeholder="Name" class="user_name_input" id="user_name_input" required="true" />
@@ -46,7 +48,12 @@
     <input type="text" class="room_input" id="room_input"/>
   </div> -->
   <div class="container d-flex justify-content-center">
-    <input class="room_id_input" id='room_id_input' type="text" placeholder="Enter Room ID">
+    <div class="enter_room_id_title">Enter Room ID</div>
+  </div>
+  <div class="container d-flex justify-content-center">
+    <input class="room_id_input1" id='room_id_input1' type="text">
+    <input class="room_id_input2" id='room_id_input2' type="text">
+    <input class="room_id_input3" id='room_id_input3' type="text">
   </div>
   
   <div class="container d-flex justify-content-center">
@@ -80,7 +87,11 @@
   var team_1_name = document.getElementById('team_1_name');
   var team_2_name = document.getElementById('team_2_name');
 
-  var room_id_input = document.getElementById('room_id_input');
+  var room_id_input1 = document.getElementById('room_id_input1');
+  var room_id_input2 = document.getElementById('room_id_input2');
+  var room_id_input3 = document.getElementById('room_id_input3');
+
+  
   var join_room_button = document.getElementById('join_room_button');
 
   teamThua.addEventListener('click', function(e) {
@@ -184,13 +195,14 @@
 
   
   join_room_button.addEventListener('click', function(e) {
+    var room_id_input = `${room_id_input1.value}-${room_id_input2.value}-${room_id_input3.value}`;
     if (current_env=='prod') {  
       if (userName.value) {
           console.log(userName.value);
           localStorage.setItem('user_id', my_user_id);
           // localStorage.setItem('user_team', my_team);
           localStorage.setItem('user_name', userName.value);
-          localStorage.setItem('user_room', room_id_input.value);
+          localStorage.setItem('user_room', room_id_input);
         }
     } 
     else {  
@@ -199,7 +211,7 @@
           sessionStorage.setItem('user_id', my_user_id);
           // sessionStorage.setItem('user_team', my_team);
           sessionStorage.setItem('user_name', userName.value);
-          sessionStorage.setItem('user_room', room_id_input.value);
+          sessionStorage.setItem('user_room', room_id_input);
         }
     }
     
@@ -209,7 +221,7 @@
     const protocol = window.location.protocol;
     const port = window.location.port; 
     var link = protocol + "//" + host + ":" + port;
-    socket.emit('join_room', my_user_id, my_name, my_team, link, room_id_input.value, (response) =>{
+    socket.emit('join_room', my_user_id, my_name, my_team, link, room_id_input, (response) =>{
       window.location.href = response['room'];
     });
   });

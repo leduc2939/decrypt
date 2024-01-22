@@ -1650,15 +1650,62 @@ i.fly-in-out {
   justify-content: flex-end !important;
   align-items: flex-end !important;
 }
+.enter_your_name_title{
+  margin-top: 200px;
+  font-size: 15px;
+  color:rgb(255, 255, 255);
+  text-shadow:
+      0.1em 0 rgb(0, 0, 0),
+      0 0.1em rgb(14, 31, 21),
+      -0.1em 0 rgb(35, 37, 34),
+      0 -0.1em rgb(23, 28, 22);
+}
 
-.room_id_input{
-  margin-top: 70px;
+.user_name_input {
+  /* position: absolute; */
+  /* top: 30%; */
+  /* left: 20%; */
+  /* right: 20%;  */
+  /* left: 42%; */
+  /* display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center; */
+  /* transform: translateX(-50%); */
+  width: 240px;
   border-width: 5px;
   background-color: #adadadc4;
+  margin-top: 12px;
+  /* left:20%; */
 
 }
 
-.room_id_input:focus { 
+.user_name_input:focus { 
+  /* outline:none; */
+  border-color:#9ecaed;
+  box-shadow:0 0 10px #9ecaed;
+}
+
+.enter_room_id_title{
+  margin-top: 70px;
+  font-size: 15px;
+  color:rgb(255, 255, 255);
+  text-shadow:
+    0.1em 0 rgb(0, 0, 0),
+    0 0.1em rgb(14, 31, 21),
+    -0.1em 0 rgb(35, 37, 34),
+    0 -0.1em rgb(23, 28, 22);
+}
+
+.room_id_input1, .room_id_input2, .room_id_input3{
+  margin-top: 12px;
+  border-width: 5px;
+  width: 96px;
+  background-color: #adadadc4;
+  margin-left: 10px;
+}
+
+.room_id_input1:focus, .room_id_input2:focus, .room_id_input3:focus { 
   /* outline:none; */
   border-color:#9ecaed;
   box-shadow:0 0 10px #9ecaed;
